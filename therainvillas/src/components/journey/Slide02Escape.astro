@@ -1,0 +1,190 @@
+<section class="escape section" id="siang">
+  <div class="container escape__container">
+    <div class="escape__time reveal">12:00 PM</div>
+
+    <div class="escape__grid">
+      <div class="escape__visual reveal reveal--left">
+        <div class="escape__image-grid">
+          <img
+            src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80"
+            alt="Private pool villa"
+            class="escape__image escape__image--main"
+            loading="lazy"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&q=80"
+            alt="Private pool dengan lounge"
+            class="escape__image escape__image--secondary"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      <div class="escape__content reveal reveal--right">
+        <h2 class="escape__title">Sembunyi dari Rutinitas.<br />Waktunya <span class="escape__highlight">Reset Pikiran.</span></h2>
+
+        <div class="escape__scene">
+          <p class="escape__text">
+            Matahari tepat di atas kepala. Air kolam pribadi berkilauan, mengundangmu 
+            untuk melompat dan melupakan hiruk-pikuk perkotaan. Kursi lounge 
+            sudah siap dengan handuk bersih dan segelas es teh manis.
+          </p>
+          <p class="escape__text">
+            Tidak ada tenggat waktu. Tidak ada rapat. Hanya dirimu, keluarga, 
+            atau teman-teman terdekat — menikmati detik-detik yang terasa 
+            lambat dan berarti.
+          </p>
+        </div>
+
+        <div class="escape__highlights">
+          <div class="escape__highlight">
+            <span class="escape__highlight-icon">🏊</span>
+            <div>
+              <h4>Kolam Renang Pribadi</h4>
+              <p>Berenang tanpa berbagi dengan siapapun</p>
+            </div>
+          </div>
+          <div class="escape__highlight">
+            <span class="escape__highlight-icon">🛋️</span>
+            <div>
+              <h4>Lounge Area</h4>
+              <p>Bersantai dengan pemandangan pegunungan</p>
+            </div>
+          </div>
+          <div class="escape__highlight">
+            <span class="escape__highlight-icon">🍳</span>
+            <div>
+              <h4>Dapur Lengkap</h4>
+              <p>Masak hidangan favoritmu kapan saja</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .escape {
+    background: var(--color-gray-light);
+    padding: 100px 0;
+  }
+
+  .escape__container {
+    max-width: 1100px;
+  }
+
+  .escape__time {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: 48px;
+  }
+
+  .escape__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .escape__image-grid {
+    position: relative;
+  }
+
+  .escape__image--main {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    display: block;
+  }
+
+  .escape__image--secondary {
+    position: absolute;
+    bottom: -32px;
+    right: -24px;
+    width: 55%;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+    display: block;
+    border: 4px solid white;
+  }
+
+  .escape__title {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 24px;
+  }
+
+  .escape__highlight {
+    background: linear-gradient(135deg, #a7b8ff, #7c9bf7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .escape__scene {
+    margin-bottom: 32px;
+  }
+
+  .escape__text {
+    color: var(--color-gray);
+    line-height: 1.9;
+    margin-bottom: 16px;
+    font-size: 1rem;
+  }
+
+  .escape__highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .escape__highlight {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .escape__highlight-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .escape__highlight h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .escape__highlight p {
+    font-size: 0.9rem;
+    color: var(--color-gray);
+  }
+
+  @media (max-width: 768px) {
+    .escape {
+      padding: 64px 0;
+    }
+
+    .escape__grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .escape__image--secondary {
+      width: 45%;
+      bottom: -20px;
+      right: -12px;
+    }
+
+    .escape__title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

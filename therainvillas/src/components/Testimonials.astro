@@ -1,0 +1,98 @@
+---
+import { testimonials } from '../data/villas';
+---
+
+<section class="testimonials section">
+  <div class="container">
+    <h2 class="section__title reveal">Apa Kata Mereka</h2>
+    <p class="section__subtitle reveal reveal--delay-1">Pengalaman tamu yang telah menginap di The Rain Villas</p>
+
+    <div class="testimonials__grid">
+      {testimonials.map((item, i) => (
+        <div class={`testimonial-card reveal reveal--delay-${Math.min(i + 1, 4)}`}>
+          <div class="testimonial-card__stars">
+            {Array.from({ length: item.rating }).map(() => (
+              <span class="testimonial-card__star">★</span>
+            ))}
+          </div>
+          <p class="testimonial-card__text">"{item.text}"</p>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">
+              {item.name.charAt(0)}
+            </div>
+            <span class="testimonial-card__name">{item.name}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    background: var(--color-light);
+  }
+
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .testimonial-card {
+    background: var(--color-gray-light);
+    border-radius: 16px;
+    padding: 32px;
+    transition: all 0.3s ease;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  }
+
+  .testimonial-card__stars {
+    margin-bottom: 16px;
+    color: #a08bff;
+    font-size: 1.25rem;
+    letter-spacing: 2px;
+  }
+
+  .testimonial-card__text {
+    color: var(--color-gray);
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+  }
+
+  .testimonial-card__author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .testimonial-card__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .testimonial-card__name {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 768px) {
+    .testimonials__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

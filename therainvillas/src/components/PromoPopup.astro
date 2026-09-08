@@ -1,0 +1,161 @@
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const popup = document.getElementById('promo-popup');
+    if (!popup) return;
+
+    const closeBtn = popup.querySelector('.promo-popup__close');
+    const cta = popup.querySelector('.promo-popup__cta');
+
+    function open() { popup.classList.add('promo-popup--open'); }
+    function close() { popup.classList.remove('promo-popup--open'); }
+
+    const isReload = performance.getEntriesByType?.('navigation')
+      .some(n => n.type === 'reload');
+    if (isReload) sessionStorage.removeItem('promoShown');
+
+    if (sessionStorage.getItem('promoShown')) return;
+    setTimeout(() => {
+      open();
+      sessionStorage.setItem('promoShown', 'true');
+    }, 800);
+
+    closeBtn?.addEventListener('click', close);
+    cta?.addEventListener('click', close);
+    popup.addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) close();
+    });
+  });
+</script>
+
+<div id="promo-popup" class="promo-popup">
+  <div class="promo-popup__card">
+    <button class="promo-popup__close" aria-label="Tutup">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    <img
+      class="promo-popup__image"
+      src="/promo/Promo.jpg"
+      alt="Flash Sale 9.9 The Rain Villas"
+      loading="lazy"
+    />
+    <div class="promo-popup__body">
+      <h2 class="promo-popup__title">Flash Sale 9.9</h2>
+      <p class="promo-popup__desc">Harga villa cuma <strong>200.000 aja!!</strong> Periode terbatas, jangan sampai kelewat!</p>
+      <a href="https://wa.me/6282125492037?text=Halo%20The%20Rain%20Villas%2C%20saya%20tertarik%20dengan%20Flash%20Sale%209.9%20harga%20villa%20Rp%20200.000" target="_blank" rel="nofollow" class="btn btn--primary promo-popup__cta">Klaim Sekarang</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .promo-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .promo-popup--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .promo-popup__card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    max-width: 420px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    transform: scale(0.9);
+    transition: transform 0.35s ease;
+  }
+
+  .promo-popup--open .promo-popup__card {
+    transform: scale(1);
+  }
+
+  .promo-popup__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .promo-popup__close:hover {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .promo-popup__image {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .promo-popup__body {
+    padding: 24px;
+    text-align: center;
+    color: white;
+  }
+
+  .promo-popup__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .promo-popup__desc {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .promo-popup__cta {
+    display: inline-block;
+    padding: 12px 32px;
+    font-size: 1rem;
+    border-radius: 10px;
+    text-decoration: none;
+  }
+
+  @media (max-width: 480px) {
+    .promo-popup__image {
+      height: 180px;
+    }
+
+    .promo-popup__body {
+      padding: 20px;
+    }
+
+    .promo-popup__title {
+      font-size: 1.25rem;
+    }
+  }
+</style>

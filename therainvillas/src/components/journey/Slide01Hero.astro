@@ -1,0 +1,339 @@
+<section class="journey-hero">
+  <div class="journey-hero__bg">
+    <video autoplay muted loop playsinline class="journey-hero__video">
+      <source src="/hero-video.mp4" type="video/mp4" />
+    </video>
+    <div class="journey-hero__overlay"></div>
+  </div>
+
+  <div class="container journey-hero__content">
+    <div class="journey-hero__time reveal">The Rain Villas</div>
+    <div class="journey-hero__tagline reveal reveal--delay-1">
+      Villa Murah, View Mewah di Puncak
+    </div>
+    <h1 class="journey-hero__title reveal reveal--delay-2">
+      Vacation with Family and Gathering with Friends
+    </h1>
+    <p class="journey-hero__subtitle reveal reveal--delay-3">
+      Pilih villa, cek jadwal, lalu booking dengan proses yang jelas. Cocok untuk
+      keluarga, gathering, dan akhir pekan yang ingin terasa lebih tenang.
+    </p>
+
+    <div class="journey-hero__actions reveal reveal--delay-4">
+      <a href="/booking" class="journey-hero__btn journey-hero__btn--primary">
+        Booking Sekarang
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+      <a href="/availability" class="journey-hero__btn journey-hero__btn--ghost">
+        Cek Jadwal
+      </a>
+    </div>
+
+    <div class="journey-hero__price-tag reveal reveal--delay-4">
+      Booking Sekarang &ndash; Mulai dari <strong>Rp 1.000.000</strong>
+    </div>
+
+    <div class="journey-hero__stats reveal reveal--delay-4">
+      <div class="journey-hero__stat">
+        <span class="journey-hero__stat-number">30</span>
+        <span class="journey-hero__stat-label">Pilihan Villa</span>
+      </div>
+      <div class="journey-hero__stat">
+        <span class="journey-hero__stat-number">500+</span>
+        <span class="journey-hero__stat-label">Tamu Terlayani</span>
+      </div>
+      <div class="journey-hero__stat">
+        <span class="journey-hero__stat-number">DP 30%</span>
+        <span class="journey-hero__stat-label">Reservasi Aman</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .journey-hero {
+    position: relative;
+    min-height: 92svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--color-footer);
+  }
+
+  .journey-hero__bg,
+  .journey-hero__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .journey-hero__bg {
+    z-index: 0;
+  }
+
+  .journey-hero__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.92) contrast(1.04);
+  }
+
+  .journey-hero__overlay {
+    background:
+      linear-gradient(90deg, rgba(8, 18, 16, 0.82) 0%, rgba(8, 18, 16, 0.54) 46%, rgba(8, 18, 16, 0.18) 100%),
+      linear-gradient(180deg, rgba(8, 18, 16, 0.18) 0%, rgba(8, 18, 16, 0.72) 100%);
+  }
+
+  .journey-hero__content {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0;
+    padding: 112px 24px 88px;
+    color: #fff;
+  }
+
+  .journey-hero__time {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 34px;
+    padding: 8px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-bottom: 28px;
+  }
+
+  .journey-hero__time::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(184, 110, 47, 0.18);
+  }
+
+  .journey-hero__tagline {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    background: rgba(184, 110, 47, 0.28);
+    border: 1px solid rgba(184, 110, 47, 0.5);
+    color: #fde8c8;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .journey-hero__title {
+    max-width: 720px;
+    margin-bottom: 22px;
+    font-family: 'Cinzel', serif;
+    font-size: 4.2rem;
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-shadow: 0 16px 42px rgba(0, 0, 0, 0.24);
+    text-wrap: balance;
+  }
+
+  .journey-hero__subtitle {
+    max-width: 610px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.08rem;
+    line-height: 1.85;
+    margin-bottom: 34px;
+  }
+
+  .journey-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+
+  .journey-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 50px;
+    padding: 0 22px;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    font-size: 0.94rem;
+    transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .journey-hero__btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .journey-hero__btn--primary {
+    color: #fff;
+    background: var(--color-accent);
+    box-shadow: 0 18px 38px rgba(184, 110, 47, 0.26);
+  }
+
+  .journey-hero__btn--primary:hover {
+    background: var(--color-accent-dark);
+  }
+
+  .journey-hero__btn--ghost {
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .journey-hero__btn--ghost:hover {
+    border-color: rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .journey-hero__price-tag {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.88rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .journey-hero__price-tag strong {
+    color: #fff;
+    font-weight: 800;
+  }
+
+  .journey-hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    max-width: 650px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .journey-hero__stat {
+    min-height: 92px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .journey-hero__stat-number {
+    display: block;
+    color: #fff;
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .journey-hero__stat-label {
+    display: block;
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .journey-hero {
+      min-height: 88svh;
+      align-items: flex-end;
+    }
+
+    .journey-hero__content {
+      padding: 86px 20px 52px;
+    }
+
+    .journey-hero__tagline {
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+    }
+
+    .journey-hero__title {
+      font-size: 2.55rem;
+    }
+
+    .journey-hero__subtitle {
+      font-size: 0.98rem;
+      line-height: 1.72;
+    }
+
+    .journey-hero__actions {
+      align-items: stretch;
+      flex-direction: column;
+      margin-bottom: 34px;
+    }
+
+    .journey-hero__stats {
+      grid-template-columns: 1fr;
+    }
+
+    .journey-hero__stat {
+      min-height: auto;
+      padding: 15px 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .journey-hero__content {
+      padding: 72px 16px 44px;
+    }
+
+    .journey-hero__title {
+      font-size: 1.9rem;
+      line-height: 1.12;
+    }
+
+    .journey-hero__subtitle {
+      font-size: 0.9rem;
+      line-height: 1.66;
+    }
+
+    .journey-hero__price-tag {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+    }
+
+    .journey-hero__btn {
+      min-height: 46px;
+      font-size: 0.9rem;
+    }
+
+    .journey-hero__stat-number {
+      font-size: 1.35rem;
+    }
+
+    .journey-hero__stat-label {
+      font-size: 0.76rem;
+    }
+  }
+</style>

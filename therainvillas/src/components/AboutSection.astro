@@ -1,0 +1,171 @@
+<section class="about section" id="tentang">
+  <div class="container">
+    <div class="about__grid">
+      <div class="about__image-wrapper reveal reveal--left">
+        <img
+          src="https://images.unsplash.com/photo-1600566753086-00f18abff0e3?w=600&q=80"
+          alt="Villa The Rain Villas interior"
+          class="about__image"
+        />
+        <div class="about__experience">
+          <span class="about__experience-number">3+</span>
+          <span class="about__experience-label">Tahun Pengalaman</span>
+        </div>
+      </div>
+      <div class="about__content reveal reveal--right">
+        <span class="about__tag">Tentang Kami</span>
+        <h2 class="about__title">The Rain Villas</h2>
+        <p class="about__text">
+          The Rain Villas adalah manajemen villa murah dan modern di Puncak yang berkomitmen
+          memberikan pengalaman liburan terbaik. Dengan pilihan villa yang nyaman, pemandangan
+          alam yang menenangkan, dan layanan profesional, kami siap menjadikan setiap kunjungan
+          Anda momen yang tak terlupakan.
+        </p>
+        <p class="about__text">
+          Nikmati suasana sejuk Puncak dengan fasilitas yang lengkap dan pelayanan terbaik dari kami.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    background: var(--color-gray-light);
+  }
+
+  .about__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+
+  .about__image-wrapper {
+    position: relative;
+  }
+
+  .about__image {
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  }
+
+  .about__experience {
+    position: absolute;
+    bottom: -24px;
+    right: -24px;
+    background: var(--color-primary);
+    color: white;
+    padding: 24px 32px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(13, 27, 43, 0.3);
+  }
+
+  .about__experience-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+
+  .about__experience-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+
+  .about__tag {
+    display: inline-block;
+    background: var(--color-primary);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .about__title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .about__text {
+    color: var(--color-gray);
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .about__features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .about__feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: var(--color-gray-dark);
+  }
+
+  .about__feature-icon {
+    color: var(--color-whatsapp);
+    font-weight: 700;
+  }
+
+  @media (max-width: 768px) {
+    .about__grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+    .about__experience {
+      bottom: -16px;
+      right: -16px;
+      padding: 16px 24px;
+    }
+
+    .about__experience-number {
+      font-size: 1.5rem;
+    }
+
+    .about__title {
+      font-size: 1.5rem;
+    }
+
+    .about__features {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .about__experience {
+      bottom: -12px;
+      right: 12px;
+      padding: 12px 18px;
+      border-radius: 10px;
+    }
+
+    .about__experience-number {
+      font-size: 1.3rem;
+    }
+
+    .about__experience-label {
+      font-size: 0.75rem;
+    }
+
+    .about__title {
+      font-size: 1.4rem;
+    }
+
+    .about__tag {
+      font-size: 0.72rem;
+      padding: 5px 12px;
+    }
+  }
+</style>

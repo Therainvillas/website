@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lokasi Strategis — Therainvillas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:ital,wght@0,356;1,356&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pine:#263A2C;
+    --pine-deep:#1b2a1f;
+    --brass:#7a6ce0;
+    --sage:#a7b6a2;
+    --sage-deep:#8b9c86;
+    --ink:#17201a;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{
+    font-family:"Work Sans", sans-serif;
+    background-color:#f5f6f4;
+    color:var(--pine);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .loka{
+    position:relative;
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 85% -10%, rgba(120,140,190,0.18) 0%, rgba(120,140,190,0) 55%),
+      radial-gradient(120% 90% at 0% 110%, rgba(150,120,190,0.16) 0%, rgba(150,120,190,0) 55%),
+      linear-gradient(160deg, #f7f8f5 0%, #eef1ef 45%, #e6eaee 100%);
+    padding: clamp(48px, 8vh, 88px) clamp(20px, 6vw, 80px) clamp(40px, 6vh, 64px);
+  }
+
+  /* ---------- background topographic illustration ---------- */
+  .loka__mapbg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    opacity:0.5;
+    pointer-events:none;
+  }
+  .loka__mapbg path{
+    fill:rgba(139,156,134,0.14);
+    stroke:rgba(167,182,162,0.5);
+    stroke-width:1.1;
+    vector-effect:non-scaling-stroke;
+  }
+  .loka__mapbg .loka__grid{
+    fill:none;
+    stroke:rgba(139,156,134,0.28);
+    stroke-width:1;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .loka__inner{
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:clamp(28px,5vh,56px);
+    width:100%;
+    max-width:1400px;
+    margin:0 auto;
+    min-height:calc(100vh - clamp(96px,14vh,152px));
+  }
+
+  /* ---------- top label ---------- */
+  .loka__tag{
+    position:absolute;
+    top:0;
+    right:0;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--sage-deep);
+  }
+
+  /* ---------- mixed typography title ---------- */
+  .loka__head{
+    max-width:1000px;
+    line-height:1.15;
+    font-family:"Cinzel", serif;
+    font-weight:600;
+    color:var(--pine);
+  }
+  .loka__head .big{
+    font-size:clamp(2.4rem, 6.4vw, 5.5rem);
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .loka__head .small{
+    font-family:"Cormorant Garamond", serif;
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(1.2rem, 2vw, 1.8rem);
+    color:var(--pine-deep);
+    opacity:0.8;
+  }
+  .loka__head .line{ display:block; }
+  .loka__head .line + .line{ margin-top:clamp(2px,0.4vw,8px); }
+
+  /* ---------- map viewport + markers ---------- */
+  .loka__map{
+    position:relative;
+    width:100%;
+    height:clamp(300px, 48vh, 480px);
+  }
+  .loka__marker{
+    position:absolute;
+    transform:translate(-50%,-50%);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    z-index:3;
+    font-family:"Work Sans", sans-serif;
+  }
+  .loka__pin{
+    position:relative;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    border:1.5px solid var(--sage-deep);
+    background:rgba(255,255,255,0.75);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .loka__pin svg{ width:11px; height:11px; stroke:var(--sage-deep); }
+  .loka__lbl{
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    color:var(--sage-deep);
+    white-space:nowrap;
+  }
+
+  /* villa marker */
+  .loka__marker--villa{ z-index:5; cursor:pointer; }
+  .loka__villa{
+    position:relative;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    border:2px solid var(--brass);
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .loka__villa svg{ width:12px; height:12px; stroke:var(--brass); }
+  .loka__marker--villa:hover .loka__villa{
+    transform:scale(1.12);
+    background:var(--brass);
+  }
+  .loka__marker--villa:hover .loka__villa svg{ stroke:#fff; }
+  .loka__lbl--villa{
+    color:rgba(107,74,43,0.95);
+    font-weight:600;
+  }
+
+  /* project marker */
+  .loka__marker--project{ z-index:6; }
+  .loka__project{
+    position:relative;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--brass);
+    border:2px solid #fff;
+    box-shadow:0 8px 22px rgba(184,128,74,0.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .loka__project img{
+    width:70%;
+    height:70%;
+    object-fit:contain;
+    display:block;
+  }
+  .loka__cap{
+    font-size:14px;
+    font-weight:700;
+    color:var(--brass);
+    white-space:nowrap;
+  }
+
+  /* pulse ring only on project */
+  .loka__pulse{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:54px;
+    height:54px;
+    border-radius:50%;
+    border:2px solid rgba(184,128,74,0.5);
+    animation:lokaPulse 2.4s ease-out infinite;
+    pointer-events:none;
+  }
+  .loka__pulse:nth-child(2){ animation-delay:0.9s; }
+  @keyframes lokaPulse{
+    0%{ transform:translate(-50%,-50%) scale(0.6); opacity:0.9; }
+    100%{ transform:translate(-50%,-50%) scale(2.1); opacity:0; }
+  }
+
+  /* ---------- CTA ---------- */
+  .loka__cta{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    align-self:flex-start;
+    padding:15px 30px;
+    border-radius:8px;
+    background:var(--pine);
+    color:#fff;
+    font-family:"Work Sans", sans-serif;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    text-decoration:none;
+    box-shadow:0 14px 30px rgba(38,58,44,0.22);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .loka__cta:hover{
+    transform:translateY(-2px);
+    background:var(--pine-deep);
+    box-shadow:0 18px 36px rgba(38,58,44,0.28);
+  }
+  .loka__cta svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; }
+
+  @media (max-width:640px){
+    .loka__tag{ letter-spacing:0.2em; font-size:11px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="loka">
+  <!-- topo illustration -->
+  <svg class="loka__mapbg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="loka__grid">
+      <path d="M0 160 H1200 M0 320 H1200 M0 480 H1200 M0 640 H1200"/>
+      <path d="M160 0 V800 M320 0 V800 M480 0 V800 M640 0 V800 M800 0 V800 M960 0 V800 M1120 0 V800"/>
+    </g>
+    <path d="M -60 220 Q 200 120 440 220 T 900 180 T 1260 260 L 1260 860 L -60 860 Z" fill="rgba(139,156,134,0.14)"/>
+    <path d="M -40 300 Q 220 200 500 300 T 940 260 T 1280 340 L 1280 860 L -40 860 Z" fill="rgba(139,156,134,0.22)"/>
+    <path d="M -20 400 Q 240 300 560 400 T 980 360 T 1300 430 L 1300 860 L -20 860 Z" fill="rgba(139,156,134,0.28)"/>
+    <path d="M -20 500 Q 260 410 600 500 T 1000 470 L 1000 900 L -20 900 Z" fill="rgba(139,156,134,0.20)"/>
+    <path d="M 240 -40 Q 400 180 360 380 T 480 820" fill="none" stroke="rgba(167,182,162,0.5)"/>
+    <path d="M 820 -60 Q 900 200 860 420 T 900 820" fill="none" stroke="rgba(167,182,162,0.5)"/>
+  </svg>
+
+  <div class="loka__inner">
+    <span class="loka__tag">Puncak, Jawa Barat, Indonesia</span>
+
+    <h2 class="loka__head">
+      <span class="line"><span class="big">LOKASI STRATEGIS</span></span>
+      <span class="line"><span class="small">di antara</span> <span class="big">BOGOR, CISARUA,</span> <span class="small">dan</span></span>
+      <span class="line"><span class="big">KEBUN TEH GUNUNG MAS</span> <span class="small">sepanjang jalur</span></span>
+      <span class="line"><span class="big">PUNCAK</span> <span class="small">yang sejuk</span></span>
+    </h2>
+
+    <div class="loka__map" id="lokaMap">
+      <!-- markers injected by JS -->
+    </div>
+
+    <a class="loka__cta" href="https://www.google.com/maps?q=Kp.Ciburial+Desa+Tugu+Utara+Cisarua+Puncak+Bogor" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+      Lihat di Peta
+    </a>
+  </div>
+</section>
+
+<script>
+  const pinIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>';
+
+  const landmarks = [
+    { label: "Therainvillas",   x: 93, y: 7,  type: "project", url: "https://maps.app.goo.gl/mGghdcBHjNJ1DZ2f9" },
+    { label: "Villa Cyrena",    x: 7,  y: 93, type: "villa", url: "https://maps.app.goo.gl/pHVfEoSgqZHQ4ZzJ7" },
+    { label: "Villa Agave",     x: 28, y: 28, type: "villa", url: "https://maps.app.goo.gl/9UiPfN9B71ZXuvDC6" },
+    { label: "Villa Aleia",     x: 48, y: 62, type: "villa", url: "https://maps.app.goo.gl/jH7e2PLbAYA7CxRx7" }
+  ];
+
+  const map = document.getElementById('lokaMap');
+
+  function renderMarker(lm){
+    const el = document.createElement('div');
+    el.className = 'loka__marker' +
+      (lm.type === 'project' ? ' loka__marker--project' : '') +
+      (lm.type === 'villa' ? ' loka__marker--villa' : '');
+    el.style.left = lm.x + '%';
+    el.style.top  = lm.y + '%';
+
+    if (lm.type === 'project'){
+      el.innerHTML =
+        '<span class="loka__pulse"></span>' +
+        '<span class="loka__pulse"></span>' +
+        '<span class="loka__project"><img src="/logo%20trv2.png" alt="The Rain Villas"></span>' +
+        '<span class="loka__cap">' + lm.label + '</span>';
+      if (lm.url){
+        el.setAttribute('role','link');
+        el.setAttribute('tabindex','0');
+        el.title = 'Lihat ' + lm.label + ' di Google Maps';
+        el.addEventListener('click', function(){ window.open(lm.url,'_blank','noopener'); });
+        el.addEventListener('keydown', function(e){
+          if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); window.open(lm.url,'_blank','noopener'); }
+        });
+      }
+    } else if (lm.type === 'villa'){
+      el.innerHTML =
+        '<span class="loka__villa">' + pinIcon + '</span>' +
+        '<span class="loka__lbl loka__lbl--villa">' + lm.label + '</span>';
+      el.setAttribute('role','link');
+      el.setAttribute('tabindex','0');
+      el.title = 'Lihat ' + lm.label + ' di Google Maps';
+      el.addEventListener('click', function(){ window.open(lm.url,'_blank','noopener'); });
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); window.open(lm.url,'_blank','noopener'); }
+      });
+    } else {
+      el.innerHTML =
+        '<span class="loka__pin">' + pinIcon + '</span>' +
+        '<span class="loka__lbl">' + lm.label + '</span>';
+    }
+    return el;
+  }
+
+  landmarks.forEach(function(lm){
+    map.appendChild(renderMarker(lm));
+  });
+</script>
+
+</body>
+</html>

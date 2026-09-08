@@ -1,0 +1,148 @@
+<section class="himbauan section" id="himbauan">
+  <div class="container">
+    <div class="himbauan__header reveal">
+      <h2 class="himbauan__title">Peraturan & Himbauan</h2>
+      <p class="himbauan__subtitle">Mari jaga kenyamanan bersama selama menginap</p>
+    </div>
+
+    <div class="himbauan__grid">
+      <div class="himbauan__card reveal reveal--delay-1">
+        <span class="himbauan__icon">🚭</span>
+        <p>Dilarang merokok di dalam glamping atau kamar.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-2">
+        <span class="himbauan__icon">⏰</span>
+        <p>Check-out jam <strong>12.00</strong>. Lebih dari jam tersebut akan dikenakan charge <strong>Rp 500.000</strong>.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-3">
+        <span class="himbauan__icon">🧴</span>
+        <p>Tidak menggunakan sampo atau sabun di dalam kolam renang.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-4">
+        <span class="himbauan__icon">🧹</span>
+        <p>Pembersihan khusus akan dikenakan biaya tambahan.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-1">
+        <span class="himbauan__icon">🔇</span>
+        <p>Jam malam berlaku sampai jam <strong>22.00</strong>. Tidak berteriak dan volume tidak terlalu keras.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-2">
+        <span class="himbauan__icon">💔</span>
+        <p>Kerusakan barang yang ditimbulkan oleh tamu akan dikenakan biaya ganti rugi (sesuai nominal harga barang).</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-3">
+        <span class="himbauan__icon">🔑</span>
+        <p>Harap perhatikan barang pribadi dan kunci ganda kendaraan.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-4">
+        <span class="himbauan__icon">🎱</span>
+        <p>Tidak menaruh barang apapun dan menduduki meja billiard.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-1">
+        <span class="himbauan__icon">📦</span>
+        <p>Dilarang menindah-mindahkan barang tanpa seizin penjaga.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-2">
+        <span class="himbauan__icon">🏏</span>
+        <p>Bola billiard atau stik patah dikenakan biaya ganti rugi <strong>Rp 100.000</strong>.</p>
+      </div>
+      <div class="himbauan__card himbauan__card--danger reveal reveal--delay-3">
+        <span class="himbauan__icon">⚠️</span>
+        <p><strong>Tidak membawa SAJAM & BARANG ILEGAL.</strong></p>
+      </div>
+      <div class="himbauan__card himbauan__card--danger reveal reveal--delay-4">
+        <span class="himbauan__icon">🍺</span>
+        <p><strong>Dilarang membawa atau meminum-minuman keras dan obat terlarang.</strong></p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-1">
+        <span class="himbauan__icon">👤</span>
+        <p>Kehilangan barang <strong>bukan tanggung jawab kami</strong>. Pastikan barang pribadi sudah aman.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-2">
+        <span class="himbauan__icon">📢</span>
+        <p>Jika melanggar peraturan, pihak kami berhak menegur pengunjung.</p>
+      </div>
+      <div class="himbauan__card reveal reveal--delay-3">
+        <span class="himbauan__icon">🐾</span>
+        <p><strong>Dilarang membawa peliharaan.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .himbauan {
+    background: var(--color-light);
+    padding: 100px 0;
+  }
+
+  .himbauan__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .himbauan__title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .himbauan__subtitle {
+    color: var(--color-gray);
+    font-size: 1rem;
+  }
+
+  .himbauan__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .himbauan__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--color-gray-light);
+    padding: 20px;
+    border-radius: 14px;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .himbauan__card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  }
+
+  .himbauan__card--danger {
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.15);
+  }
+
+  .himbauan__icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .himbauan__card p {
+    font-size: 0.9rem;
+    color: var(--color-gray-dark);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .himbauan {
+      padding: 64px 0;
+    }
+
+    .himbauan__title {
+      font-size: 1.5rem;
+    }
+
+    .himbauan__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

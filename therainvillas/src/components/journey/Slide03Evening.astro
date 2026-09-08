@@ -1,0 +1,229 @@
+---
+import { villas } from '../../data/villas';
+
+const thumbMap = {
+  'Villa Cyrena': 'Cyrena Thumb.jpg',
+  'Villa Cempaka': 'Cempaka Thumb.jpg',
+  'Villa Agave': 'Agave Thumb.jpg',
+  'Villa Arsy': 'Griya Arsy Thumb.jpg',
+  'Villa Aleia': 'Aleia Thumb.jpg',
+  'Villa Arisyfa': 'Arisyfa Thumb.jpg',
+  'Villa Cemara': 'Cemara Thumb.jpg',
+  'Villa 4D': '4D Thumb.jpg',
+  'Villa Twins': 'Twins Thumb.jpg',
+};
+
+function getVillaImage(name, fallback) {
+  const file = thumbMap[name];
+  return file ? `/thumbnail/${encodeURIComponent(file)}` : fallback;
+}
+---
+
+<section class="evening" id="malam">
+  <div class="evening__slider" id="eveningSlider">
+    {villas.map((villa, i) => (
+      <div class="evening__slide" data-index={i}>
+        <div class="evening__slide-bg" style={`background-image: url(${getVillaImage(villa.name, villa.image)})`}>
+          <div class="evening__slide-overlay"></div>
+        </div>
+        <div class="evening__slide-content">
+          <h3 class="evening__slide-name">{villa.name}</h3>
+          <p class="evening__slide-desc">{villa.description}</p>
+          <div class="evening__slide-meta">
+            <span>🛏️ {villa.bedrooms} kamar</span>
+            <span>👥 {villa.capacity} tamu</span>
+            <span>{villa.priceLabel}</span>
+          </div>
+          <a href={`/villas/${villa.id}`} class="evening__slide-cta">Lihat Detail</a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="evening__dots" id="eveningDots">
+    {villas.map((_, i) => (
+      <button class="evening__dot" data-index={i} aria-label={`Slide ${i + 1}`}></button>
+    ))}
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('eveningSlider');
+    const dots = document.querySelectorAll('.evening__dot');
+    if (!slider || !dots.length) return;
+
+    const slides = slider.querySelectorAll('.evening__slide');
+    let current = 0;
+    const total = slides.length;
+    let interval;
+
+    function goTo(index) {
+      slides.forEach((s, i) => {
+        s.classList.toggle('evening__slide--active', i === index);
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle('evening__dot--active', i === index);
+      });
+      current = index;
+    }
+
+    function next() { goTo((current + 1) % total); }
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        clearInterval(interval);
+        goTo(parseInt(dot.dataset.index));
+        interval = setInterval(next, 4000);
+      });
+    });
+
+    goTo(0);
+    interval = setInterval(next, 4000);
+  });
+</script>
+
+<style>
+  .evening {
+    color: white;
+    padding: 80px 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .evening__slider {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 640px;
+  }
+
+  .evening__slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .evening__slide--active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .evening__slide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .evening__slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 60%);
+  }
+
+  .evening__slide-content {
+    position: relative;
+    z-index: 1;
+    padding: 48px 40px;
+    max-width: 600px;
+  }
+
+  .evening__slide-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .evening__slide-desc {
+    font-size: 0.95rem;
+    opacity: 0.8;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .evening__slide-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .evening__slide-cta {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, #5b8def, #7c9bf7);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+  }
+
+  .evening__slide-cta:hover { transform: translateY(-2px); }
+
+  .evening__dots {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    max-width: 100%;
+    margin: 28px 16px 0;
+    padding: 0 8px;
+  }
+
+  .evening__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+
+  .evening__dot--active {
+    background: #7c9bf7;
+    width: 28px;
+    border-radius: 5px;
+  }
+
+  @media (max-width: 768px) {
+    .evening { padding: 48px 0 40px; }
+    .evening__slider { min-height: 380px; margin: 0 16px; }
+    .evening__slide-content { padding: 32px 24px; }
+    .evening__slide-name { font-size: 1.4rem; }
+    .evening__slide-meta { gap: 12px; font-size: 0.8rem; }
+    .evening__dots { margin: 24px 16px 0; }
+    .evening__dot { width: 8px; height: 8px; }
+    .evening__dot--active { width: 20px; border-radius: 5px; }
+  }
+
+  @media (max-width: 480px) {
+    .evening__slider { min-height: 340px; margin: 0 12px; }
+    .evening__slide-content { padding: 26px 20px; }
+    .evening__slide-name { font-size: 1.25rem; }
+    .evening__slide-desc { font-size: 0.85rem; line-height: 1.55; }
+    .evening__slide-cta { padding: 11px 22px; font-size: 0.85rem; }
+    .evening__dots { gap: 8px; }
+  }
+</style>

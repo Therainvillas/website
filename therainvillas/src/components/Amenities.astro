@@ -1,0 +1,83 @@
+---
+import { amenities } from '../data/villas';
+---
+
+<section class="amenities section" id="fasilitas">
+  <div class="container">
+    <h2 class="section__title reveal">Fasilitas Lengkap</h2>
+    <p class="section__subtitle reveal reveal--delay-1">Semua kebutuhan Anda tersedia di setiap villa</p>
+
+    <div class="amenities__grid">
+      {amenities.map((item, i) => (
+        <div class={`amenity-card reveal reveal--delay-${Math.min(i + 1, 4)}`}>
+          <div class="amenity-card__icon">{item.icon}</div>
+          <h3 class="amenity-card__title">{item.title}</h3>
+          <p class="amenity-card__desc">{item.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .amenities {
+    background: var(--color-light);
+  }
+
+  .amenities__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .amenity-card {
+    text-align: center;
+    padding: 40px 24px;
+    border-radius: 16px;
+    background: var(--color-gray-light);
+    transition: all 0.3s ease;
+  }
+
+  .amenity-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .amenity-card__icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+  }
+
+  .amenity-card__title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .amenity-card__desc {
+    font-size: 0.9rem;
+    color: var(--color-gray);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .amenities__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .amenity-card {
+      padding: 24px 16px;
+    }
+
+    .amenity-card__icon {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .amenities__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

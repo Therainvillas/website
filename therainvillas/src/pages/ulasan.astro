@@ -1,0 +1,113 @@
+﻿---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import ReviewsGallery from '../components/ReviewsGallery.vue';
+import { villas } from '../data/villas';
+import { villaCovers } from '../data/covers';
+---
+
+<Layout title="Ulasan Villa | The Rain Villas" description="Lihat rating dan ulasan penyewa sebelumnya untuk membantu memilih villa terbaik di Puncak.">
+  <Header />
+
+  <section class="page-hero">
+    <div class="page-hero__bg">
+      {villas.slice(0, 12).map((v, i) => {
+        const cover = villaCovers[v.name] ?? v.image;
+        return <div class="page-hero__slide" style={`background-image: url(${cover})`} data-index={i}></div>;
+      })}
+      <div class="page-hero__overlay"></div>
+    </div>
+    <div class="container" style="position:relative;z-index:1">
+      <h1 class="page-hero__title reveal">Ulasan Penyewa</h1>
+      <p class="page-hero__subtitle reveal reveal--delay-1">Rating & pengalaman tamu di setiap villa kami</p>
+    </div>
+  </section>
+
+  <section class="reviews-section section">
+    <div class="container">
+      <div class="reviews-section__intro reveal">
+        <p>
+          Bandingkan setiap villa berdasarkan rating dari penyewa sebelumnya.
+          Pilih villa untuk melihat ulasan lengkapnya.
+        </p>
+      </div>
+      <ReviewsGallery client:load />
+    </div>
+  </section>
+
+  <Footer />
+  <WhatsAppBubble />
+</Layout>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+    padding: 80px 24px 60px;
+    background: #0d1b2b;
+  }
+  .page-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .page-hero__slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: hero-fade 36s ease-in-out infinite;
+  }
+  .page-hero__slide[data-index="0"] { animation-delay: 0s; }
+  .page-hero__slide[data-index="1"] { animation-delay: 3s; }
+  .page-hero__slide[data-index="2"] { animation-delay: 6s; }
+  .page-hero__slide[data-index="3"] { animation-delay: 9s; }
+  .page-hero__slide[data-index="4"] { animation-delay: 12s; }
+  .page-hero__slide[data-index="5"] { animation-delay: 15s; }
+  .page-hero__slide[data-index="6"] { animation-delay: 18s; }
+  .page-hero__slide[data-index="7"] { animation-delay: 21s; }
+  .page-hero__slide[data-index="8"] { animation-delay: 24s; }
+  .page-hero__slide[data-index="9"] { animation-delay: 27s; }
+  .page-hero__slide[data-index="10"] { animation-delay: 30s; }
+  .page-hero__slide[data-index="11"] { animation-delay: 33s; }
+  @keyframes hero-fade {
+    0%, 5% { opacity: 0; }
+    8%, 22% { opacity: 1; }
+    25%, 100% { opacity: 0; }
+  }
+  .page-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(15,23,42,0.7) 0%, rgba(91,141,239,0.5) 100%);
+  }
+  .page-hero__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .page-hero__subtitle {
+    font-size: 1.1rem;
+    opacity: 0.85;
+  }
+
+  .reviews-section {
+    background: #f2f3f6;
+    min-height: 50vh;
+  }
+  .reviews-section__intro {
+    max-width: 640px;
+    margin: 0 auto 32px;
+    text-align: center;
+    color: #64748b;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    .page-hero__title { font-size: 1.8rem; }
+  }
+</style>

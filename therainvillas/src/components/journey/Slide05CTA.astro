@@ -1,0 +1,234 @@
+---
+import { villas } from '../../data/villas';
+---
+
+<section class="cta-final section" id="pesan">
+  <div class="cta-final__bg">
+    {villas.map((v, i) => (
+      <img
+        src={v.image}
+        alt={v.name}
+        class="cta-final__slide"
+        class:list={{ 'cta-final__slide--active': i === 0 }}
+        data-slide={i}
+        loading="lazy"
+      />
+    ))}
+    <div class="cta-final__overlay"></div>
+  </div>
+
+  <div class="container cta-final__content">
+    <div class="cta-final__time reveal">Sekarang</div>
+    <h2 class="cta-final__title reveal reveal--delay-1">
+      Waktunya Berhenti<br />
+      <span class="cta-final__highlight">Hanya Membayangkannya.</span>
+    </h2>
+    <p class="cta-final__subtitle reveal reveal--delay-2">
+      Tanggal yang kamu incar bisa saja diambil orang lain. Pengalaman 
+      ini sudah menunggumu — cukup satu langkah kecil untuk mengubah 
+      akhir pekanmu menjadi kenangan seumur hidup.
+    </p>
+    <div class="cta-final__actions reveal reveal--delay-3">
+      <a href="https://wa.me/6282125492037" target="_blank" rel="nofollow" class="cta-final__btn cta-final__btn--primary">
+        Amankan Tanggal Pelarianmu
+        <span class="cta-final__btn-arrow">→</span>
+      </a>
+      <a href="/availability" class="cta-final__btn cta-final__btn--ghost">
+        Cek Ketersediaan Dulu
+      </a>
+    </div>
+    <div class="cta-final__trust reveal reveal--delay-4">
+      <span>✅ DP 50%</span>
+      <span>✅ Harga Transparan</span>
+    </div>
+  </div>
+</section>
+
+<script>
+  const slides = document.querySelectorAll('.cta-final__slide');
+  let current = 0;
+  const total = slides.length;
+  if (total > 1) {
+    setInterval(() => {
+      slides.forEach((el) => el.classList.remove('cta-final__slide--active'));
+      current = (current + 1) % total;
+      slides[current].classList.add('cta-final__slide--active');
+    }, 4000);
+  }
+</script>
+
+<style>
+  .cta-final {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 80px 0;
+  }
+
+  .cta-final__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .cta-final__slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+  }
+
+  .cta-final__slide--active {
+    opacity: 1;
+  }
+
+  .cta-final__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.75) 0%,
+      rgba(0,0,0,0.4) 50%,
+      rgba(0,0,0,0.3) 100%
+    );
+  }
+
+  .cta-final__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .cta-final__time {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 8px 20px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 28px;
+  }
+
+  .cta-final__title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .cta-final__highlight {
+    background: linear-gradient(135deg, #a7b8ff, #7c9bf7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cta-final__subtitle {
+    font-size: 1.1rem;
+    opacity: 0.85;
+    line-height: 1.8;
+    margin-bottom: 40px;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-final__actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .cta-final__btn {
+    padding: 18px 36px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: all 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cta-final__btn--primary {
+    background: linear-gradient(135deg, #5b8def, #7c9bf7);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 32px rgba(91,141,239,0.35);
+  }
+
+  .cta-final__btn--primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(91,141,239,0.45);
+  }
+
+  .cta-final__btn-arrow {
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+
+  .cta-final__btn--primary:hover .cta-final__btn-arrow {
+    transform: translateX(4px);
+  }
+
+  .cta-final__btn--ghost {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+  }
+
+  .cta-final__btn--ghost:hover {
+    border-color: white;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .cta-final__trust {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .cta-final {
+      min-height: 70vh;
+      padding: 60px 0;
+    }
+
+    .cta-final__title {
+      font-size: 2rem;
+    }
+
+    .cta-final__subtitle {
+      font-size: 1rem;
+    }
+
+    .cta-final__btn {
+      padding: 14px 28px;
+      font-size: 1rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .cta-final__trust {
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+  }
+</style>

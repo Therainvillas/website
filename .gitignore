@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+therainvillas/dist/
+therainvillas/.astro/
+
+# Source/mentah images TIDAK dipakai website (duplikat besar)
+therainvillas/images/
+therainvillas/.bak_mojibake/
+therainvillas/mentah/
+therainvillas/contoh.jpeg
+therainvillas/invoice/
+
+# Form admin build
+form trv/villa-booking-admin/node_modules/
+form trv/villa-booking-admin/dist/
+form trv/villa-booking-admin/tsconfig.tsbuildinfo
+
+# Temp / backup
+*.tsbuildinfo
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Env / secrets
+.env
+.env.*

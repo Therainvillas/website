@@ -1,0 +1,229 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import CalendarPicker from '../components/CalendarPicker.vue';
+import { villas } from '../data/villas';
+import { villaCovers } from '../data/covers';
+---
+
+<Layout title="Cek Jadwal & Ketersediaan Villa | The Rain Villas" description="Cek ketersediaan villa di Puncak secara real-time. Lihat kalender, pilih tanggal, dan pesan langsung via WhatsApp.">
+  <Header />
+
+  <section class="page-hero">
+    <div class="page-hero__bg">
+      {villas.slice(0, 12).map((v, i) => {
+        const cover = villaCovers[v.name] ?? v.image;
+        return <div class="page-hero__slide" style={`background-image: url(${cover})`} data-index={i}></div>;
+      })}
+      <div class="page-hero__overlay"></div>
+    </div>
+    <div class="container" style="position:relative;z-index:1">
+      <h1 class="page-hero__title reveal">Cek Ketersediaan</h1>
+      <p class="page-hero__subtitle reveal reveal--delay-1">Pilih villa dan tanggal untuk melihat jadwal tersedia</p>
+    </div>
+  </section>
+
+  <section class="booking-section section">
+    <div class="booking-section__bg">
+      {villas.slice(0, 12).map((v, i) => {
+        const cover = villaCovers[v.name] ?? v.image;
+        return <div class="booking-section__slide" style={`background-image: url(${cover})`} data-index={i}></div>;
+      })}
+      <div class="booking-section__overlay"></div>
+    </div>
+    <div class="container" style="position:relative;z-index:1">
+      <CalendarPicker client:load />
+    </div>
+  </section>
+
+  <section class="info-section section">
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-card reveal reveal--delay-1">
+          <span class="info-card__icon">📅</span>
+          <h3>Kalender Otomatis</h3>
+          <p>Jadwal ketersediaan terupdate secara real-time. Tanggal yang tidak tersedia akan terlihat di kalender.</p>
+        </div>
+        <div class="info-card reveal reveal--delay-2">
+          <span class="info-card__icon">📱</span>
+          <h3>Reservasi via WhatsApp</h3>
+          <p>Setelah memilih tanggal, Anda akan langsung diarahkan ke WhatsApp untuk melakukan pemesanan.</p>
+        </div>
+        <div class="info-card reveal reveal--delay-3">
+          <span class="info-card__icon">🔄</span>
+          <h3>Kebijakan Pembatalan</h3>
+          <p>Jika batal, uang DP akan hangus dan untuk reschedule maksimal H-7 sebelum check-in.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer />
+  <WhatsAppBubble />
+</Layout>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    text-align: center;
+    padding: 80px 24px 60px;
+  }
+
+  .page-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .page-hero__slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: hero-fade 36s ease-in-out infinite;
+  }
+
+  .page-hero__slide[data-index="0"] { animation-delay: 0s; }
+  .page-hero__slide[data-index="1"] { animation-delay: 3s; }
+  .page-hero__slide[data-index="2"] { animation-delay: 6s; }
+  .page-hero__slide[data-index="3"] { animation-delay: 9s; }
+  .page-hero__slide[data-index="4"] { animation-delay: 12s; }
+  .page-hero__slide[data-index="5"] { animation-delay: 15s; }
+  .page-hero__slide[data-index="6"] { animation-delay: 18s; }
+  .page-hero__slide[data-index="7"] { animation-delay: 21s; }
+  .page-hero__slide[data-index="8"] { animation-delay: 24s; }
+  .page-hero__slide[data-index="9"] { animation-delay: 27s; }
+  .page-hero__slide[data-index="10"] { animation-delay: 30s; }
+  .page-hero__slide[data-index="11"] { animation-delay: 33s; }
+
+  @keyframes hero-fade {
+    0%, 5% { opacity: 0; }
+    8%, 22% { opacity: 1; }
+    25%, 100% { opacity: 0; }
+  }
+
+  .page-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(15,23,42,0.7) 0%, rgba(91,141,239,0.5) 100%);
+  }
+
+  .page-hero__title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .page-hero__subtitle {
+    font-size: 1.1rem;
+    opacity: 0.85;
+  }
+
+  .booking-section {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .booking-section__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .booking-section__slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    animation: booking-fade 36s ease-in-out infinite;
+  }
+
+  .booking-section__slide[data-index="0"] { animation-delay: 0s; }
+  .booking-section__slide[data-index="1"] { animation-delay: 3s; }
+  .booking-section__slide[data-index="2"] { animation-delay: 6s; }
+  .booking-section__slide[data-index="3"] { animation-delay: 9s; }
+  .booking-section__slide[data-index="4"] { animation-delay: 12s; }
+  .booking-section__slide[data-index="5"] { animation-delay: 15s; }
+  .booking-section__slide[data-index="6"] { animation-delay: 18s; }
+  .booking-section__slide[data-index="7"] { animation-delay: 21s; }
+  .booking-section__slide[data-index="8"] { animation-delay: 24s; }
+  .booking-section__slide[data-index="9"] { animation-delay: 27s; }
+  .booking-section__slide[data-index="10"] { animation-delay: 30s; }
+  .booking-section__slide[data-index="11"] { animation-delay: 33s; }
+
+  @keyframes booking-fade {
+    0%, 5% { opacity: 0; }
+    8%, 22% { opacity: 1; }
+    25%, 100% { opacity: 0; }
+  }
+
+  .booking-section__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: rgba(242, 243, 246, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .info-section {
+    background: white;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .info-card {
+    text-align: center;
+    padding: 40px 24px;
+    border-radius: 16px;
+    background: var(--color-gray-light, #f2f3f6);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  }
+
+  .info-card__icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .info-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .info-card p {
+    font-size: 0.9rem;
+    color: var(--color-gray, #727586);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .page-hero {
+      padding: 60px 20px 40px;
+    }
+
+    .page-hero__title {
+      font-size: 1.8rem;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

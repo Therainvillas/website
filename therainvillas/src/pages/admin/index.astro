@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AdminLogin from '../../components/AdminLogin.vue';
+---
+
+<Layout title="Admin Login | The Rain Villas" description="Login admin untuk mengelola jadwal villa">
+  <div class="page">
+    <a href="/" class="page__back">&larr; Kembali ke Beranda</a>
+    <AdminLogin client:load />
+  </div>
+</Layout>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-gray-light, #f2f3f6);
+  }
+
+  .page__back {
+    display: inline-block;
+    margin: 24px 24px 0;
+    color: var(--color-gray, #727586);
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .page__back:hover {
+    color: var(--color-primary);
+  }
+</style>

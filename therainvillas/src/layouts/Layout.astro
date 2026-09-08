@@ -1,0 +1,76 @@
+---
+import '../styles/global.css';
+import PromoPopup from '../components/PromoPopup.astro';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  showPromo?: boolean;
+}
+
+const {
+  title = 'The Rain Villas | Sewa Villa Modern di Puncak',
+  description = 'Temukan villa sewa terbaik di Puncak dengan desain simpel dan modern.',
+  showPromo = true,
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href="https://therainvillas.com/" />
+    <link rel="icon" type="image/png" href="/logo%20trv2.png" />
+
+    <link rel="apple-touch-icon" href="/logo%20trv2.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Work+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,750&family=Dancing+Script:wght@600;700&family=Cinzel:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://therainvillas.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("therainvillas_theme");
+          var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (t === "dark" || (!t && prefersDark)) document.documentElement.setAttribute("data-theme", "dark");
+        } catch (e) {}
+      })();
+    </script>
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "The Rain Villas",
+      "url": "https://therainvillas.com",
+      "description": description,
+      "inLanguage": "id",
+    })} />
+  </head>
+  <body>
+    <slot />
+    <script>
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -20px 0px' });
+
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+      });
+    </script>
+    {showPromo && <PromoPopup />}
+  </body>
+</html>

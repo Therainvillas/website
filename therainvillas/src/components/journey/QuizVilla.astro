@@ -1,0 +1,514 @@
+<section class="quiz" id="quiz">
+  <div class="quiz__video-bg">
+    <video autoplay muted loop playsinline class="quiz__video">
+      <source src="/quiz-bg.mp4" type="video/mp4" />
+    </video>
+    <div class="quiz__video-overlay"></div>
+  </div>
+  <div class="container" style="position:relative;z-index:1">
+    <div class="quiz__box" id="quizBox">
+      <div id="quizStart" class="quiz__screen quiz__screen--active">
+        <div class="quiz__start-icon">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <h2 class="quiz__title">Cari Villa dengan Spesifikasi Impianmu</h2>
+        <p class="quiz__desc">Pilih fasilitas, kapasitas, dan budget — kami rekomendasikan villa paling cocok untukmu!</p>
+        <button class="quiz__btn-start" id="quizStartBtn">Mulai Quiz</button>
+      </div>
+
+      <div id="quizQ1" class="quiz__screen">
+        <div class="quiz__progress-wrap">
+          <div class="quiz__progress-bar"><div class="quiz__progress-fill" style="width:33%"></div></div>
+          <span class="quiz__progress-label">1 dari 3</span>
+        </div>
+        <h3 class="quiz__question">Suasana villa impianmu?</h3>
+        <div class="quiz__options" data-question="1">
+          <button class="quiz__option" data-value="cozy">
+            <span class="quiz__option-icon">★</span>
+            <span class="quiz__option-text">Cozy & Intimate</span>
+          </button>
+          <button class="quiz__option" data-value="mewah">
+            <span class="quiz__option-icon">★★★</span>
+            <span class="quiz__option-text">Mewah & Premium</span>
+          </button>
+          <button class="quiz__option" data-value="luas">
+            <span class="quiz__option-icon">★★★★</span>
+            <span class="quiz__option-text">Luas & Lega</span>
+          </button>
+          <button class="quiz__option" data-value="modern">
+            <span class="quiz__option-icon">★★</span>
+            <span class="quiz__option-text">Modern & Stylish</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="quizQ2" class="quiz__screen">
+        <div class="quiz__progress-wrap">
+          <div class="quiz__progress-bar"><div class="quiz__progress-fill" style="width:66%"></div></div>
+          <span class="quiz__progress-label">2 dari 3</span>
+        </div>
+        <h3 class="quiz__question">Jumlah kamar tidur yang dibutuhkan?</h3>
+        <div class="quiz__options" data-question="2">
+          <button class="quiz__option" data-value="2">
+            <span class="quiz__option-icon">★★</span>
+            <span class="quiz__option-text">2 kamar</span>
+          </button>
+          <button class="quiz__option" data-value="3">
+            <span class="quiz__option-icon">★★★</span>
+            <span class="quiz__option-text">3 kamar</span>
+          </button>
+          <button class="quiz__option" data-value="4">
+            <span class="quiz__option-icon">★★★★</span>
+            <span class="quiz__option-text">4 kamar</span>
+          </button>
+          <button class="quiz__option" data-value="5">
+            <span class="quiz__option-icon">★★★★★</span>
+            <span class="quiz__option-text">5+ kamar</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="quizQ3" class="quiz__screen">
+        <div class="quiz__progress-wrap">
+          <div class="quiz__progress-bar"><div class="quiz__progress-fill" style="width:100%"></div></div>
+          <span class="quiz__progress-label">3 dari 3</span>
+        </div>
+        <h3 class="quiz__question">Budget per malam kamu?</h3>
+        <div class="quiz__options" data-question="3">
+          <button class="quiz__option" data-value="hemat">
+            <span class="quiz__option-icon">★</span>
+            <span class="quiz__option-text">Hemat (&lt; Rp 1,3jt)</span>
+          </button>
+          <button class="quiz__option" data-value="sedang">
+            <span class="quiz__option-icon">★★</span>
+            <span class="quiz__option-text">Sedang (Rp 1,3-1,5jt)</span>
+          </button>
+          <button class="quiz__option" data-value="premium">
+            <span class="quiz__option-icon">★★★</span>
+            <span class="quiz__option-text">Premium (Rp 1,5-1,7jt)</span>
+          </button>
+          <button class="quiz__option" data-value="sultan">
+            <span class="quiz__option-icon">★★★★</span>
+            <span class="quiz__option-text">Sultan (&gt; Rp 1,7jt)</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="quizResult" class="quiz__screen">
+        <div class="quiz__result" id="quizResultContent"></div>
+        <button class="quiz__btn-restart" id="quizRestartBtn">Ulang Quiz</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const villasData = [
+    { id: 8, name: "Villa Cyrena", price: "Rp 1.200.000/malam", image: "/thumbnail/Cyrena%20Thumb.jpg", desc: "Villa elegan dengan private pool dan area bersantai. Cocok untuk liburan keluarga atau kumpul teman." },
+    { id: 10, name: "Villa Cempaka", price: "Rp 1.200.000/malam", image: "/thumbnail/Cempaka%20Thumb.jpg", desc: "Villa bergaya Eropa dengan arsitektur klasik elegan, private pool, dan taman mediterania." },
+    { id: 1, name: "Villa Agave", price: "Rp 1.700.000/malam", image: "/thumbnail/Agave%20Thumb.jpg", desc: "Villa luas dengan 3 bangunan, private pool, dan area billiard. Cocok untuk acara besar dan gathering." },
+    { id: 12, name: "Villa Rayya", price: "Rp 1.350.000/malam", image: "/thumbnail/Rayya%20Thumb.jpg", desc: "Villa cozy dengan queen bed, private pool, karaoke, dan chill space. Cocok untuk staycation romantis." },
+    { id: 11, name: "Villa Arsy", price: "Rp 1.700.000/malam", image: "/thumbnail/Griya%20Arsy%20Thumb.jpg", desc: "Villa dengan private pool, mushola, dan suasana nyaman. Cocok untuk liburan keluarga yang tenang." },
+    { id: 2, name: "Villa Wanela", price: "Rp 1.000.000/malam", image: "/thumbnail/Wanela%20Thumb.jpg", desc: "Villa cozy dengan private pool dan billiard. Cocok untuk staycation santai bersama teman atau keluarga." },
+    { id: 4, name: "Villa Aleia", price: "Rp 1.400.000/malam", image: "/thumbnail/Aleia%20Thumb.jpg", desc: "Villa cozy dengan private pool, gazebo, dan kitchen set lengkap. Cocok untuk liburan santai bersama keluarga." },
+    { id: 9, name: "Villa Arisyfa", price: "Rp 1.500.000/malam", image: "/thumbnail/Arisyfa%20Thumb.jpg", desc: "Villa luas 3 lantai dengan lapangan badminton dan private pool. Cocok untuk gathering keluarga besar." },
+    { id: 3, name: "Villa Cemara", price: "Rp 1.300.000/malam", image: "/thumbnail/Cemara%20Thumb.jpg", desc: "Villa asri dengan private pool, balkon, dan halaman luas. Cocok untuk healing dan quality time." },
+    { id: 5, name: "Villa 4D", price: "Rp 1.200.000/malam", image: "/thumbnail/4D%20Thumb.jpg", desc: "Villa dengan konsep ala cafe, private pool, gazebo, dan area billiard. Cocok untuk nongkrong santai." },
+    { id: 19, name: "Villa De Summit", price: "Rp 2.000.000/malam", image: "/thumbnail/De%20Summit%20Thumb.jpg", desc: "Villa dengan pendopo view 360, private pool, dan space api unggun. Cocok untuk gathering eksklusif." },
+    { id: 7, name: "Villa Twins", price: "Rp 1.500.000/malam", image: "/thumbnail/Twins%20Thumb.jpg", desc: "Villa twin dengan lapangan basket, playground, dan free 2 glamping. Cocok untuk gathering dan acara keluarga." },
+  ];
+
+  const scoring = {
+    q1: { cozy: [2, 4, 10], mewah: [8, 11, 7], luas: [1, 9, 3], modern: [5, 19, 12] },
+    q1_pts: { cozy: 2, mewah: 2, luas: 2, modern: 2 },
+    q2: { "2": [2], "3": [8, 10, 12, 4, 7], "4": [11, 5, 19], "5": [9, 3, 1] },
+    q2_pts: { "2": 2, "3": 2, "4": 2, "5": 2 },
+    q3: { hemat: [2, 8, 10, 5, 3], sedang: [9, 7, 12, 4], premium: [1, 11, 9], sultan: [19, 1, 11] },
+    q3_pts: { hemat: 2, sedang: 2, premium: 2, sultan: 2 },
+  };
+
+  const qBonus = {
+    cozy: { "2": [2], "3": [4, 10] },
+    mewah: { "3": [8, 7], "4": [11] },
+    luas: { "5": [1, 9, 3] },
+    modern: { "3": [8], "4": [5, 19] },
+  };
+
+  let answers = {};
+
+  function show(id) {
+    document.querySelectorAll(".quiz__screen").forEach((s) => s.classList.remove("quiz__screen--active"));
+    const el = document.getElementById(id);
+    if (el) el.classList.add("quiz__screen--active");
+  }
+
+  document.getElementById("quizStartBtn").addEventListener("click", () => show("quizQ1"));
+
+  document.querySelectorAll(".quiz__option").forEach((btn) => {
+    btn.addEventListener("click", function () {
+      const q = this.closest(".quiz__options").dataset.question;
+      answers[q] = this.dataset.value;
+      if (q === "1") show("quizQ2");
+      else if (q === "2") show("quizQ3");
+      else if (q === "3") showResult();
+    });
+  });
+
+  function showResult() {
+    const scores = {};
+    villasData.forEach((v) => (scores[v.id] = 0));
+
+    Object.entries(scoring).forEach(([key, data]) => {
+      const qNum = key.replace("q", "");
+      const ans = answers[qNum];
+      if (!ans || !data[ans]) return;
+      data[ans].forEach((id) => (scores[id] += data[`${key}_pts`] ? data[`${key}_pts`][ans] : 2));
+    });
+
+    const q1a = answers["1"];
+    const q2a = answers["2"];
+    if (q1a && q2a && qBonus[q1a] && qBonus[q1a][q2a]) {
+      qBonus[q1a][q2a].forEach((id) => (scores[id] += 1));
+    }
+
+    let topId = null;
+    let topScore = -1;
+    Object.entries(scores).forEach(([id, score]) => {
+      if (score > topScore) {
+        topScore = score;
+        topId = parseInt(id);
+      }
+    });
+
+    const villa = villasData.find((v) => v.id === topId);
+    if (!villa) return;
+
+    const content = document.getElementById("quizResultContent");
+    content.innerHTML = `
+      <div class="quiz__result-card">
+        <div class="quiz__result-img-wrap">
+          <img src="${villa.image}" alt="${villa.name}" class="quiz__result-img" />
+          <div class="quiz__result-badge">Rekomendasi Terbaik</div>
+        </div>
+        <div class="quiz__result-info">
+          <h3 class="quiz__result-name">${villa.name}</h3>
+          <p class="quiz__result-desc">${villa.desc}</p>
+          <div class="quiz__result-price">${villa.price}</div>
+          <div class="quiz__result-actions">
+            <a href="/villas/${villa.id}" class="quiz__result-btn quiz__result-btn--detail">Lihat Detail</a>
+            <a href="https://wa.me/6282125492037?text=Halo%20The%20Rain%20Villas%2C%20saya%20dapat%20rekomendasi%20${encodeURIComponent(villa.name)}%20dari%20quiz.%20Mohon%20info%20ketersediaan." target="_blank" rel="nofollow" class="quiz__result-btn quiz__result-btn--wa">Pesan via WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    `;
+    show("quizResult");
+  }
+
+  document.getElementById("quizRestartBtn").addEventListener("click", () => {
+    answers = {};
+    show("quizStart");
+  });
+</script>
+
+<style>
+  .quiz {
+    position: relative;
+    color: white;
+    padding: 80px 0;
+    overflow: hidden;
+  }
+
+  .quiz__video-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .quiz__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .quiz__video-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+  }
+
+  .quiz__box {
+    max-width: 580px;
+    margin: 0 auto;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(91,141,239,0.2);
+    border-radius: 24px;
+    padding: 48px 40px;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+  }
+
+  .quiz__screen {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: quizFadeIn 0.4s ease;
+  }
+
+  .quiz__screen--active {
+    display: flex;
+  }
+
+  @keyframes quizFadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .quiz__start-icon {
+    color: #5b8def;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .quiz__title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .quiz__desc {
+    font-size: 0.95rem;
+    opacity: 0.7;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 400px;
+  }
+
+  .quiz__btn-start {
+    padding: 14px 44px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    background: linear-gradient(135deg, #5b8def, #7a5ce0);
+    box-shadow: 0 4px 20px rgba(91,141,239,0.35);
+    animation: quizPulse 2s ease-in-out infinite;
+    transition: transform 0.2s;
+  }
+
+  .quiz__btn-start:hover {
+    transform: scale(1.05);
+  }
+
+  @keyframes quizPulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(91,141,239,0.35); }
+    50% { box-shadow: 0 4px 36px rgba(91,141,239,0.55); }
+  }
+
+  .quiz__progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    margin-bottom: 28px;
+  }
+
+  .quiz__progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .quiz__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #5b8def, #7c9bf7);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .quiz__progress-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #7c9bf7;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  .quiz__question {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    line-height: 1.4;
+    width: 100%;
+  }
+
+  .quiz__options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .quiz__option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: left;
+  }
+
+  .quiz__option:hover {
+    background: rgba(91,141,239,0.18);
+    border-color: rgba(91,141,239,0.5);
+    transform: translateX(6px) scale(1.02);
+  }
+
+  .quiz__option-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+
+  .quiz__option-text {
+    font-weight: 500;
+  }
+
+  .quiz__result-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .quiz__result-img-wrap {
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .quiz__result-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .quiz__result-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #5b8def, #7c9bf7);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .quiz__result-info {
+    text-align: left;
+  }
+
+  .quiz__result-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .quiz__result-desc {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .quiz__result-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #7c9bf7;
+    margin-bottom: 20px;
+  }
+
+  .quiz__result-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .quiz__result-btn {
+    flex: 1;
+    min-width: 130px;
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+    text-decoration: none;
+  }
+
+  .quiz__result-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .quiz__result-btn--detail {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .quiz__result-btn--wa {
+    background: #25d366;
+    color: white;
+  }
+
+  .quiz__btn-restart {
+    margin-top: 24px;
+    padding: 10px 32px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: inherit;
+    border: 1px solid rgba(91,141,239,0.4);
+    border-radius: 50px;
+    background: transparent;
+    color: #7c9bf7;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .quiz__btn-restart:hover {
+    background: rgba(91,141,239,0.15);
+    border-color: #5b8def;
+  }
+
+  @media (max-width: 768px) {
+    .quiz { padding: 48px 16px; }
+    .quiz__box { padding: 32px 24px; min-height: 360px; }
+    .quiz__title { font-size: 1.3rem; }
+    .quiz__result-img { height: 160px; }
+    .quiz__result-actions { flex-direction: column; }
+  }
+</style>

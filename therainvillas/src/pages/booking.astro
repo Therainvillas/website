@@ -1,0 +1,143 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import BookingForm from '../components/BookingForm.vue';
+import Footer from '../components/Footer.astro';
+import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+---
+
+<Layout title="Booking Villa | The Rain Villas" description="Reservasi villa Puncak. Isi format booking lalu kirim langsung ke WhatsApp admin The Rain Villas." showPromo={false}>
+  <Header />
+  <main class="booking-page">
+    <div class="container">
+      <div class="booking-page__head">
+        <span class="booking-page__badge">Reservasi Online</span>
+        <h1>Booking Villa</h1>
+        <p>Isi format booking di bawah lengkap sesuai villa & tanggal.<br/>Format terisi otomatis dikirim ke WhatsApp admin The Rain Villas.</p>
+      </div>
+
+      <div class="booking-page__features">
+        <div class="booking-page__feature">
+          <div class="booking-page__feature-icon">⚡</div>
+          <div>
+            <strong>Proses Cepat</strong>
+            <span>Booking langsung tanpa antri</span>
+          </div>
+        </div>
+        <div class="booking-page__feature">
+          <div class="booking-page__feature-icon">📝</div>
+          <div>
+            <strong>Format Booking</strong>
+            <span>Cukup isi format &amp; kirim ke WhatsApp</span>
+          </div>
+        </div>
+        <div class="booking-page__feature">
+          <div class="booking-page__feature-icon">🔑</div>
+          <div>
+            <strong>Rekening Setelah Format Terisi</strong>
+            <span>DP &amp; pelunasan via rekening resmi</span>
+          </div>
+        </div>
+      </div>
+
+      <BookingForm client:load />
+    </div>
+  </main>
+  <Footer />
+  <WhatsAppBubble />
+</Layout>
+
+<style>
+  .booking-page {
+    min-height: 80vh;
+    padding: 80px 0 100px;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 40%, #eef1f6 100%);
+    position: relative;
+  }
+  .booking-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(91,141,239,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .booking-page__head {
+    text-align: center;
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .booking-page__badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #5b8def;
+    background: rgba(91,141,239,0.08);
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .booking-page__head h1 {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    color: #11120f;
+    margin-bottom: 10px;
+  }
+  .booking-page__head p {
+    color: #64748b;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  .booking-page__features {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 36px;
+  }
+  .booking-page__feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    padding: 12px 18px;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .booking-page__feature-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .booking-page__feature strong {
+    display: block;
+    font-size: 0.82rem;
+    color: #1e293b;
+    font-weight: 600;
+  }
+  .booking-page__feature span {
+    font-size: 0.72rem;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 768px) {
+    .booking-page {
+      padding: 60px 0 80px;
+    }
+    .booking-page__head h1 {
+      font-size: 1.8rem;
+    }
+    .booking-page__features {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>

@@ -1,0 +1,454 @@
+---
+import { villas } from '../data/villas';
+const villaList = villas.map(v => ({ id: v.id, name: v.name }));
+---
+
+<section class="satisfaction section" id="kepuasan">
+  <div class="satisfaction__bg" id="satBg">
+    {villas.filter(v => v.image).map((v, i) => (
+      <div class="satisfaction__slide" data-index={i} style={`background-image: url(${v.image})`}></div>
+    ))}
+  </div>
+  <div class="satisfaction__overlay"></div>
+  <div class="container" style="position:relative;z-index:2">
+    <div class="satisfaction__header-icon reveal">✦</div>
+    <h2 class="section__title reveal" style="color:#fff">Kepuasan Tamu</h2>
+    <p class="section__subtitle reveal reveal--delay-1" style="color:rgba(255,255,255,0.8)">Bantu kami terus meningkatkan kualitas pelayanan</p>
+
+    <div class="satisfaction__form-wrapper reveal reveal--delay-2">
+      <form id="satisfactionForm" class="satisfaction__form" data-villas={JSON.stringify(villaList)}>
+        <div class="satisfaction__rating">
+          <p class="satisfaction__label">Rating Pengalaman Anda</p>
+          <div class="satisfaction__stars" id="starContainer">
+            {[1,2,3,4,5].map((n) => (
+              <button type="button" class="satisfaction__star" data-value={n} aria-label={`${n} bintang`}>
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </button>
+            ))}
+          </div>
+          <input type="hidden" name="rating" id="ratingInput" value="0" />
+        </div>
+
+        <div class="satisfaction__field">
+          <label for="villa">Villa yang Disewa</label>
+          <div class="satisfaction__input-wrap">
+            <span class="satisfaction__input-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+            <select name="villa" id="villa" required>
+              <option value="">Pilih villa</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="satisfaction__field">
+          <label for="name">Nama Lengkap</label>
+          <div class="satisfaction__input-wrap">
+            <span class="satisfaction__input-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input type="text" name="name" id="name" placeholder="Masukkan nama Anda" required />
+          </div>
+        </div>
+
+        <div class="satisfaction__field">
+          <label for="message">Kesan & Pesan</label>
+          <div class="satisfaction__input-wrap">
+            <span class="satisfaction__input-icon satisfaction__input-icon--top">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </span>
+            <textarea name="message" id="message" rows="4" placeholder="Tulis pengalaman menginap Anda..." required></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="satisfaction__submit">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Kirim Penilaian
+        </button>
+
+        <div class="satisfaction__message" id="successMsg">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Terima kasih! Penilaian Anda sangat berarti bagi kami.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  const formEl = document.getElementById("satisfactionForm");
+  const VILLAS = JSON.parse(formEl?.dataset?.villas || "[]");
+
+  const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec";
+
+  const starContainer = document.getElementById("starContainer");
+  const ratingInput = document.getElementById("ratingInput");
+  const stars = starContainer?.querySelectorAll(".satisfaction__star");
+  let currentRating = 0;
+
+  function setStars(val) {
+    currentRating = val;
+    ratingInput.value = val;
+    stars.forEach((s, i) => {
+      const svg = s.querySelector("svg");
+      if (i < val) {
+        svg.setAttribute("fill", "currentColor");
+        svg.classList.add("satisfaction__star--active");
+      } else {
+        svg.setAttribute("fill", "none");
+        svg.classList.remove("satisfaction__star--active");
+      }
+    });
+  }
+
+  stars?.forEach((star) => {
+    star.addEventListener("click", () => {
+      const val = parseInt(star.dataset.value);
+      setStars(val);
+      stars.forEach(s => s.classList.remove("satisfaction__star--bounce"));
+      star.classList.add("satisfaction__star--bounce");
+      setTimeout(() => star.classList.remove("satisfaction__star--bounce"), 300);
+    });
+    star.addEventListener("mouseenter", () => {
+      const val = parseInt(star.dataset.value);
+      stars.forEach((s, i) => {
+        const svg = s.querySelector("svg");
+        if (i < val) {
+          svg.setAttribute("fill", "#a08bff");
+        } else {
+          svg.setAttribute("fill", "none");
+        }
+      });
+    });
+    star.addEventListener("mouseleave", () => {
+      setStars(currentRating);
+    });
+  });
+
+  const villaSelect = document.getElementById("villa");
+  VILLAS.forEach((v) => {
+    const opt = document.createElement("option");
+    opt.value = v.name;
+    opt.textContent = v.name;
+    villaSelect?.appendChild(opt);
+  });
+
+  const form = document.getElementById("satisfactionForm");
+  const successMsg = document.getElementById("successMsg");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    successMsg.classList.remove("satisfaction__message--show", "satisfaction__message--success");
+
+    if (currentRating === 0) {
+      alert("Silakan pilih rating terlebih dahulu.");
+      return;
+    }
+
+    const data = {
+      rating: currentRating,
+      villa: document.getElementById("villa").value,
+      name: document.getElementById("name").value,
+      message: document.getElementById("message").value,
+      timestamp: new Date().toISOString(),
+    };
+
+    const submitBtn = form.querySelector(".satisfaction__submit");
+    submitBtn.disabled = true;
+    submitBtn.classList.add("satisfaction__submit--loading");
+
+    try {
+      const res = await fetch(APP_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      successMsg.classList.add("satisfaction__message--show", "satisfaction__message--success");
+      form.reset();
+      currentRating = 0;
+      ratingInput.value = "0";
+      stars?.forEach((s) => {
+        const svg = s.querySelector("svg");
+        svg.setAttribute("fill", "none");
+        svg.classList.remove("satisfaction__star--active");
+      });
+    } catch {
+      // keep quiet on failure
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("satisfaction__submit--loading");
+    }
+  });
+
+  // Background slideshow fade
+  const satBg = document.getElementById("satBg");
+  if (satBg) {
+    const slides = satBg.querySelectorAll(".satisfaction__slide");
+    let idx = 0;
+    const total = slides.length;
+    if (total > 0) {
+      slides[0].classList.add("satisfaction__slide--active");
+      setInterval(() => {
+        slides.forEach(s => s.classList.remove("satisfaction__slide--active"));
+        idx = (idx + 1) % total;
+        slides[idx].classList.add("satisfaction__slide--active");
+      }, 5000);
+    }
+  }
+</script>
+
+<style>
+  .satisfaction {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .satisfaction__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .satisfaction__slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+  }
+
+  .satisfaction__slide--active {
+    opacity: 1;
+  }
+
+  .satisfaction__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.65) 100%);
+  }
+
+  .satisfaction__header-icon {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #a7b8ff;
+    margin-bottom: -8px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .satisfaction__form-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .satisfaction__form {
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 44px 40px;
+    border-radius: 24px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+  }
+
+  .satisfaction__rating {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .satisfaction__label {
+    font-weight: 600;
+    margin-bottom: 14px;
+    font-size: 1rem;
+    color: #1e293b;
+  }
+
+  .satisfaction__stars {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .satisfaction__star {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #a08bff;
+    padding: 4px;
+    transition: transform 0.2s;
+  }
+
+  .satisfaction__star:hover {
+    transform: scale(1.2);
+  }
+
+  .satisfaction__star svg {
+    display: block;
+  }
+
+  .satisfaction__star--bounce {
+    animation: starBounce 0.3s ease;
+  }
+
+  @keyframes starBounce {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.35); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+  }
+
+  .satisfaction__field {
+    margin-bottom: 18px;
+  }
+
+  .satisfaction__field label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    color: #334155;
+  }
+
+  .satisfaction__input-wrap {
+    position: relative;
+  }
+
+  .satisfaction__input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
+
+  .satisfaction__input-icon--top {
+    top: 16px;
+    transform: none;
+  }
+
+  .satisfaction__input-wrap:focus-within .satisfaction__input-icon {
+    color: var(--color-primary);
+  }
+
+  .satisfaction__field input,
+  .satisfaction__field select,
+  .satisfaction__field textarea {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    font-family: inherit;
+    font-size: 1rem;
+    background: #fff;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .satisfaction__field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+
+  .satisfaction__field textarea {
+    padding-top: 16px;
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .satisfaction__field input:focus,
+  .satisfaction__field select:focus,
+  .satisfaction__field textarea:focus {
+    outline: none;
+    border-color: #5b8def;
+    box-shadow: 0 0 0 4px rgba(91,141,239,0.1);
+  }
+
+  .satisfaction__submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 16px;
+    margin-top: 10px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-family: inherit;
+    border: none;
+    border-radius: 16px;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(135deg, #5b8def, #7a5ce0);
+    box-shadow: 0 4px 16px rgba(91,141,239,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .satisfaction__submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(91,141,239,0.4);
+  }
+
+  .satisfaction__submit:active {
+    transform: translateY(0);
+  }
+
+  .satisfaction__submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .satisfaction__submit--loading {
+    opacity: 0.8;
+  }
+
+  .satisfaction__message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+  }
+
+  .satisfaction__message--show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .satisfaction__message--success {
+    color: #16a34a;
+  }
+
+  .satisfaction__message--error {
+    color: #dc2626;
+  }
+
+  @media (max-width: 768px) {
+    .satisfaction__form {
+      padding: 28px 20px;
+      border-radius: 20px;
+    }
+
+    .satisfaction__star svg {
+      width: 34px;
+      height: 34px;
+    }
+  }
+</style>

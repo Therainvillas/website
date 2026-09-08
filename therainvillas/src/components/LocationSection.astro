@@ -1,0 +1,176 @@
+---
+import VillaDistanceMap from '../components/VillaDistanceMap.vue';
+import { OFFICE, locations } from '../data/locations.js';
+---
+
+<section class="loka" id="lokasi">
+  <svg class="loka__mapbg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g class="loka__grid">
+      <path d="M0 160 H1200 M0 320 H1200 M0 480 H1200 M0 640 H1200"/>
+      <path d="M160 0 V800 M320 0 V800 M480 0 V800 M640 0 V800 M800 0 V800 M960 0 V800 M1120 0 V800"/>
+    </g>
+    <path d="M -60 220 Q 200 120 440 220 T 900 180 T 1260 260 L 1260 860 L -60 860 Z"/>
+    <path d="M -40 300 Q 220 200 500 300 T 940 260 T 1280 340 L 1280 860 L -40 860 Z"/>
+    <path d="M -20 400 Q 240 300 560 400 T 980 360 T 1300 430 L 1300 860 L -20 860 Z"/>
+    <path d="M -20 500 Q 260 410 600 500 T 1000 470 L 1000 900 L -20 900 Z"/>
+    <path d="M 240 -40 Q 400 180 360 380 T 480 820"/>
+    <path d="M 820 -60 Q 900 200 860 420 T 900 820"/>
+  </svg>
+
+  <div class="loka__inner">
+    <span class="loka__tag">Puncak, Jawa Barat, Indonesia</span>
+
+    <h2 class="loka__head">
+      <span class="line"><span class="big">LOKASI STRATEGIS</span></span>
+      <span class="line"><span class="small">di antara</span> <span class="big">BOGOR, CISARUA</span></span>
+    </h2>
+
+    <div class="loka__map-wrap">
+      <VillaDistanceMap
+        client:load
+        office={OFFICE}
+        villas={locations}
+        title="Jarak Villa dari Kantor"
+        subtitle="The Rain Villas · Puncak, Bogor"
+      />
+    </div>
+
+    <p class="loka__note">
+      Arahkan kursor ke marker peta atau nama villa di daftar untuk melihat jarak dari kantor.
+      Klik untuk membuka detail villa.
+    </p>
+
+    <a class="loka__cta" href={OFFICE.mapsUrl} target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+      Lihat di Peta
+    </a>
+  </div>
+</section>
+
+<style>
+  .loka{
+    position:relative;
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 85% -10%, rgba(120,140,190,0.18) 0%, rgba(120,140,190,0) 55%),
+      radial-gradient(120% 90% at 0% 110%, rgba(150,120,190,0.16) 0%, rgba(150,120,190,0) 55%),
+      linear-gradient(160deg, #f7f8f5 0%, #eef1ef 45%, #e6eaee 100%);
+    color:#263A2C;
+    padding:clamp(48px,8vh,88px) clamp(20px,6vw,80px) clamp(40px,6vh,64px);
+  }
+
+  .loka__mapbg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    opacity:0.5;
+    pointer-events:none;
+  }
+  .loka__mapbg path{
+    fill:rgba(139,156,134,0.16);
+    stroke:rgba(167,182,162,0.5);
+    stroke-width:1.1;
+    vector-effect:non-scaling-stroke;
+  }
+  .loka__mapbg .loka__grid{
+    fill:none;
+    stroke:rgba(139,156,134,0.28);
+    stroke-width:1;
+    vector-effect:non-scaling-stroke;
+  }
+
+  .loka__inner{
+    position:relative;
+    z-index:2;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:clamp(20px,3.5vh,40px);
+    width:100%;
+    max-width:1400px;
+    margin:0 auto;
+    min-height:calc(100vh - clamp(96px,14vh,152px));
+  }
+
+  .loka__tag{
+    position:absolute;
+    top:0;
+    right:0;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:rgba(139,156,134,0.9);
+  }
+
+  .loka__head{
+    max-width:1000px;
+    line-height:1.15;
+    font-family:"Cinzel", serif;
+    font-weight:600;
+    color:#263A2C;
+  }
+  .loka__head .big{
+    font-size:clamp(1.8rem,4.6vw,4rem);
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .loka__head .small{
+    font-family:"Cormorant Garamond", serif;
+    font-weight:500;
+    font-style:italic;
+    font-size:clamp(1.2rem,2vw,1.8rem);
+    color:#263A2C;
+    opacity:0.8;
+  }
+  .loka__head .line{ display:block; }
+  .loka__head .line + .line{ margin-top:clamp(2px,0.4vw,8px); }
+
+  .loka__map-wrap{
+    width:100%;
+  }
+
+  .loka__note{
+    font-family:"Work Sans", sans-serif;
+    font-size:13px;
+    color:rgba(107,74,43,0.8);
+    margin:0;
+  }
+
+  .loka__cta{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    align-self:flex-start;
+    padding:15px 30px;
+    border-radius:8px;
+    background:#263A2C;
+    color:#fff;
+    font-family:"Work Sans", sans-serif;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    text-decoration:none;
+    box-shadow:0 14px 30px rgba(38,58,44,0.22);
+    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  .loka__cta:hover{
+    transform:translateY(-2px);
+    background:#1b2a1f;
+    box-shadow:0 18px 36px rgba(38,58,44,0.28);
+  }
+  .loka__cta svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; }
+
+  @media (max-width:640px){
+    .loka__tag{ letter-spacing:0.2em; font-size:11px; }
+    .loka__note{ font-size:12px; }
+  }
+</style>

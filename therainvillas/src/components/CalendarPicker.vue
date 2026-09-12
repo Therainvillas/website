@@ -34,6 +34,10 @@
         <span>Memuat data ketersediaan...</span>
       </div>
 
+      <div v-if="notice" class="booking__notice">
+        <span>{{ notice }}</span>
+      </div>
+
       <div v-if="error" class="booking__error">
         <span>{{ error }}</span>
       </div>
@@ -145,6 +149,8 @@ export default {
       apiBlockedDates: [],
       loading: false,
       error: "",
+      notice: "",
+      retryTimer: null,
       preselected: false,
     };
   },
@@ -154,9 +160,16 @@ export default {
     if (this.initialVillaId) {
       this.preselected = true;
       this.selectedId = String(this.initialVillaId);
-      if (this.selectedId) this.fetchBlockedDates();
     }
     if (this.selectedId) this.fetchBlockedDates();
+    window.addEventListener('online', this.handleOnline);
+  },
+  beforeUnmount() {
+    window.removeEventListener('online', this.handleOnline);
+    if (this.retryTimer) {
+      clearTimeout(this.retryTimer);
+      this.retryTimer = null;
+    }
   },
   computed: {
     selectedVilla() {
@@ -236,6 +249,11 @@ export default {
       this.checkOut = null;
       this.apiBlockedDates = [];
       this.error = "";
+      this.notice = "";
+      if (this.retryTimer) {
+        clearTimeout(this.retryTimer);
+        this.retryTimer = null;
+      }
       this.fetchBlockedDates();
     },
     onVillaChange() {
@@ -243,14 +261,25 @@ export default {
       this.checkOut = null;
       this.apiBlockedDates = [];
       this.error = "";
+      this.notice = "";
+      if (this.retryTimer) {
+        clearTimeout(this.retryTimer);
+        this.retryTimer = null;
+      }
       if (this.selectedId) this.fetchBlockedDates();
     },
     fetchBlockedDates() {
-      this.loading = true;
       this.error = "";
-      this.apiBlockedDates = [];
-      var villa = this.villas.find(function (v) { return v.id === Number(this.selectedId); }.bind(this));
+      const villa = this.villas.find((v) => v.id === Number(this.selectedId));
       if (!villa) { this.loading = false; return; }
+
+      const cached = this.loadBlockedCache(villa);
+      if (cached.length) {
+        this.apiBlockedDates = cached;
+        this.loading = false;
+      } else {
+        this.loading = true;
+      }
 
       var url = SPREADSHEET_API_URL + '?villa=' + encodeURIComponent(villa.scheduleName || villa.name) + '&_=' + Date.now();
       var self = this;
@@ -261,9 +290,12 @@ export default {
         .then(function (data) {
           if (Array.isArray(data)) {
             self.apiBlockedDates = data;
+            self.saveBlockedCache(villa, data);
+            self.notice = "";
+            self.error = "";
           } else if (data && data.error) {
             console.warn("API error:", data.error);
-            self.error = "Data ketersediaan tidak tersedia. Data cadangan digunakan.";
+            self.onFetchFail(villa);
           }
           self.loading = false;
         })
@@ -281,9 +313,14 @@ export default {
         delete window[callbackName];
         if (Array.isArray(data)) {
           self.apiBlockedDates = data;
+          self.saveBlockedCache(villa, data);
+          self.notice = "";
+          self.error = "";
         } else if (data && data.error) {
           console.warn("API error:", data.error);
-          self.error = "Data ketersediaan tidak tersedia. Data cadangan digunakan.";
+          self.onFetchFail(villa);
+        } else {
+          self.onFetchFail(villa);
         }
         self.loading = false;
       };
@@ -292,17 +329,59 @@ export default {
       script.src = url + '&callback=' + callbackName;
       script.onerror = function () {
         delete window[callbackName];
-        self.error = "Koneksi terputus. Data cadangan digunakan.";
+        self.onFetchFail(villa);
         self.loading = false;
       };
       setTimeout(function () {
         if (window[callbackName]) {
           delete window[callbackName];
-          self.error = "Server tidak merespon. Data cadangan digunakan.";
+          self.onFetchFail(villa);
           self.loading = false;
         }
       }, 8000);
       document.head.appendChild(script);
+    },
+    onFetchFail(villa) {
+      const cached = this.loadBlockedCache(villa);
+      if (cached.length) {
+        this.apiBlockedDates = cached;
+        this.notice = "Menampilkan jadwal terakhir — akan diperbarui otomatis saat koneksi pulih.";
+        this.error = "";
+      } else {
+        this.apiBlockedDates = [];
+        this.notice = "";
+        this.error = "Server sedang tidak merespon. Coba lagi nanti.";
+      }
+      this.scheduleRetry();
+    },
+    scheduleRetry() {
+      if (this.retryTimer) return;
+      const currentId = this.selectedId;
+      this.retryTimer = setTimeout(() => {
+        this.retryTimer = null;
+        if (this.selectedId === currentId) this.fetchBlockedDates();
+      }, 20000);
+    },
+    handleOnline() {
+      this.notice = "";
+      if (this.selectedId) this.fetchBlockedDates();
+    },
+    loadBlockedCache(villa) {
+      try {
+        const raw = JSON.parse(localStorage.getItem("trv_blocked_cache")) || {};
+        const key = String(villa.scheduleName || villa.id);
+        const entry = raw[key];
+        if (entry && Array.isArray(entry.dates)) return entry.dates;
+      } catch (e) {}
+      return [];
+    },
+    saveBlockedCache(villa, dates) {
+      try {
+        const key = String(villa.scheduleName || villa.id);
+        const raw = JSON.parse(localStorage.getItem("trv_blocked_cache")) || {};
+        raw[key] = { dates: Array.isArray(dates) ? dates : [], savedAt: new Date().toISOString() };
+        localStorage.setItem("trv_blocked_cache", JSON.stringify(raw));
+      } catch (e) {}
     },
     prevMonth() {
       if (this.month === 0) {
@@ -804,6 +883,16 @@ formatDateDisplay(d) {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.booking__notice {
+  padding: 12px 16px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 10px;
+  color: #b45309;
+  font-size: 0.85rem;
+  text-align: center;
 }
 
 .booking__error {

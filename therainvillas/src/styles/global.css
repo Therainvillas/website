@@ -369,6 +369,14 @@ ul {
 .reveal--delay-3 { transition-delay: 0.24s; }
 .reveal--delay-4 { transition-delay: 0.32s; }
 
+html.no-js .reveal,
+html.no-js .reveal--left,
+html.no-js .reveal--right,
+html.no-js .reveal--scale {
+  opacity: 1;
+  transform: none;
+}
+
 html[data-theme="dark"] body {
   background:
     linear-gradient(180deg, rgba(143, 208, 189, 0.06), rgba(14, 21, 19, 0) 300px),

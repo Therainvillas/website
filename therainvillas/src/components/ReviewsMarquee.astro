@@ -1,3 +1,10 @@
+---
+import { sampleReviews, reviewCardHTML } from '../data/reviews.js';
+
+const SSR_SETS = 4;
+const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.map(reviewCardHTML).join('')).join('');
+---
+
 <section class="reviews-marquee" id="apa-kata-mereka">
   <div class="reviews-marquee__orb reviews-marquee__orb--orange"></div>
   <div class="reviews-marquee__orb reviews-marquee__orb--blue"></div>
@@ -21,7 +28,7 @@
   </div>
 
   <div class="reviews-marquee__viewport">
-    <div class="reviews-marquee__track" id="reviewsTrack"></div>
+    <div class="reviews-marquee__track" id="reviewsTrack" set:html={reviewsTrackHTML}></div>
   </div>
 
   <div class="container">
@@ -35,15 +42,38 @@
 </section>
 
 <script>
-  import { REVIEWS_API_URL, parseReviews, sampleReviews } from '../data/reviews.js';
+  import { REVIEWS_API_URL, parseReviews, reviewCardHTML } from '../data/reviews.js';
 
   const track = document.getElementById('reviewsTrack');
   if (track) {
+    const CACHE_KEY = 'trv_reviews_cache';
+    const TIMEOUT_MS = 5000;
+
+    function renderReviews(reviews) {
+      if (!reviews || !reviews.length) return;
+      const cards = reviews.map(reviewCardHTML).join('');
+      const viewportW = window.innerWidth || 1600;
+      const approxSetW = reviews.length * 424; // card width + gap
+      const halves = Math.max(2, Math.ceil((viewportW * 2) / approxSetW) * 2);
+      const copies = halves % 2 === 0 ? halves : halves + 1;
+      // Even number of identical copies → translateX(-50%) loops seamlessly
+      track.innerHTML = cards.repeat(copies);
+      try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(reviews)); } catch (e) {}
+    }
+
     (async () => {
-      let reviews = sampleReviews;
+      // show last fetched reviews instantly, then refresh in background
+      try {
+        const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY));
+        if (Array.isArray(cached) && cached.length) renderReviews(cached);
+      } catch (e) {}
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
       try {
         const url = REVIEWS_API_URL + '?action=reviews&_=' + Date.now();
-        const res = await fetch(url, { redirect: 'follow', cache: 'no-store' });
+        const res = await fetch(url, { redirect: 'follow', cache: 'no-store', signal: controller.signal });
         const text = await res.text();
         let data = null;
         try {
@@ -54,66 +84,13 @@
             try { data = JSON.parse(m[1]); } catch (e2) { data = null; }
           }
         }
-        const parsed = parseReviews(data);
-        if (Array.isArray(parsed) && parsed.length) reviews = parsed;
+        renderReviews(parseReviews(data));
       } catch (e) {
-        // fallback to sample reviews
+        // network error / timeout → keep SSR sample cards (never blank)
+      } finally {
+        clearTimeout(timer);
       }
-      render(reviews);
     })();
-  }
-
-  function escapeHtml(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  function cardHTML(r) {
-    const rating = Math.min(5, Math.max(1, Number(r.rating) || 0));
-    const stars = '★'.repeat(rating).padEnd(5, '☆');
-    const name = r.name || 'Tamu Anonim';
-    const initial = String(name).trim().charAt(0).toUpperCase() || 'T';
-    const villa = r.villa || '';
-    return `
-      <div class="reviews-marquee__card">
-        <span class="reviews-marquee__quote" aria-hidden="true">“</span>
-        <div class="reviews-marquee__rect">
-          <div class="reviews-marquee__stars" aria-label="${rating} dari 5 bintang">${stars}</div>
-          <p class="reviews-marquee__text">${escapeHtml(r.message)}</p>
-        </div>
-        <div class="reviews-marquee__author">
-          <div class="reviews-marquee__avatar">
-            <span class="reviews-marquee__avatar-initial">${escapeHtml(initial)}</span>
-          </div>
-          <div class="reviews-marquee__meta">
-            <div class="reviews-marquee__name-row">
-              <strong class="reviews-marquee__name">${escapeHtml(name)}</strong>
-              <span class="reviews-marquee__check" title="Tamu terverifikasi">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </span>
-            </div>
-            ${villa ? `<span class="reviews-marquee__villa">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              ${escapeHtml(villa)}
-            </span>` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function render(reviews) {
-    if (!reviews.length) return;
-    const cards = reviews.map(cardHTML).join('');
-    const viewportW = window.innerWidth || 1600;
-    const approxSetW = reviews.length * 424; // card width + gap
-    const halves = Math.max(2, Math.ceil((viewportW * 2) / approxSetW) * 2);
-    const copies = halves % 2 === 0 ? halves : halves + 1;
-    // Even number of identical copies → translateX(-50%) loops seamlessly
-    track.innerHTML = cards.repeat(copies);
   }
 </script>
 
@@ -448,6 +425,10 @@
   @media (max-width: 768px) {
     .reviews-marquee {
       padding: 76px 0 60px;
+    }
+    .reviews-marquee__viewport {
+      -webkit-mask-image: none;
+      mask-image: none;
     }
     .reviews-marquee__card {
       width: 330px;

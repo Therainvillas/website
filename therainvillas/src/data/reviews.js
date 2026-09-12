@@ -43,6 +43,48 @@ export function parseReviews(data) {
   return [];
 }
 
+export function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+export function reviewCardHTML(r) {
+  const rating = Math.min(5, Math.max(1, Number(r.rating) || 0));
+  const stars = '★'.repeat(rating).padEnd(5, '☆');
+  const name = r.name || 'Tamu Anonim';
+  const initial = String(name).trim().charAt(0).toUpperCase() || 'T';
+  const villa = r.villa || '';
+  return `
+      <div class="reviews-marquee__card">
+        <span class="reviews-marquee__quote" aria-hidden="true">“</span>
+        <div class="reviews-marquee__rect">
+          <div class="reviews-marquee__stars" aria-label="${rating} dari 5 bintang">${stars}</div>
+          <p class="reviews-marquee__text">${escapeHtml(r.message)}</p>
+        </div>
+        <div class="reviews-marquee__author">
+          <div class="reviews-marquee__avatar">
+            <span class="reviews-marquee__avatar-initial">${escapeHtml(initial)}</span>
+          </div>
+          <div class="reviews-marquee__meta">
+            <div class="reviews-marquee__name-row">
+              <strong class="reviews-marquee__name">${escapeHtml(name)}</strong>
+              <span class="reviews-marquee__check" title="Tamu terverifikasi">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+            </div>
+            ${villa ? `<span class="reviews-marquee__villa">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              ${escapeHtml(villa)}
+            </span>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+}
+
 export function normalizeVillaName(name) {
   return String(name || '').toLowerCase().replace(/^villa\s+/i, '').trim();
 }

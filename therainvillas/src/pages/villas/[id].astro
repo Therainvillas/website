@@ -194,9 +194,7 @@ const heroNotes = [
         </div>
       </div>
 
-      <div class="vd-badge" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M6 4v10a6 6 0 0 0 12 0V7"/><path d="M6 9h12"/></svg>
-      </div>
+
     </section>
 
     <section class="vd-overview section" id="booking">
@@ -832,31 +830,7 @@ const heroNotes = [
     color: #ffffff;
   }
 
-  /* ===== brand badge ===== */
-  .vd-badge {
-    position: absolute;
-    left: 31%;
-    bottom: 7%;
-    z-index: 6;
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    background: linear-gradient(145deg, #5b8def, #5d3fc7);
-    box-shadow: 0 12px 26px rgba(93,63,199,.45), 0 0 0 5px rgba(255,255,255,.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .vd-badge svg {
-    width: 44%;
-    height: 44%;
-    color: #fff;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
+
 
   .vd-overview {
     background: #ebe4d9;
@@ -1537,6 +1511,10 @@ const heroNotes = [
     }
 
     .vd-badge {
+      display: none;
+    }
+
+    .vd-showcase__mark {
       display: none;
     }
 

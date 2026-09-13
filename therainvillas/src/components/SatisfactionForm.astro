@@ -1,13 +1,15 @@
 ---
 import { villas } from '../data/villas';
+import { villaCovers } from '../data/covers';
 const villaList = villas.map(v => ({ id: v.id, name: v.name }));
 ---
 
 <section class="satisfaction section" id="kepuasan">
   <div class="satisfaction__bg" id="satBg">
-    {villas.filter(v => v.image).map((v, i) => (
-      <div class="satisfaction__slide" data-index={i} style={`background-image: url(${v.image})`}></div>
-    ))}
+    {villas.filter(v => v.image).map((v, i) => {
+      const cover = villaCovers[v.name] ?? v.image;
+      return <div class="satisfaction__slide" data-index={i} style={`background-image: url(${cover})`}></div>;
+    })}
   </div>
   <div class="satisfaction__overlay"></div>
   <div class="container" style="position:relative;z-index:2">

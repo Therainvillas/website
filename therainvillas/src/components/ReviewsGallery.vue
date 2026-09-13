@@ -34,7 +34,7 @@
     </div>
     <div v-if="error" class="rg__empty">{{ error }}</div>
 
-    <div v-if="selectedVilla" class="rg__detail">
+    <div v-if="selectedVilla" ref="detail" class="rg__detail">
       <h2 class="rg__detail-title">Ulasan {{ selectedVilla.name }}</h2>
       <div class="rg__detail-rating">
         <span class="rg__big-score">{{ (selectedSummary.average || 0).toFixed(1) }}</span>
@@ -119,6 +119,10 @@ export default {
     },
     selectVilla(id) {
       this.selectedId = id;
+      this.$nextTick(() => {
+        const el = this.$refs.detail;
+        if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     },
     preselectVillaWithReviews() {
       const withReviews = this.villas.find((v) => {
@@ -273,6 +277,7 @@ export default {
   padding: 28px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+  scroll-margin-top: 88px;
 }
 .rg__detail-title {
   font-size: 1.3rem;

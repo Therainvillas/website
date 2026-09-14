@@ -87,8 +87,8 @@
             <h3 class="vf-card__title">{{ villa.name }}</h3>
             <p class="vf-card__desc">{{ villa.description }}</p>
             <ul class="vf-card__stats">
-              <li><span>🌙</span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
-              <li><span>🧺</span> <strong>{{ villa.bathrooms }}</strong> mandi</li>
+              <li><span class="vf-card__stat-icon"><img src="/icon/bed.png" alt="" /></span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
+              <li><span class="vf-card__stat-icon"><img src="/icon/bathtub.png" alt="" /></span> <strong>{{ villa.bathrooms }}</strong> mandi</li>
               <li><span>👥</span> <strong>{{ villa.capacity }}</strong> tamu</li>
               <li><span>🅿️</span> <strong>{{ villa.parking }}</strong> parkir</li>
             </ul>
@@ -542,6 +542,17 @@ export default {
 
 .vf-card__stats strong {
   color: var(--color-dark, #0f172a);
+}
+
+.vf-card__stat-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.vf-card__stat-icon img {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .vf-card__tags {

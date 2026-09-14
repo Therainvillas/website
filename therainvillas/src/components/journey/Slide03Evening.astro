@@ -30,7 +30,7 @@ function getVillaImage(name, fallback) {
           <h3 class="evening__slide-name">{villa.name}</h3>
           <p class="evening__slide-desc">{villa.description}</p>
           <div class="evening__slide-meta">
-            <span>🛏️ {villa.bedrooms} kamar</span>
+            <span><img src="/icon/bed.png" alt="" class="evening__slide-meta-icon" /> {villa.bedrooms} kamar</span>
             <span>👥 {villa.capacity} tamu</span>
             <span>{villa.priceLabel}</span>
           </div>
@@ -162,6 +162,13 @@ function getVillaImage(name, fallback) {
     opacity: 0.7;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .evening__slide-meta-icon {
+    width: 15px;
+    height: 15px;
+    vertical-align: -2px;
   }
 
   .evening__slide-cta {

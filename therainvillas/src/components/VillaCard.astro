@@ -43,11 +43,11 @@ const link = `/villas/${id}`;
 
     <ul class="villa-card__stats">
       <li>
-        <span class="villa-card__stat-icon">🌙</span>
+        <span class="villa-card__stat-icon"><img src="/icon/bed.png" alt="" /></span>
         <strong>{bedrooms}</strong> kamar
       </li>
       <li>
-        <span class="villa-card__stat-icon">🧺</span>
+        <span class="villa-card__stat-icon"><img src="/icon/bathtub.png" alt="" /></span>
         <strong>{bathrooms}</strong> kamar mandi
       </li>
       <li>
@@ -167,8 +167,10 @@ const link = `/villas/${id}`;
     color: var(--color-dark);
   }
 
-  .villa-card__stat-icon {
-    font-size: 0.9rem;
+  .villa-card__stat-icon img {
+    width: 16px;
+    height: 16px;
+    display: block;
   }
 
   .villa-card__btn {

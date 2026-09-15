@@ -1,15 +1,8 @@
 <section class="journey-hero">
   <div class="journey-hero__bg">
-    <iframe
-      class="journey-hero__video"
-      src="https://www.youtube.com/embed/Q5n6ph6eFsU?autoplay=1&mute=1&loop=1&playlist=Q5n6ph6eFsU&controls=0&disablekb=1&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3"
-      title="The Rain Villas video"
-      frameborder="0"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      referrerpolicy="strict-origin-when-cross-origin"
-      aria-hidden="true"
-      tabindex="-1"
-    ></iframe>
+    <video autoplay muted loop playsinline class="journey-hero__video">
+      <source src="/DISPLAY%20TV%202.mp4" type="video/mp4" />
+    </video>
     <div class="journey-hero__overlay"></div>
   </div>
 
@@ -78,13 +71,9 @@
   }
 
 .journey-hero__video {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  border: 0;
   object-fit: cover;
-  pointer-events: none;
   filter: saturate(0.92) contrast(1.04);
 }
 

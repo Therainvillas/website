@@ -1,0 +1,268 @@
+---
+// TeamSection.astro - Showcase Tim The Rain Villas
+---
+
+<section class="team-section section" id="tim-kami">
+  <div class="container">
+    <div class="team-header reveal">
+      <span class="team-badge">Tim The Rain Villas</span>
+      <h2 class="team-title">Dedikasi & Pelayanan Sepenuh Hati</h2>
+      <p class="team-subtitle">
+        Di balik setiap momen liburan yang berkesan di Puncak, ada tim profesional kami yang berdedikasi menjaga kebersihan, kenyamanan, dan pelayanan terbaik untuk Anda dan keluarga.
+      </p>
+    </div>
+
+    <div class="team-showcase reveal reveal--delay-1">
+      <div class="team-showcase__card">
+        <div class="team-showcase__glow"></div>
+        <picture class="team-showcase__picture">
+          <source srcset="/foto-team.webp" type="image/webp" />
+          <img
+            src="/foto-team.png"
+            alt="Tim The Rain Villas - Meet Our Team"
+            class="team-showcase__img"
+            loading="lazy"
+            width="2000"
+            height="1414"
+          />
+        </picture>
+      </div>
+    </div>
+
+    <div class="team-values reveal reveal--delay-2">
+      <div class="team-value-card">
+        <div class="team-value-card__icon-box">
+          <svg class="team-value-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h3 class="team-value-card__title">Sambutan Hangat & Ramah</h3>
+        <p class="team-value-card__desc">
+          Tim kami menyambut kedatangan Anda secara langsung, memastikan proses check-in mudah dan nyaman tanpa ribet.
+        </p>
+      </div>
+
+      <div class="team-value-card">
+        <div class="team-value-card__icon-box">
+          <svg class="team-value-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h3 class="team-value-card__title">Standar Kebersihan Prima</h3>
+        <p class="team-value-card__desc">
+          Inspeksi detail dan sanitasi menyeluruh sebelum Anda tiba, menjamin villa selalu bersih, wangi, dan steril.
+        </p>
+      </div>
+
+      <div class="team-value-card">
+        <div class="team-value-card__icon-box">
+          <svg class="team-value-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <h3 class="team-value-card__title">Pendampingan 24 Jam</h3>
+        <p class="team-value-card__desc">
+          Tim operasional on-site siap sedia membantu kebutuhan tambahan, fasilitas villa, atau bantuan darurat kapan saja.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .team-section {
+    background: linear-gradient(180deg, var(--color-light) 0%, var(--color-gray-light) 100%);
+    padding: 90px 0 100px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .team-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 48px;
+  }
+
+  .team-badge {
+    display: inline-block;
+    background: var(--color-primary);
+    color: #fff;
+    padding: 6px 18px;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(var(--color-primary-rgb), 0.2);
+  }
+
+  .team-title {
+    font-size: 2.3rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--color-dark);
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+
+  .team-subtitle {
+    font-size: 1.05rem;
+    color: var(--color-gray);
+    line-height: 1.7;
+  }
+
+  .team-showcase {
+    max-width: 1080px;
+    margin: 0 auto 56px;
+    position: relative;
+  }
+
+  .team-showcase__card {
+    position: relative;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffffff 0%, #f5f8f5 100%);
+    border: 1px solid rgba(var(--color-primary-rgb), 0.12);
+    box-shadow: 0 20px 50px -10px rgba(23, 68, 60, 0.12);
+    padding: 36px 36px 0;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  }
+
+  html[data-theme="dark"] .team-showcase__card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 245, 242, 0.94) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
+  }
+
+  .team-showcase__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 70px -12px rgba(23, 68, 60, 0.22);
+  }
+
+  .team-showcase__glow {
+    position: absolute;
+    top: -30%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(var(--color-accent-rgb), 0.15) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .team-showcase__picture {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .team-showcase__img {
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.12));
+    transition: transform 0.3s ease;
+  }
+
+  .team-showcase__card:hover .team-showcase__img {
+    transform: scale(1.015);
+  }
+
+  .team-values {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .team-value-card {
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 30px 24px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .team-value-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-soft);
+    border-color: rgba(var(--color-primary-rgb), 0.3);
+  }
+
+  .team-value-card__icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(var(--color-primary-rgb), 0.08);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .team-value-card__icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .team-value-card__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-dark);
+    margin-bottom: 10px;
+  }
+
+  .team-value-card__desc {
+    font-size: 0.92rem;
+    color: var(--color-gray);
+    line-height: 1.65;
+  }
+
+  @media (max-width: 900px) {
+    .team-values {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .team-showcase__card {
+      padding: 24px 16px 8px;
+      border-radius: 18px;
+    }
+
+    .team-title {
+      font-size: 1.85rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .team-section {
+      padding: 60px 0 70px;
+    }
+
+    .team-title {
+      font-size: 1.55rem;
+    }
+
+    .team-subtitle {
+      font-size: 0.95rem;
+    }
+
+    .team-showcase__card {
+      padding: 16px 8px 0;
+      border-radius: 14px;
+    }
+  }
+</style>

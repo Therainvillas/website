@@ -28,3 +28,5 @@ Desktop.ini
 # Env / secrets
 .env
 .env.*
+
+therainvillas/preview-avail.log

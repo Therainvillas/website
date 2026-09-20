@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
-import CalendarPicker from '../components/CalendarPicker.vue';
+import AvailabilityGrid from '../components/AvailabilityGrid.vue';
 import { villas } from '../data/villas';
 import { villaCovers } from '../data/covers';
 ---
@@ -21,7 +21,7 @@ import { villaCovers } from '../data/covers';
     </div>
     <div class="container" style="position:relative;z-index:1">
       <h1 class="page-hero__title reveal">Cek Ketersediaan</h1>
-      <p class="page-hero__subtitle reveal reveal--delay-1">Pilih villa dan tanggal untuk melihat jadwal tersedia</p>
+      <p class="page-hero__subtitle reveal reveal--delay-1">Semua villa & tanggal ketersediaan tampil langsung tanpa perlu memilih</p>
     </div>
   </section>
 
@@ -34,7 +34,7 @@ import { villaCovers } from '../data/covers';
       <div class="booking-section__overlay"></div>
     </div>
     <div class="container" style="position:relative;z-index:1">
-      <CalendarPicker client:load />
+      <AvailabilityGrid client:load />
     </div>
   </section>
 
@@ -44,7 +44,7 @@ import { villaCovers } from '../data/covers';
         <div class="info-card reveal reveal--delay-1">
           <span class="info-card__icon">📅</span>
           <h3>Kalender Otomatis</h3>
-          <p>Jadwal ketersediaan terupdate secara real-time. Tanggal yang tidak tersedia akan terlihat di kalender.</p>
+          <p>Jadwal ketersediaan terupdate secara real-time. Tanggal yang terbooking langsung terlihat dan tidak tersedia.</p>
         </div>
         <div class="info-card reveal reveal--delay-2">
           <span class="info-card__icon">📱</span>

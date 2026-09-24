@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 const PUBLIC = path.resolve('./public');
-const MAX_W = 1920;
+const MAX_W = 2560;
 const THUMB_MAX_W = 1200;
 const THUMB_DIRS = new Set(['thumbnail', 'promo']);
 const KEEP_PNG = new Set(['logo trv2.png', 'man-phone.png']);
@@ -39,7 +39,7 @@ async function processFile(full, childRel) {
     if (opPng) {
       // Opaque photo PNG -> JPEG (huge savings)
       outFile = full.replace(/\.png$/i, '.jpg');
-      buf = await p.jpeg({ quality: 82, mozjpeg: true }).toBuffer();
+      buf = await p.jpeg({ quality: 88, mozjpeg: true }).toBuffer();
       if (buf.length < origSize) {
         fs.writeFileSync(outFile, buf);
         fs.unlinkSync(full);
@@ -54,7 +54,7 @@ async function processFile(full, childRel) {
       buf = await p.png({ palette: true, compressionLevel: 9, effort: 9, quality: 100 }).toBuffer();
       kind = 'PNG-opt';
     } else {
-      buf = await p.jpeg({ quality: 82, mozjpeg: true }).toBuffer();
+      buf = await p.jpeg({ quality: 88, mozjpeg: true }).toBuffer();
       kind = 'JPG';
     }
 

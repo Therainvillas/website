@@ -10,6 +10,7 @@ import Himbauan from '../components/journey/Himbauan.astro';
 import LocationSection from '../components/LocationSection.astro';
 import ReviewsMarquee from '../components/ReviewsMarquee.astro';
 import SatisfactionForm from '../components/SatisfactionForm.astro';
+import FaqSection from '../components/FaqSection.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import VillaCard from '../components/VillaCard.astro';
@@ -17,6 +18,45 @@ import { villas } from '../data/villas';
 
 // Render all villas, client-side script will randomly pick 3
 const allVillas = villas;
+
+const homeFaq = [
+  {
+    q: 'Bagaimana cara booking villa di The Rain Villas?',
+    a: 'Cek ketersediaan di story Instagram @therainvillas atau hubungi admin melalui WhatsApp 0821-2549-2037, lalu isi formulir booking. DP minimal 30% dari harga villa, pelunasan wajib H-3 sebelum check-in, dan reschedule maksimal H-7 sebelum tanggal check-in dengan penambahan DP.',
+  },
+  {
+    q: 'Apakah DP bisa di-refund jika batal?',
+    a: 'Tidak. DP tidak bisa di-refund dalam kondisi apapun. Jika pelunasan tidak dilakukan H-3 sebelum check-in, uang DP dianggap hangus.',
+  },
+  {
+    q: 'Bagaimana cara cek ketersediaan tanggal?',
+    a: 'Buka halaman Cek Ketersediaan untuk melihat kalender semua villa sekaligus, atau tanyakan langsung ke admin via WhatsApp 0821-2549-2037.',
+  },
+  {
+    q: 'Berapa jam check-out dan bagaimana jadwal survey?',
+    a: 'Check-out wajib dilakukan pukul 12.00; lebih dari jam tersebut dikenakan charge Rp 500.000. Survey villa dilakukan pukul 12.00–14.00 saat villa sedang kosong, maksimal sampai pukul 17.00.',
+  },
+  {
+    q: 'Berapa kapasitas tamu setiap villa?',
+    a: 'Kapasitas bervariasi per villa, mulai dari 20 hingga 50 tamu. Jika melebihi kapasitas, dikenakan charge tambahan Rp 50.000/orang (lihat ketentuan persisnya di halaman detail setiap villa).',
+  },
+  {
+    q: 'Apa saja fasilitas yang tersedia?',
+    a: 'Fasilitas bervariasi per villa, antara lain private pool, karaoke, billiard, smart TV & WiFi, gazebo, area BBQ, dan kitchen set. Cek daftar fasilitas lengkap di halaman detail setiap villa.',
+  },
+  {
+    q: 'Di mana lokasi The Rain Villas?',
+    a: 'Semua villa berlokasi di kawasan Cisarua–Puncak, Bogor, Jawa Barat pada ketinggian ±800 mdpl, sekitar 90 menit dari Jakarta melalui tol Ciawi.',
+  },
+  {
+    q: 'Apa saja aturan penting saat menginap?',
+    a: 'Dilarang membawa minuman keras, obat terlarang, senjata tajam, dan peliharaan. Jam malam berlaku hingga pukul 22.00. Kerusakan barang yang ditimbulkan tamu dikenakan biaya ganti rugi sesuai nominal harga barang.',
+  },
+  {
+    q: 'Bagaimana cara menghubungi admin?',
+    a: 'Hubungi WhatsApp 0821-2549-2037 atau ikuti Instagram @therainvillas untuk info ketersediaan, tarif, dan jadwal survey villa.',
+  },
+];
 ---
 
 <Layout title="The Rain Villas | Rasakan 24 Jam di Villa Puncak Impianmu" description="Sewa 31 villa private di Puncak Cisarua, Bogor. Private pool, pemandangan gunung, karaoke, billiard, dan fasilitas lengkap mulai Rp1 juta/malam.">
@@ -55,6 +95,8 @@ const allVillas = villas;
   <SatisfactionForm />
 
   <Himbauan />
+
+  <FaqSection faq={homeFaq} />
 
   <LocationSection />
 

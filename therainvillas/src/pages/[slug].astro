@@ -5,6 +5,7 @@ import VillaCard from '../components/VillaCard.astro';
 import CalendarPicker from '../components/CalendarPicker.vue';
 import VillaReviews from '../components/VillaReviews.vue';
 import VillaSorotan from '../components/VillaSorotan.vue';
+import FaqSection from '../components/FaqSection.astro';
 import LocationMap from '../components/LocationMap.vue';
 import { villas } from '../data/villas';
 import { locations } from '../data/locations';
@@ -125,6 +126,37 @@ const heroNotes = [
   `${villa.capacity} tamu maksimal`,
   `${villa.bedrooms} kamar tidur`,
   villa.amenities[0] ?? 'Private villa',
+];
+
+const priceDetail = (villa.pricingLabels ?? [])
+  .map((row) => `${row.label} Rp ${row.price.toLocaleString('id-ID')}`)
+  .join(', ');
+
+const villaFaq = [
+  {
+    q: `Berapa tarif sewa ${villa.name} per malam?`,
+    a: priceDetail ? `${priceDetail} per malam.` : `${villa.priceLabel} per malam.`,
+  },
+  {
+    q: `Berapa kapasitas maksimal ${villa.name}?`,
+    a: `${villa.capacity} tamu.${villa.capacityNote ? ` ${villa.capacityNote}` : ''}`,
+  },
+  {
+    q: `Fasilitas apa saja yang tersedia di ${villa.name}?`,
+    a: `${villa.amenities.join(', ')}.`,
+  },
+  {
+    q: 'Bagaimana cara booking dan kebijakan DP?',
+    a: 'Hubungi admin via WhatsApp 0821-2549-2037, isi formulir booking, lalu bayar DP minimal 30%. Pelunasan wajib H-3 sebelum check-in dan reschedule maksimal H-7 dengan penambahan DP. DP tidak bisa di-refund dalam kondisi apapun.',
+  },
+  {
+    q: `Di mana lokasi ${villa.name} dan bagaimana aksesnya?`,
+    a: `Berlokasi di ${meta.location}, kawasan Cisarua–Puncak, Bogor, Jawa Barat pada ketinggian ±800 mdpl. Hanya sekitar 90 menit dari Jakarta melalui tol Ciawi.`,
+  },
+  {
+    q: 'Berapa jam check-out?',
+    a: 'Check-out wajib dilakukan pukul 12.00. Lebih dari jam tersebut dikenakan charge Rp 500.000.',
+  },
 ];
 ---
 
@@ -400,6 +432,8 @@ const heroNotes = [
         </div>
       </div>
     </section>
+
+    <FaqSection variant="dark" title={`FAQ ${villa.name}`} subtitle={`Pertanyaan umum tentang ${villa.name}`} faq={villaFaq} />
 
     <section class="vd-more section">
       <div class="container">

@@ -1,0 +1,223 @@
+---
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  variant?: 'light' | 'dark';
+  faq: Array<{ q: string; a: string }>;
+}
+
+const { title = 'Pertanyaan Umum', subtitle = 'Jawaban singkat untuk pertanyaan yang paling sering diajukan', variant = 'light', faq } = Astro.props;
+
+const badge = variant === 'dark' ? 'FAQ' : 'Tanya Jawab';
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
+};
+---
+
+<section class:list={['faq', 'section', variant === 'dark' ? 'faq--dark' : '']} id="faq">
+  <div class="container">
+    <div class="faq__header reveal">
+      <span class="faq__badge">{badge}</span>
+      <h2 class="faq__title">{title}</h2>
+      <p class="faq__subtitle">{subtitle}</p>
+    </div>
+
+    <div class="faq__list">
+      {faq.map((item) => (
+        <details class="faq__item reveal">
+          <summary class="faq__question">
+            <span>{item.q}</span>
+            <svg class="faq__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+          </summary>
+          <div class="faq__answer">
+            <p>{item.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+
+<style>
+  .faq {
+    background: var(--color-gray-light);
+  }
+
+  .faq__header {
+    text-align: center;
+    margin-bottom: 44px;
+  }
+
+  .faq__badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #5b8def;
+    background: rgba(91, 141, 239, 0.1);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .faq__title {
+    font-family: var(--font-display);
+    font-size: 2.35rem;
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: 0;
+    margin-bottom: 8px;
+  }
+
+  .faq__subtitle {
+    max-width: 620px;
+    margin: 0 auto;
+    color: var(--color-gray);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  .faq__list {
+    display: grid;
+    gap: 12px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .faq__item {
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    transition: box-shadow 0.25s ease;
+  }
+
+  .faq__item[open] {
+    box-shadow: var(--shadow-lift);
+  }
+
+  .faq__item + .faq__item {
+    margin-top: 0;
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--color-dark);
+    line-height: 1.45;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question:hover {
+    color: var(--color-primary);
+  }
+
+  .faq__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.3s ease;
+    color: var(--color-primary);
+  }
+
+  .faq__item[open] .faq__icon {
+    transform: rotate(180deg);
+  }
+
+  .faq__answer {
+    padding: 0 22px 20px;
+  }
+
+  .faq__answer p {
+    color: var(--color-gray-dark);
+    font-size: 0.93rem;
+    line-height: 1.8;
+  }
+
+  /* ===== dark variant (halaman villa) ===== */
+  .faq--dark {
+    background: #11120f;
+    color: #f4ede3;
+  }
+
+  .faq--dark .faq__badge {
+    color: #a8c3ff;
+    background: rgba(168, 195, 255, 0.12);
+  }
+
+  .faq--dark .faq__title {
+    color: #f4ede3;
+  }
+
+  .faq--dark .faq__subtitle {
+    color: rgba(244, 237, 227, 0.68);
+  }
+
+  .faq--dark .faq__item {
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+  }
+
+  .faq--dark .faq__question {
+    color: #f4ede3;
+  }
+
+  .faq--dark .faq__question:hover {
+    color: #a8c3ff;
+  }
+
+  .faq--dark .faq__icon {
+    color: #a8c3ff;
+  }
+
+  .faq--dark .faq__answer p {
+    color: rgba(244, 237, 227, 0.78);
+  }
+
+  @media (max-width: 768px) {
+    .faq {
+      padding: 64px 0;
+    }
+
+    .faq__title {
+      font-size: 1.7rem;
+    }
+
+    .faq__question {
+      padding: 15px 16px;
+      font-size: 0.94rem;
+    }
+
+    .faq__answer {
+      padding: 0 16px 16px;
+    }
+  }
+</style>

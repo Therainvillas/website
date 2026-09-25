@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://therainvillas.com/sitemap-index.xml

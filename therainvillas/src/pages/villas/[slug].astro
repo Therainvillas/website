@@ -24,6 +24,7 @@ const otherVillas = villas.filter((v) => v.id !== villa.id).slice(0, 3);
 const whatsapp = '6282125492037';
 const waMsg = `Halo The Rain Villas, saya ingin memesan ${villa.name}. Mohon info ketersediaan.`;
 const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(waMsg)}`;
+const villaUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://therainvillas.com/').href;
 
 const localGalleries = {
   'Villa 4D': ['/4D/4d%20(1).jpeg', '/4D/4d%20(2).jpeg', '/4D/4d%20(3).jpeg', '/4D/4d%20(4).jpeg', '/4D/4d%20(5).jpeg', '/4D/4d%20(6).jpeg', '/4D/4d%20(7).jpeg', '/4D/4d%20(8).jpeg', '/4D/4d%20(9).jpeg', '/4D/4d%20(10).jpeg', '/4D/4d%20(11).jpeg', '/4D/4d%20(12).jpeg', '/4D/4d%20(13).jpeg', '/4D/4d%20(14).jpeg', '/4D/4d%20(15).jpeg'],
@@ -61,6 +62,44 @@ const localGalleries = {
 
 const heroImage = villaCovers[villa.name] ?? villa.image;
 const galleryImages = Array.from(new Set([heroImage, ...(localGalleries[villa.name] ?? [])]));
+const villaShareImage = new URL(heroImage, Astro.site ?? 'https://therainvillas.com/').href;
+const villaJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "@id": `${villaUrl}#villa`,
+    "name": villa.name,
+    "image": villaShareImage,
+    "description": villa.description,
+    "url": villaUrl,
+    "priceRange": villa.priceLabel,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Cisarua",
+      "addressRegion": "Jawa Barat",
+      "addressCountry": "ID",
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": villa.coords[0],
+      "longitude": villa.coords[1],
+    },
+    "numberOfRooms": villa.bedrooms,
+    "amenityFeature": villa.amenities.map((a) => ({
+      "@type": "LocationFeatureSpecification",
+      "name": a,
+    })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Beranda", "item": "https://therainvillas.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Villa", "item": "https://therainvillas.com/our-villas/" },
+      { "@type": "ListItem", "position": 3, "name": villa.name, "item": villaUrl },
+    ],
+  },
+];
 
 const villaMeta = {
   'Villa Cyrena': { area: '450 m2', year: '2023', tone: 'Mediterranean Calm', location: 'Cisarua, Bogor' },
@@ -89,7 +128,7 @@ const heroNotes = [
 ];
 ---
 
-<Layout title={`${villa.name} | The Rain Villas`} description={villa.description} showPromo={false}>
+<Layout title={`${villa.name} | The Rain Villas`} description={villa.description} image={heroImage} jsonLd={villaJsonLd} showPromo={false}>
   <main class="villa-detail">
     <section class="vd-showcase" id="top">
       <div class="vd-showcase__media">

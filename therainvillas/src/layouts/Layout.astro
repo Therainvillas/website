@@ -5,17 +5,27 @@ import PromoPopup from '../components/PromoPopup.astro';
 export interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  ogType?: string;
+  noindex?: boolean;
+  jsonLd?: object[];
   showPromo?: boolean;
 }
 
 const {
   title = 'The Rain Villas | Sewa Villa Modern di Puncak',
   description = 'Temukan villa sewa terbaik di Puncak dengan desain simpel dan modern.',
+  image = '/Agave/Cover.jpg',
+  ogType = 'website',
+  noindex = false,
+  jsonLd = [],
   showPromo = true,
 } = Astro.props;
 
 const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
+const shareImage = new URL(image, siteRoot).href;
+const isHome = Astro.url.pathname === '/';
 ---
 
 <!DOCTYPE html>
@@ -26,7 +36,8 @@ const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
       document.documentElement.classList.replace('no-js', 'js');
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <meta name="theme-color" content="#11120f" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
@@ -46,11 +57,17 @@ const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
     </noscript>
     <link rel="preload" as="image" href="/display-poster.webp" fetchpriority="high" />
 
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:site_name" content="The Rain Villas" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={shareImage} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
 
     <script is:inline>
       (function () {
@@ -70,6 +87,25 @@ const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
       "description": description,
       "inLanguage": "id",
     })} />
+    {isHome && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "The Rain Villas",
+        "url": "https://therainvillas.com",
+        "logo": "https://therainvillas.com/logo%20trv2.png",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+6282125492037",
+          "contactType": "customer service",
+          "areaServed": "ID",
+          "availableLanguage": "Indonesian",
+        },
+      })} />
+    )}
+    {jsonLd.map((schema) => (
+      <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    ))}
   </head>
   <body>
     <slot />

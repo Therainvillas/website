@@ -27,6 +27,44 @@ const props = defineProps({
   subtitle: { type: String, default: 'Jarak dari kantor The Rain Villas, Puncak' },
 });
 
+function crPath(pts) {
+  const n = pts.length;
+  if (n < 2) return '';
+  let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[Math.min(n - 1, i + 2)];
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += ` C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+
+function windingPath(x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const px = -uy;
+  const py = ux;
+  const amp = Math.min(46, Math.max(18, len * 0.1));
+  const lobes = 1.5;
+  const steps = Math.max(16, Math.round(len / 14));
+  const pts = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const off = amp * Math.sin(t * Math.PI * 2 * lobes);
+    pts.push([x1 + dx * t + px * off, y1 + dy * t + py * off]);
+  }
+  return crPath(pts);
+}
+
 const EARTH_RADIUS_KM = 6371;
 
 function haversineKm(lat1, lng1, lat2, lng2) {
@@ -75,6 +113,7 @@ function updateLine(id) {
     y1: op.y,
     x2: dp.x,
     y2: dp.y,
+    d: windingPath(op.x, op.y, dp.x, dp.y),
     cx: (op.x + dp.x) / 2,
     cy: (op.y + dp.y) / 2,
     name: villa.name,
@@ -147,7 +186,7 @@ onMounted(async () => {
   props.villas.forEach((v) => {
     const icon = L.divIcon({
       className: 'vdm-icon',
-      html: `<div class="vdm-villa" data-vdm-id="${String(v.id)}"><span class="vdm-villa-pin"></span><span class="vdm-villa-name">${v.name}</span></div>`,
+      html: `<div class="vdm-villa" data-vdm-id="${String(v.id)}"><span class="vdm-villa-icon"><img src="/pin.png" alt="" /></span><span class="vdm-villa-name">${v.name}</span></div>`,
       iconSize: [0, 0],
       iconAnchor: [0, 0],
     });
@@ -203,7 +242,7 @@ onBeforeUnmount(() => {
         :viewBox="`0 0 ${viewport.w} ${viewport.h}`"
         aria-hidden="true"
       >
-        <line class="vdm-line" :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2" />
+        <path class="vdm-line" :d="line.d" />
         <circle class="vdm-dot" :cx="line.cx" :cy="line.cy" r="4.5" />
       </svg>
 
@@ -327,6 +366,7 @@ onBeforeUnmount(() => {
   overflow: visible;
 }
 .vdm-line {
+  fill: none;
   stroke: var(--vdm-gold);
   stroke-width: 3;
   stroke-linecap: round;
@@ -460,27 +500,31 @@ onBeforeUnmount(() => {
   width: 0;
   height: 0;
 }
-.vdm-villa-pin {
+.vdm-villa-icon {
   position: absolute;
-  left: -9px;
-  top: -9px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #bcc89e, var(--vdm-sage) 70%);
-  border: 2.5px solid #fff;
-  box-shadow: 0 4px 12px rgba(20, 39, 26, 0.35);
+  left: -15px;
+  top: -15px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(20, 39, 26, 0.4));
   transition:
     transform 0.15s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease;
+    filter 0.15s ease;
   cursor: pointer;
   z-index: 1;
+}
+.vdm-villa-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .vdm-villa-name {
   position: absolute;
   left: 0;
-  top: 17px;
+  top: 20px;
   transform: translateX(-50%);
   padding: 3px 9px;
   border-radius: 999px;
@@ -496,13 +540,10 @@ onBeforeUnmount(() => {
   line-height: 1.25;
   z-index: 1;
 }
-.vdm-villa:hover .vdm-villa-pin,
-.vdm-villa--active .vdm-villa-pin {
-  background: radial-gradient(circle at 30% 30%, var(--vdm-gold-soft), var(--vdm-gold) 75%);
+.vdm-villa:hover .vdm-villa-icon,
+.vdm-villa--active .vdm-villa-icon {
   transform: scale(1.25);
-  box-shadow:
-    0 0 0 4px rgba(213, 166, 46, 0.3),
-    0 6px 16px rgba(20, 39, 26, 0.4);
+  filter: drop-shadow(0 4px 10px rgba(20, 39, 26, 0.45)) drop-shadow(0 0 6px rgba(213, 166, 46, 0.9));
 }
 .vdm-villa:hover .vdm-villa-name,
 .vdm-villa--active .vdm-villa-name {

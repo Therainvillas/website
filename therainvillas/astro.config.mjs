@@ -6,4 +6,9 @@ export default defineConfig({
   image: {
     domains: ['assets.zyrosite.com'],
   },
+  vite: {
+    build: {
+      cssMinify: 'esbuild',
+    },
+  },
 });

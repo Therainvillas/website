@@ -1,3 +1,5 @@
+import { slugify } from '../lib/slugify.js';
+
 export const villas = [
   {
     id: 1,
@@ -736,6 +738,10 @@ export const villas = [
     unavailable: [],
   },
 ];
+
+for (const villa of villas) {
+  villa.slug = slugify(villa.name);
+}
 
 export const amenities = [
   {

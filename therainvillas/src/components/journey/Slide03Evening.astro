@@ -1,5 +1,6 @@
 ---
 import { villas } from '../../data/villas';
+import { slugify } from '../../lib/slugify.js';
 
 const thumbMap = {
   'Villa Cyrena': 'Cyrena Thumb.jpg',
@@ -34,7 +35,7 @@ function getVillaImage(name, fallback) {
             <span>👥 {villa.capacity} tamu</span>
             <span>{villa.priceLabel}</span>
           </div>
-          <a href={`/villas/${villa.id}`} class="evening__slide-cta">Lihat Detail</a>
+          <a href={`/villas/${slugify(villa.name)}`} class="evening__slide-cta">Lihat Detail</a>
         </div>
       </div>
     ))}

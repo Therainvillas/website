@@ -103,6 +103,7 @@
 </section>
 
 <script>
+  const slugify = (s) => String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const villasData = [
     { id: 8, name: "Villa Cyrena", price: "Rp 1.200.000/malam", image: "/thumbnail/Cyrena%20Thumb.jpg", desc: "Villa elegan dengan private pool dan area bersantai. Cocok untuk liburan keluarga atau kumpul teman." },
     { id: 10, name: "Villa Cempaka", price: "Rp 1.200.000/malam", image: "/thumbnail/Cempaka%20Thumb.jpg", desc: "Villa bergaya Eropa dengan arsitektur klasik elegan, private pool, dan taman mediterania." },
@@ -195,7 +196,7 @@
           <p class="quiz__result-desc">${villa.desc}</p>
           <div class="quiz__result-price">${villa.price}</div>
           <div class="quiz__result-actions">
-            <a href="/villas/${villa.id}" class="quiz__result-btn quiz__result-btn--detail">Lihat Detail</a>
+            <a href="/villas/${slugify(villa.name)}" class="quiz__result-btn quiz__result-btn--detail">Lihat Detail</a>
             <a href="https://wa.me/6282125492037?text=Halo%20The%20Rain%20Villas%2C%20saya%20dapat%20rekomendasi%20${encodeURIComponent(villa.name)}%20dari%20quiz.%20Mohon%20info%20ketersediaan." target="_blank" rel="nofollow" class="quiz__result-btn quiz__result-btn--wa">Pesan via WhatsApp</a>
           </div>
         </div>

@@ -10,6 +10,7 @@
 
 <script>
 import { OFFICE, locations } from '../data/locations.js';
+import { slugify } from '../lib/slugify.js';
 
 export default {
   props: {
@@ -92,7 +93,7 @@ export default {
         const marker = L.marker([v.lat, v.lng], { icon: divIcon })
           .addTo(this.map)
           .on('click', () => {
-            this.openVilla(v.id);
+            this.openVilla(v);
           });
 
         marker.bindPopup(
@@ -125,8 +126,8 @@ export default {
         .replace(/^Villa\s+/i, '')
         .replace(/^Rjs\s+cottage\s+/i, 'RJS ');
     },
-    openVilla(id) {
-      window.location.href = `/villas/${id}`;
+    openVilla(v) {
+      window.location.href = `/villas/${slugify(v.name)}`;
     },
   },
 };

@@ -12,7 +12,7 @@ import { villaCovers } from '../../data/covers';
 
 export function getStaticPaths() {
   return villas.map((villa) => ({
-    params: { id: String(villa.id) },
+    params: { slug: villa.slug },
     props: { villa },
   }));
 }

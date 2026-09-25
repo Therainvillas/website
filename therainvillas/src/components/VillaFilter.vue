@@ -78,7 +78,7 @@
 
     <div class="vf__grid">
       <div v-for="villa in paginated" :key="villa.id" class="vf__card-wrap">
-        <a :href="`/villas/${villa.id}`" class="vf-card">
+        <a :href="`/villas/${slugify(villa.name)}`" class="vf-card">
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
@@ -242,6 +242,9 @@ export default {
     formatPrice(n) {
       if (!n) return 'Cek harga';
       return 'Rp ' + Number(n).toLocaleString('id-ID');
+    },
+    slugify(s) {
+      return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     },
     toggleDrop(name) {
       this.openDrop = this.openDrop === name ? null : name;

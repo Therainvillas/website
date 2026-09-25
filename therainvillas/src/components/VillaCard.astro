@@ -1,4 +1,6 @@
 ---
+import { slugify } from '../lib/slugify.js';
+
 interface Props {
   id: number;
   name: string;
@@ -28,7 +30,7 @@ const {
 } = Astro.props;
 
 const priceText = price ?? priceLabel ?? 'Cek harga';
-const link = `/villas/${id}`;
+const link = `/villas/${slugify(name)}`;
 ---
 
 <article class="villa-card">

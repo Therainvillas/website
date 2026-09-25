@@ -118,6 +118,7 @@ export const villas = [
   {
     id: 6,
     name: "Villa Calmora",
+    badge: "⭐ Best Seller",
     scheduleName: "calmora",
     description: "Villa dengan best view pegunungan dan citylight, private pool, dan gazebo. Cocok untuk liburan santai.",
     price: 1700000,

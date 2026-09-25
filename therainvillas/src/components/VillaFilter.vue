@@ -81,6 +81,7 @@
         <a :href="`/villas/${villa.id}`" class="vf-card">
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
+            <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
             <span class="vf-card__price">{{ villa.priceLabel || formatPrice(villa.price) }}</span>
           </div>
           <div class="vf-card__body">
@@ -496,6 +497,21 @@ export default {
   color: #fff;
   background: rgba(91, 141, 239, 0.92);
   backdrop-filter: blur(4px);
+}
+
+.vf-card__badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #4a2c00;
+  background: linear-gradient(135deg, #ffd76a 0%, #ffb84d 55%, #ff9d2e 100%);
+  box-shadow: 0 6px 18px rgba(255, 170, 40, 0.45);
+  letter-spacing: 0.2px;
 }
 
 .vf-card__body {

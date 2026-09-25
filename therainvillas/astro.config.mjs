@@ -5,13 +5,18 @@ import { villas } from './src/data/villas.js';
 
 export default defineConfig({
   site: 'https://therainvillas.com',
-  redirects: Object.fromEntries(
-    villas.map((villa) => [`/villas/${villa.id}`, `/villas/${villa.slug}`]),
-  ),
+  redirects: {
+    ...Object.fromEntries(
+      villas.map((villa) => [`/villas/${villa.id}`, `/${villa.slug}`]),
+    ),
+    ...Object.fromEntries(
+      villas.map((villa) => [`/villas/${villa.slug}`, `/${villa.slug}`]),
+    ),
+  },
   integrations: [
     vue(),
     sitemap({
-      filter: (page) => !page.includes('/admin/') && !/\/villas\/\d+/.test(page),
+      filter: (page) => !page.includes('/admin/') && !page.includes('/villas/'),
     }),
   ],
   image: {

@@ -1,14 +1,14 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import WhatsAppBubble from '../../components/WhatsAppBubble.astro';
-import VillaCard from '../../components/VillaCard.astro';
-import CalendarPicker from '../../components/CalendarPicker.vue';
-import VillaReviews from '../../components/VillaReviews.vue';
-import VillaSorotan from '../../components/VillaSorotan.vue';
-import LocationMap from '../../components/LocationMap.vue';
-import { villas } from '../../data/villas';
-import { locations } from '../../data/locations';
-import { villaCovers } from '../../data/covers';
+import Layout from '../layouts/Layout.astro';
+import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import VillaCard from '../components/VillaCard.astro';
+import CalendarPicker from '../components/CalendarPicker.vue';
+import VillaReviews from '../components/VillaReviews.vue';
+import VillaSorotan from '../components/VillaSorotan.vue';
+import LocationMap from '../components/LocationMap.vue';
+import { villas } from '../data/villas';
+import { locations } from '../data/locations';
+import { villaCovers } from '../data/covers';
 
 export function getStaticPaths() {
   return villas.map((villa) => ({

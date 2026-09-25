@@ -78,7 +78,7 @@
 
     <div class="vf__grid">
       <div v-for="villa in paginated" :key="villa.id" class="vf__card-wrap">
-        <a :href="`/villas/${slugify(villa.name)}`" class="vf-card">
+        <a :href="`/${slugify(villa.name)}`" class="vf-card">
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>

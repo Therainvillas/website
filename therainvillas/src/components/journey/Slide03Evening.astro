@@ -35,7 +35,7 @@ function getVillaImage(name, fallback) {
             <span>👥 {villa.capacity} tamu</span>
             <span>{villa.priceLabel}</span>
           </div>
-          <a href={`/villas/${slugify(villa.name)}`} class="evening__slide-cta">Lihat Detail</a>
+          <a href={`/${slugify(villa.name)}`} class="evening__slide-cta">Lihat Detail</a>
         </div>
       </div>
     ))}

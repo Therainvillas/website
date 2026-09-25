@@ -127,7 +127,7 @@ export default {
         .replace(/^Rjs\s+cottage\s+/i, 'RJS ');
     },
     openVilla(v) {
-      window.location.href = `/villas/${slugify(v.name)}`;
+      window.location.href = `/${slugify(v.name)}`;
     },
   },
 };

@@ -30,7 +30,7 @@ const {
 } = Astro.props;
 
 const priceText = price ?? priceLabel ?? 'Cek harga';
-const link = `/villas/${slugify(name)}`;
+const link = `/${slugify(name)}`;
 ---
 
 <article class="villa-card">

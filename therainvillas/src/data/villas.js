@@ -377,6 +377,7 @@ export const villas = [
   {
     id: 17,
     name: "Villa Kaca 1",
+    badge: "New",
     scheduleName: "kaca 1",
     description: "Villa mega dengan gazebo, halaman, dan private pool. Cocok untuk acara besar dan gathering.",
     price: 2500000,
@@ -401,6 +402,7 @@ export const villas = [
   {
     id: 18,
     name: "Villa Kaca 2",
+    badge: "New",
     scheduleName: "kaca 2",
     description: "Villa compact dengan karaoke, billiard, dan chill space. Cocok untuk staycation santai bersama teman.",
     price: 1500000,
@@ -663,6 +665,7 @@ export const villas = [
   {
     id: 29,
     name: "Villa Rio 5",
+    badge: "New",
     scheduleName: "rio",
     description: "Villa dengan lapang bola mini soccer, gazebo, dan halaman luas. Cocok untuk gathering sportif keluarga.",
     price: 1300000,

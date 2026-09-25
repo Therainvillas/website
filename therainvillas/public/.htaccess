@@ -1,3 +1,38 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^villas/1/?$ /villas/villa-agave [R=301,L]
+  RewriteRule ^villas/2/?$ /villas/villa-wanela [R=301,L]
+  RewriteRule ^villas/3/?$ /villas/villa-cemara [R=301,L]
+  RewriteRule ^villas/4/?$ /villas/villa-aleia [R=301,L]
+  RewriteRule ^villas/5/?$ /villas/villa-4d [R=301,L]
+  RewriteRule ^villas/6/?$ /villas/villa-calmora [R=301,L]
+  RewriteRule ^villas/7/?$ /villas/villa-twins [R=301,L]
+  RewriteRule ^villas/8/?$ /villas/villa-cyrena [R=301,L]
+  RewriteRule ^villas/9/?$ /villas/villa-arisyfa [R=301,L]
+  RewriteRule ^villas/10/?$ /villas/villa-cempaka [R=301,L]
+  RewriteRule ^villas/11/?$ /villas/villa-arsy [R=301,L]
+  RewriteRule ^villas/12/?$ /villas/villa-rayya [R=301,L]
+  RewriteRule ^villas/13/?$ /villas/villa-opung [R=301,L]
+  RewriteRule ^villas/14/?$ /villas/rjs-cottage-1 [R=301,L]
+  RewriteRule ^villas/15/?$ /villas/rjs-cottage-2 [R=301,L]
+  RewriteRule ^villas/16/?$ /villas/rjs-cottage-3 [R=301,L]
+  RewriteRule ^villas/17/?$ /villas/villa-kaca-1 [R=301,L]
+  RewriteRule ^villas/18/?$ /villas/villa-kaca-2 [R=301,L]
+  RewriteRule ^villas/19/?$ /villas/villa-de-summit [R=301,L]
+  RewriteRule ^villas/20/?$ /villas/villa-bodas [R=301,L]
+  RewriteRule ^villas/21/?$ /villas/villa-thymi [R=301,L]
+  RewriteRule ^villas/22/?$ /villas/villa-albi [R=301,L]
+  RewriteRule ^villas/23/?$ /villas/villa-valora [R=301,L]
+  RewriteRule ^villas/24/?$ /villas/echa-village [R=301,L]
+  RewriteRule ^villas/25/?$ /villas/villa-awan [R=301,L]
+  RewriteRule ^villas/26/?$ /villas/villa-baduo [R=301,L]
+  RewriteRule ^villas/27/?$ /villas/villa-hala [R=301,L]
+  RewriteRule ^villas/28/?$ /villas/villa-ranna [R=301,L]
+  RewriteRule ^villas/29/?$ /villas/villa-rio-5 [R=301,L]
+  RewriteRule ^villas/30/?$ /villas/the-herlina [R=301,L]
+  RewriteRule ^villas/31/?$ /villas/villa-hariza [R=301,L]
+</IfModule>
+
 <IfModule mod_headers.c>
   <FilesMatch "^(robots\.txt|sitemap-index\.xml|sitemap-0\.xml)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"

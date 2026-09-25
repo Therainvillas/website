@@ -4,6 +4,7 @@ import WhatsAppBubble from '../../components/WhatsAppBubble.astro';
 import VillaCard from '../../components/VillaCard.astro';
 import CalendarPicker from '../../components/CalendarPicker.vue';
 import VillaReviews from '../../components/VillaReviews.vue';
+import VillaSorotan from '../../components/VillaSorotan.vue';
 import LocationMap from '../../components/LocationMap.vue';
 import { villas } from '../../data/villas';
 import { locations } from '../../data/locations';
@@ -326,6 +327,12 @@ const heroNotes = [
       </div>
     </section>
 
+    <div class="vd-sorotan">
+      <div class="container">
+        <VillaSorotan client:load images={galleryImages} villaName={villa.name} />
+      </div>
+    </div>
+
     <section class="vd-reviews section" id="ulasan">
       <div class="container">
         <div class="vd-reviews__head reveal">
@@ -449,6 +456,17 @@ const heroNotes = [
     stroke-linejoin: round;
     display: block;
     flex-shrink: 0;
+  }
+
+  .vd-sorotan {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(180deg, #15161b 0%, #11120f 100%);
+    padding: clamp(30px, 5vh, 52px) 0 clamp(10px, 2vh, 22px);
+  }
+
+  .vd-sorotan .container {
+    max-width: 1320px;
   }
 
   /* ===== top bar ===== */

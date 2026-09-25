@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
 
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: claudebot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
 Sitemap: https://therainvillas.com/sitemap-index.xml

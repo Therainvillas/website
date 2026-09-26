@@ -91,7 +91,7 @@ const promoFaq = [
             </div>
             <p class="promo-card__period">Berlaku {fmtDate(p.validFrom)} s.d. {fmtDate(p.validUntil)} — {fmtTime(p.validUntil)} WIB</p>
             <div class="promo-card__claim-gate" data-claim-gate data-proof-api={PROOF_API}>
-              <p class="promo-card__gate-note">🔒 Kode tersembunyi. Untuk membuka kode: 1) beri rating di Google Maps kantor The Rain Villas, 2) ambil screenshot buktinya, 3) upload bukti, lalu klik "Kirim Bukti &amp; Buka Kode" — kode terbuka setelah bukti masuk ke admin dan berlaku 10 menit (habis tempo akan tertutup kembali).</p>
+              <p class="promo-card__gate-note">🔒 Kode tersembunyi. Untuk membuka kode: 1) beri rating di Google Maps kantor The Rain Villas, 2) ambil screenshot buktinya, 3) upload bukti, lalu klik "Kirim Bukti &amp; Buka Kode" — kode terbuka setelah bukti masuk ke admin dan berlaku 2 menit (habis tempo akan tertutup kembali).</p>
               <a class="btn btn--primary promo-card__rate" href={MAPS_RATING_URL} target="_blank" rel="noopener" data-rate-btn>
                 ★ Rating di Google Maps
               </a>
@@ -204,7 +204,7 @@ const promoFaq = [
   <script>
     (function () {
       var CLAIM_KEY = 'trv_promo_claimed';
-      var CLAIM_TTL_MS = 10 * 60 * 1000;
+      var CLAIM_TTL_MS = 2 * 60 * 1000;
       function readCookieClaims() {
         try {
           var m = document.cookie.match(/(?:^|;\s*)trv_promo_claimed=([^;]*)/);
@@ -294,7 +294,7 @@ const promoFaq = [
           gate.PENDING = null;
           if (input) input.value = '';
           if (submitBtn) submitBtn.disabled = true;
-          setStatus('⏰ Waktu kode terbuka habis (10 menit). Ulangi rating & upload bukti untuk membuka lagi.', 'wait');
+          setStatus('⏰ Waktu kode terbuka habis (2 menit). Ulangi rating & upload bukti untuk membuka lagi.', 'wait');
         }
         function startCountdown(ts) {
           var labelEl = card.querySelector('[data-unlocked-label]');

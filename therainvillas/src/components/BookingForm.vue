@@ -850,7 +850,7 @@ export default {
         const key = String(code).trim().toUpperCase();
         const val = claims[key];
         if (val === true) return true;
-        return typeof val === 'number' && Date.now() - val <= 10 * 60 * 1000;
+        return typeof val === 'number' && Date.now() - val <= 2 * 60 * 1000;
       } catch (e) {
         return false;
       }

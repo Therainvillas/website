@@ -36,7 +36,7 @@
 
     <div class="journey-hero__stats reveal reveal--delay-4">
       <div class="journey-hero__stat">
-        <span class="journey-hero__stat-number">30</span>
+        <span class="journey-hero__stat-number">31</span>
         <span class="journey-hero__stat-label">Pilihan Villa</span>
       </div>
       <div class="journey-hero__stat">
@@ -44,8 +44,8 @@
         <span class="journey-hero__stat-label">Tamu Terlayani</span>
       </div>
       <div class="journey-hero__stat">
-        <span class="journey-hero__stat-number">DP 30%</span>
-        <span class="journey-hero__stat-label">Reservasi Aman</span>
+        <span class="journey-hero__stat-number">4.9 <svg class="journey-hero__stat-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.94 6.26 6.87.87-5.06 4.73 1.3 6.79L12 17.27l-6.05 3.38 1.3-6.79L2.19 9.13l6.87-.87z" /></svg></span>
+        <span class="journey-hero__stat-label">Rating Bintang</span>
       </div>
     </div>
   </div>
@@ -248,11 +248,20 @@
   }
 
   .journey-hero__stat-number {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     color: #fff;
     font-size: 1.6rem;
     font-weight: 800;
     line-height: 1;
+  }
+
+  .journey-hero__stat-star {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    fill: #ffd76a;
   }
 
   .journey-hero__stat-label {

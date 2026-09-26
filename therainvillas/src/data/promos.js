@@ -29,7 +29,7 @@ export const MAPS_RATING_URL =
 //  - upload wajib tersimpan di backend sebelum kode promo terbuka,
 //  - halaman admin (admin/dashboard) menampilkan daftar bukti dari endpoint ini.
 export const PROOF_API =
-  'https://script.google.com/macros/s/AKfycbyvTQNPGcR8ojq4kXtsxBuyRgggx9UmhgLOtBlOMCrwEl0AEGrJtq9a_RiJ3OYconY/exec';
+  'https://script.google.com/macros/s/AKfycbzYIxSBifJSKu-9On1GfHHQpGMo73RzoccC52m0nJQoQEV2S-6FjpoTTmuAV6bfmHor/exec';
 
 export function getPromoStatus(promo, now = new Date()) {
   if (!promo) return 'expired';

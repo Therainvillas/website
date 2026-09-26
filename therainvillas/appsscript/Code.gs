@@ -30,12 +30,15 @@
  *
  * PENYIMPANAN:
  *  - Screenshot disimpan sebagai file di folder Drive "TheRainVillas Proofs".
- *  - Metadata tercatat di Spreadsheet "TheRainVillas Bukti Rating" (sheet "Bukti Rating").
+ *  - Metadata + gambar bukti tercatat di Spreadsheet "TheRainVillas Bukti Rating"
+ *    (sheet "Bukti Rating", kolom: id, waktu, kode, nama_file, mime, file_id, bukti).
+ *    Gambar bukti disisipkan sebagai gambar dalam kolom "bukti" tiap baris.
  */
 
 var FOLDER_NAME = 'TheRainVillas Proofs';
 var SHEET_NAME = 'Bukti Rating';
 var MAX_LIST = 40;
+var HEADER = ['id', 'waktu', 'kode', 'nama_file', 'mime', 'file_id', 'bukti'];
 
 function setupStorage() {
   var props = PropertiesService.getScriptProperties();
@@ -56,7 +59,11 @@ function setupStorage() {
   var sh = ss.getSheetByName(SHEET_NAME);
   if (!sh) {
     sh = ss.insertSheet(SHEET_NAME);
-    sh.appendRow(['id', 'waktu', 'kode', 'nama_file', 'mime', 'file_id']);
+    sh.appendRow(HEADER);
+  } else if (sh.getLastColumn() < HEADER.length) {
+    var start = sh.getLastColumn() + 1;
+    sh.getRange(1, start, 1, HEADER.length - start + 1)
+      .setValues([HEADER.slice(start - 1)]);
   }
   return { folder: folder, ss: ss, sh: sh };
 }
@@ -127,6 +134,9 @@ function addProof_(req) {
   var ts = new Date().toISOString();
 
   st.sh.appendRow([id, ts, code, name, type, file.getId()]);
+  try {
+    st.sh.insertImage(blob, 7, st.sh.getLastRow(), 0, 0, 180, 180);
+  } catch (e) {}
   return { ok: true, id: id, ts: ts };
 }
 

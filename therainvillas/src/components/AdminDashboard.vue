@@ -13,6 +13,36 @@
     </div>
 
     <div v-else class="dashboard__content">
+      <!-- ===== BUKTI RATING ===== -->
+      <div class="dashboard__proof-section">
+        <div class="dashboard__proof-head">
+          <div>
+            <h2>Bukti Rating & Klaim Voucher</h2>
+            <p class="dashboard__proof-sub">Screenshot rating Google Maps yang diupload pengunjung untuk membuka kode promo.</p>
+          </div>
+          <button @click="loadProofs" class="dashboard__proof-refresh" :disabled="proofsLoading">
+            {{ proofsLoading ? 'Memuat…' : 'Refresh' }}
+          </button>
+        </div>
+
+        <p v-if="proofsStatus" class="dashboard__proof-status" :class="{ 'dashboard__proof-status--ok': proofs.length }">{{ proofsStatus }}</p>
+
+        <div v-if="proofs.length" class="dashboard__proof-grid">
+          <div v-for="p in proofs" :key="p.id" class="dashboard__proof-card">
+            <img v-if="p.data" :src="p.data" :alt="p.name" class="dashboard__proof-thumb" @click="openProof(p.data)" />
+            <div v-else class="dashboard__proof-thumb dashboard__proof-thumb--empty">gambar tidak tersedia</div>
+            <div class="dashboard__proof-meta">
+              <div class="dashboard__booking-title-row">
+                <span class="dashboard__badge-status dashboard__badge-status--pending">Voucher {{ p.code || '-' }}</span>
+              </div>
+              <p class="dashboard__proof-name">{{ p.name }}</p>
+              <p class="dashboard__proof-date">{{ proofDate(p.ts) }}</p>
+            </div>
+            <button @click="deleteProof(p.id)" class="dashboard__proof-delete">Hapus</button>
+          </div>
+        </div>
+      </div>
+
       <!-- ===== KALENDER BLOKIR ===== -->
       <div class="dashboard__calendar-wrap">
         <div v-for="villa in villas" :key="villa.id" class="dashboard__villa">
@@ -61,9 +91,18 @@
       </div>
     </div>
   </div>
+
+  <div v-if="proofLightbox" class="dashboard__lightbox" @click="closeProof">
+    <div class="dashboard__lightbox-inner" @click.stop>
+      <img :src="proofLightbox" alt="Bukti rating rating" />
+      <button class="dashboard__lightbox-close" @click="closeProof">×</button>
+    </div>
+  </div>
 </template>
 
 <script>
+import { PROOF_API } from "../data/promos.js";
+
 const STORAGE_KEY = "therainvillas_blocked";
 
 function loadBlocked() {
@@ -88,6 +127,10 @@ export default {
       authenticated: false,
       villas: [],
       calendarDates: {},
+      proofs: [],
+      proofsLoading: false,
+      proofsStatus: "",
+      proofLightbox: "",
     };
   },
   async mounted() {
@@ -97,6 +140,9 @@ export default {
     this.villas.forEach((v) => {
       this.calendarDates[v.id] = { month: new Date().getMonth(), year: new Date().getFullYear() };
     });
+    if (this.authenticated) {
+      this.loadProofs();
+    }
   },
   methods: {
     getBlocked() {
@@ -196,6 +242,79 @@ export default {
     handleLogout() {
       localStorage.removeItem("therainvillas_admin");
       window.location.href = "/admin";
+    },
+    proofDate(ts) {
+      if (!ts) return "";
+      try {
+        return new Date(ts).toLocaleString("id-ID", {
+          day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
+        });
+      } catch (e) {
+        return ts;
+      }
+    },
+    loadProofs() {
+      if (!PROOF_API) {
+        this.proofs = [];
+        this.proofsStatus = "PROOF_API belum diisi di src/data/promos.js. Setelah deploy backend (appsscript/Code.gs), isi URL lalu build ulang.";
+        return;
+      }
+      this.proofsLoading = true;
+      this.proofsStatus = "";
+      const self = this;
+      const onData = (data) => {
+        self.proofsLoading = false;
+        if (data && data.ok && Array.isArray(data.items)) {
+          self.proofs = data.items;
+          self.proofsStatus = self.proofs.length ? "" : "Belum ada bukti rating terkirim.";
+        } else {
+          self.proofsStatus = "Respon backend tidak valid.";
+        }
+      };
+      const onErr = () => {
+        self.proofsLoading = false;
+        self.proofsStatus = "Gagal memuat bukti dari backend. Coba refresh.";
+      };
+      const cb = "__trvProofs" + Math.floor(Math.random() * 1e9);
+      window[cb] = (data) => {
+        delete window[cb];
+        onData(data);
+      };
+      const url = PROOF_API + (PROOF_API.indexOf("?") > -1 ? "&" : "?") + "action=listProofs&limit=40&callback=" + cb;
+      const s = document.createElement("script");
+      s.src = url;
+      const timer = window.setTimeout(() => {
+        if (window[cb]) {
+          delete window[cb];
+          onErr();
+        }
+      }, 15000);
+      s.onerror = () => {
+        window.clearTimeout(timer);
+        delete window[cb];
+        onErr();
+      };
+      s.onload = () => window.clearTimeout(timer);
+      document.head.appendChild(s);
+    },
+    deleteProof(id) {
+      if (!PROOF_API) return;
+      if (!window.confirm("Hapus bukti ini?")) return;
+      const self = this;
+      fetch(PROOF_API, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "deleteProof", id: id }),
+      })
+        .then(() => self.loadProofs())
+        .catch(() => self.loadProofs());
+    },
+    openProof(data) {
+      this.proofLightbox = data;
+    },
+    closeProof() {
+      this.proofLightbox = "";
     },
   },
 };
@@ -759,6 +878,117 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ===== PROOF SECTION ===== */
+.dashboard__proof-section {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+}
+.dashboard__proof-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.dashboard__proof-head h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.dashboard__proof-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+.dashboard__proof-refresh {
+  background: #0d1b2b;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.dashboard__proof-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.dashboard__proof-status {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin: 0 0 14px;
+}
+.dashboard__proof-status--ok {
+  color: #64748b;
+}
+.dashboard__proof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.dashboard__proof-card {
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  padding: 10px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dashboard__proof-thumb {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: zoom-in;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+.dashboard__proof-thumb--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  cursor: default;
+}
+.dashboard__proof-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dashboard__proof-name {
+  font-size: 0.8rem;
+  color: #334155;
+  margin: 0;
+  word-break: break-all;
+}
+.dashboard__proof-date {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin: 0;
+}
+.dashboard__proof-delete {
+  align-self: flex-start;
+  background: none;
+  border: 1.5px solid #fecaca;
+  color: #dc2626;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dashboard__proof-delete:hover {
+  background: #fef2f2;
 }
 
 /* ===== CALENDAR (same as before) ===== */

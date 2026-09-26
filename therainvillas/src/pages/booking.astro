@@ -4,9 +4,10 @@ import Header from '../components/Header.astro';
 import BookingForm from '../components/BookingForm.vue';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import { promoOfferJsonLd } from '../data/promos.js';
 ---
 
-<Layout title="Booking Villa | The Rain Villas" description="Reservasi villa Puncak. Isi format booking lalu kirim langsung ke WhatsApp admin The Rain Villas." showPromo={false}>
+<Layout title="Booking Villa | The Rain Villas" description="Reservasi villa Puncak. Isi format booking lalu kirim langsung ke WhatsApp admin The Rain Villas." showPromo={false} jsonLd={[promoOfferJsonLd]}>
   <Header />
   <main class="booking-page">
     <div class="container">
@@ -14,6 +15,11 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
         <span class="booking-page__badge">Reservasi Online</span>
         <h1>Booking Villa</h1>
         <p>Isi format booking di bawah lengkap sesuai villa & tanggal.<br/>Format terisi otomatis dikirim ke WhatsApp admin The Rain Villas.</p>
+      </div>
+
+      <div class="booking-page__promo">
+        <span class="booking-page__promo-icon">🎟️</span>
+        <p>Klaim kode promo di halaman <a href="/promo">Promo</a> — potongan 10% dari subtotal menginap villa. Berlaku s.d. <strong>30 September 2026</strong> untuk semua villa, <strong>kecuali</strong> Rjs Cottage 1–3 dan Villa Kaca 1–2.</p>
       </div>
 
       <div class="booking-page__features">
@@ -94,6 +100,36 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
     margin: 0 auto;
     line-height: 1.7;
     font-size: 0.95rem;
+  }
+
+  .booking-page__promo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 580px;
+    margin: 0 auto 36px;
+    background: linear-gradient(135deg, rgba(91,141,239,0.08), rgba(122,92,224,0.06));
+    border: 1px dashed rgba(122, 92, 224, 0.4);
+    border-radius: 14px;
+    padding: 12px 18px;
+  }
+  .booking-page__promo-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .booking-page__promo p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.6;
+  }
+  .booking-page__promo strong {
+    color: #7a5ce0;
+  }
+  .booking-page__promo a {
+    color: #7a5ce0;
+    font-weight: 700;
+    text-decoration: underline;
   }
 
   .booking-page__features {

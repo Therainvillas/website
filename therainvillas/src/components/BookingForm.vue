@@ -166,12 +166,49 @@
               <p class="bf__cal-legend">Tanggal yang dicoret sudah terbooking dan tidak dapat dipilih sebagai check-in.</p>
             </div>
 
+            <p v-if="nightCount === 0 && (promoStatus === 'invalid' || promoStatus === 'expired')" class="bf__promo-msg bf__promo-msg--err">{{ promoMessage }}</p>
+
             <div v-if="nightCount > 0" class="bf__price-card">
               <div class="bf__price-row">
                 <span>{{ nightCount }} malam</span>
                 <strong>Rp {{ totalPrice }}</strong>
               </div>
               <div class="bf__price-note">Harga dihitung otomatis berdasarkan hari menginap</div>
+
+              <div class="bf__promo">
+                <div class="bf__promo-head">
+                  <span class="bf__promo-title">🎟️ Kode Promo</span>
+                  <button
+                    v-if="promoApplied"
+                    type="button"
+                    class="bf__promo-chip"
+                    @click="clearPromo"
+                  >{{ promoApplied.code }} ✕ Hapus</button>
+                </div>
+                <div v-if="!promoApplied" class="bf__promo-row">
+                  <input v-model="form.promo" type="text" placeholder="Kode promo" />
+                  <button type="button" class="bf__promo-btn" @click="applyPromo">Pakai</button>
+                </div>
+                <p v-if="promoStatus === 'valid' && promoBlockedVilla" class="bf__promo-msg bf__promo-msg--warn">Kode {{ promoApplied.code }} tidak berlaku untuk villa {{ selectedVilla.name }}. Silakan pilih villa lain atau hapus kode ini.</p>
+                <p v-else-if="promoStatus === 'valid'" class="bf__promo-msg bf__promo-msg--ok">{{ promoMessage }}</p>
+                <p v-else-if="promoStatus === 'invalid'" class="bf__promo-msg bf__promo-msg--err">{{ promoMessage }}</p>
+                <p v-else-if="promoStatus === 'expired'" class="bf__promo-msg bf__promo-msg--warn">{{ promoMessage }}</p>
+
+                <div v-if="promoApplied && discountRaw > 0" class="bf__price-detail">
+                  <div class="bf__price-detail-row">
+                    <span>Subtotal ({{ nightCount }} malam)</span>
+                    <strong>Rp {{ totalPrice }}</strong>
+                  </div>
+                  <div class="bf__price-detail-row bf__price-detail-row--discount">
+                    <span>{{ promoApplied.label }} ({{ promoApplied.code }})</span>
+                    <strong>− Rp {{ discountNum }}</strong>
+                  </div>
+                  <div class="bf__price-detail-row bf__price-detail-row--total">
+                    <span>Total Setelah Diskon</span>
+                    <strong>Rp {{ totalAfterPromo }}</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </transition>
@@ -224,6 +261,11 @@
                 <label>Nominal Transfer (Rp) <span class="bf__req">*</span></label>
                 <input v-model="form.amount" type="number" min="1" placeholder="contoh 500000" required />
               </div>
+            </div>
+
+            <div v-if="nightCount > 0 && promoApplied && !promoBlockedVilla" class="bf__amount-hint">
+              <span>Saran nominal transfer (sudah termasuk diskon): <strong>Rp {{ totalAfterPromo }}</strong></span>
+              <button type="button" class="bf__amount-fill" @click="fillAmount">Isi otomatis</button>
             </div>
 
             <div class="bf__field">
@@ -325,6 +367,7 @@
           <div><span>Tanggal</span><strong>{{ dateRange }}</strong></div>
           <div><span>Nama</span><strong>{{ form.name }}</strong></div>
           <div><span>Nominal Transfer</span><strong>Rp {{ formatNum(form.amount) }}</strong></div>
+          <div v-if="promoApplied && !promoBlockedVilla"><span>Kode Promo</span><strong>{{ promoApplied.code }} ({{ promoApplied.label }})</strong></div>
         </div>
 
         <a :href="waLink" target="_blank" rel="nofollow" class="bf__wa-btn">
@@ -338,6 +381,8 @@
 </template>
 
 <script>
+import { getPromo, isPromoActive, isPromoExcluded } from '../data/promos.js';
+
 const BOOKING_API = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 const WHATSAPP = '6282125492037';
 const NOTED = [
@@ -379,7 +424,11 @@ export default {
         transferName: '',
         amount: '',
         rentPs: 'Tidak',
+        promo: '',
       },
+      promoApplied: null,
+      promoStatus: '',
+      promoMessage: '',
     };
   },
   watch: {
@@ -396,6 +445,11 @@ export default {
     },
     'form.checkOut'() {
       this.checkBlockedDates();
+    },
+    'form.promo'() {
+      this.promoApplied = null;
+      this.promoStatus = '';
+      this.promoMessage = '';
     },
   },
   computed: {
@@ -430,6 +484,10 @@ export default {
     selectedVilla() {
       return this.villas.find((v) => v.name === this.form.villa) || null;
     },
+    promoBlockedVilla() {
+      if (!this.promoApplied) return false;
+      return isPromoExcluded(this.promoApplied, this.selectedVilla && this.selectedVilla.name);
+    },
     filteredVillas() {
       const q = this.villaSearch.trim().toLowerCase();
       if (!q) return this.villas;
@@ -459,6 +517,20 @@ export default {
     totalPrice() {
       return this.totalPriceRaw.toLocaleString('id-ID').replace(/,/g, '.');
     },
+    discountRaw() {
+      if (!this.promoApplied || !this.totalPriceRaw || this.promoBlockedVilla) return 0;
+      const v = Number(this.promoApplied.value) || 0;
+      return Math.round((this.totalPriceRaw * v) / 100);
+    },
+    totalAfterPromoRaw() {
+      return Math.max(0, this.totalPriceRaw - this.discountRaw);
+    },
+    discountNum() {
+      return this.formatNum(this.discountRaw);
+    },
+    totalAfterPromo() {
+      return this.formatNum(this.totalAfterPromoRaw);
+    },
     dateRange() {
       if (!this.form.checkIn) return '-';
       const out = this.form.checkOut ? ' - ' + this.formatDate(this.form.checkOut) : '';
@@ -479,6 +551,14 @@ export default {
         l('Jumlah orang', this.form.guests),
         l('Akun sosial media', this.form.socialMedia),
         '',
+        ...(this.promoApplied && !this.promoBlockedVilla
+          ? [
+            l('Kode promo', this.promoApplied.code),
+            l('Potongan promo', `-Rp ${this.formatNum(this.discountRaw)} (${this.promoApplied.label})`),
+            l('Total setelah diskon', `Rp ${this.formatNum(this.totalAfterPromoRaw)}`),
+            '',
+          ]
+          : []),
         'Penyediaan lainya',
         l('Sewa ps', this.form.rentPs),
         '',
@@ -505,6 +585,7 @@ export default {
     const qVilla = params.get('villa');
     const qCheckIn = params.get('checkIn');
     const qCheckOut = params.get('checkOut');
+    const qPromo = params.get('promo');
 
     if (qVilla) {
       const v = this.villas.find((x) => x.name.toLowerCase() === qVilla.toLowerCase());
@@ -512,6 +593,7 @@ export default {
     }
     if (qCheckIn) this.form.checkIn = qCheckIn;
     if (qCheckOut) this.form.checkOut = qCheckOut;
+    if (qPromo) this.form.promo = qPromo;
 
     if (this.form.checkIn) {
       const d = new Date(this.form.checkIn + 'T00:00:00');
@@ -526,6 +608,10 @@ export default {
 
     if (this.form.villa) {
       this.fetchBlockedDates();
+    }
+
+    if (this.form.promo) {
+      this.applyPromo();
     }
 
     document.addEventListener('click', this.onDocClick);
@@ -700,6 +786,75 @@ export default {
     goToStep(n) {
       if (n <= this.step) this.step = n;
     },
+    applyPromo() {
+      this.error = '';
+      const raw = this.form.promo;
+      if (!raw || !String(raw).trim()) {
+        this.promoApplied = null;
+        this.promoStatus = '';
+        this.promoMessage = '';
+        return;
+      }
+      const promo = getPromo(raw);
+      if (!promo) {
+        this.promoApplied = null;
+        this.promoStatus = 'invalid';
+        this.promoMessage = 'Kode promo tidak valid.';
+        return;
+      }
+      if (!isPromoActive(promo)) {
+        this.promoApplied = null;
+        this.promoStatus = 'expired';
+        this.promoMessage = `Promo sudah berakhir (berlaku s.d. ${this.formatValidUntil(promo.validUntil)}).`;
+        return;
+      }
+      if (!this.isPromoClaimed(promo.code)) {
+        this.promoApplied = null;
+        this.promoStatus = 'invalid';
+        this.promoMessage = `Kode ${promo.code} belum diklaim. Klaim dulu dengan memberi rating di Google Maps kantor The Rain Villas melalui halaman Promo.`;
+        return;
+      }
+      this.promoApplied = promo;
+      this.promoStatus = 'valid';
+      this.promoMessage = `Kode ${promo.code} diterapkan — ${promo.label}.`;
+    },
+    clearPromo() {
+      this.form.promo = '';
+      this.promoApplied = null;
+      this.promoStatus = '';
+      this.promoMessage = '';
+    },
+    fillAmount() {
+      if (!this.totalAfterPromoRaw) return;
+      this.form.amount = String(this.totalAfterPromoRaw);
+    },
+    formatValidUntil(dt) {
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+      const d = new Date(dt);
+      return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    },
+    isPromoClaimed(code) {
+      try {
+        let claims = {};
+        try {
+          const stored = JSON.parse(localStorage.getItem('trv_promo_claimed') || '{}');
+          if (stored && typeof stored === 'object') claims = stored;
+        } catch (e) {}
+        try {
+          const cm = document.cookie.match(/(?:^|;\s*)trv_promo_claimed=([^;]*)/);
+          if (cm) {
+            const ck = JSON.parse(decodeURIComponent(cm[1]));
+            if (ck && typeof ck === 'object') Object.assign(claims, ck);
+          }
+        } catch (e) {}
+        const key = String(code).trim().toUpperCase();
+        const val = claims[key];
+        if (val === true) return true;
+        return typeof val === 'number' && Date.now() - val <= 10 * 60 * 1000;
+      } catch (e) {
+        return false;
+      }
+    },
     validateStep() {
       this.error = '';
       if (this.step === 1) {
@@ -749,8 +904,11 @@ export default {
       this.step = 1;
       this.form = {
         villa: '', checkIn: '', checkOut: '', name: '', guests: '',
-        socialMedia: '', transferName: '', amount: '', rentPs: 'Tidak',
+        socialMedia: '', transferName: '', amount: '', rentPs: 'Tidak', promo: '',
       };
+      this.promoApplied = null;
+      this.promoStatus = '';
+      this.promoMessage = '';
     },
   },
 };
@@ -1357,6 +1515,158 @@ export default {
   font-size: 0.75rem;
   color: #94a3b8;
   margin-top: 6px;
+}
+
+/* ===== PROMO ===== */
+.bf__promo {
+  margin-top: 14px;
+  border-top: 1px dashed rgba(91, 141, 239, 0.25);
+  padding-top: 14px;
+}
+.bf__promo-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.bf__promo-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #334155;
+}
+.bf__promo-chip {
+  background: linear-gradient(135deg, rgba(91,141,239,0.12), rgba(122,92,224,0.1));
+  color: #7a5ce0;
+  border: 1px solid rgba(122, 92, 224, 0.3);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.bf__promo-chip:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+.bf__promo-row {
+  display: flex;
+  gap: 8px;
+}
+.bf__promo-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  background: #fff;
+}
+.bf__promo-row input:focus {
+  outline: none;
+  border-color: #5b8def;
+  box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.1);
+}
+.bf__promo-btn {
+  background: linear-gradient(135deg, #5b8def, #7a5ce0);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.bf__promo-btn:hover {
+  filter: brightness(1.05);
+}
+.bf__promo-msg {
+  font-size: 0.78rem;
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+.bf__promo-msg--ok {
+  color: #16a34a;
+}
+.bf__promo-msg--err {
+  color: #dc2626;
+}
+.bf__promo-msg--warn {
+  color: #b45309;
+}
+.bf__price-detail {
+  margin-top: 12px;
+  border-top: 1px dashed #e2e8f0;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bf__price-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #475569;
+}
+.bf__price-detail-row strong {
+  font-size: 0.9rem;
+  color: #334155;
+}
+.bf__price-detail-row--discount strong {
+  color: #16a34a;
+}
+.bf__price-detail-row--total {
+  padding-top: 6px;
+  border-top: 1px solid #e2e8f0;
+}
+.bf__price-detail-row--total span {
+  font-weight: 700;
+  color: #11120f;
+}
+.bf__price-detail-row--total strong {
+  color: #7a5ce0;
+  font-size: 1.05rem;
+}
+.bf__amount-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: #166534;
+}
+.bf__amount-hint strong {
+  color: #15803d;
+}
+.bf__amount-fill {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.bf__amount-fill:hover {
+  filter: brightness(1.08);
 }
 
 /* ===== TOGGLE ===== */

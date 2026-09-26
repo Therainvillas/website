@@ -25,6 +25,11 @@
           </button>
         </div>
 
+        <p v-if="sheetUrl || folderUrl" class="dashboard__proof-links">
+          <a v-if="sheetUrl" :href="sheetUrl" target="_blank" rel="noopener" class="dashboard__proof-link">Buka Spreadsheet Bukti</a>
+          <a v-if="folderUrl" :href="folderUrl" target="_blank" rel="noopener" class="dashboard__proof-link">Buka Folder Bukti</a>
+        </p>
+
         <p v-if="proofsStatus" class="dashboard__proof-status" :class="{ 'dashboard__proof-status--ok': proofs.length }">{{ proofsStatus }}</p>
 
         <div v-if="proofs.length" class="dashboard__proof-grid">
@@ -130,6 +135,8 @@ export default {
       proofs: [],
       proofsLoading: false,
       proofsStatus: "",
+      sheetUrl: "",
+      folderUrl: "",
       proofLightbox: "",
     };
   },
@@ -262,15 +269,33 @@ export default {
       this.proofsLoading = true;
       this.proofsStatus = "";
       const self = this;
-      const onData = (data) => {
+      const handleData = (data) => {
         self.proofsLoading = false;
         if (data && data.ok && Array.isArray(data.items)) {
           self.proofs = data.items;
+          self.sheetUrl = data.spreadsheetUrl || "";
+          self.folderUrl = data.folderUrl || "";
           self.proofsStatus = self.proofs.length ? "" : "Belum ada bukti rating terkirim.";
+        } else if (data && data.error) {
+          self.proofsStatus = "Backend: " + String(data.error);
         } else {
           self.proofsStatus = "Respon backend tidak valid.";
         }
       };
+      fetch(PROOF_API, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "listProofs", limit: 40 }),
+      })
+        .then((r) => {
+          if (!r.ok) throw new Error("http " + r.status);
+          return r.json();
+        })
+        .then(handleData)
+        .catch(() => this._loadProofsJsonp(handleData));
+    },
+    _loadProofsJsonp(onData) {
+      const self = this;
       const onErr = () => {
         self.proofsLoading = false;
         self.proofsStatus = "Gagal memuat bukti dari backend. Coba refresh.";
@@ -919,6 +944,25 @@ export default {
 .dashboard__proof-refresh:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+.dashboard__proof-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+}
+.dashboard__proof-link {
+  display: inline-block;
+  background: #0d9488;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.dashboard__proof-link:hover {
+  background: #0f766e;
 }
 .dashboard__proof-status {
   font-size: 0.85rem;

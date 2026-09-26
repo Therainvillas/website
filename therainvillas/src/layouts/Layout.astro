@@ -35,6 +35,13 @@ const isHome = Astro.url.pathname === '/';
     <script is:inline>
       document.documentElement.classList.replace('no-js', 'js');
     </script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-18476533015"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'AW-18476533015');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
     <meta name="theme-color" content="#11120f" />

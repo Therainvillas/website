@@ -26,7 +26,8 @@
  * ENDPOINT YANG DIPAKAI WEBSITE:
  *  - POST body text/plain JSON  {action:'addProof', code, name, type, data:<data-url>}
  *  - POST body text/plain JSON  {action:'deleteProof', id}
- *  - GET  ?action=listProofs&limit=40&callback=fn   (JSONP, dipakai halaman admin)
+ *  - POST body text/plain JSON  {action:'listProofs'}   (dipakai halaman admin; GET bisa loop-302)
+ *  - GET  ?action=listProofs&limit=40&callback=fn        (JSONP cadangan)
  *
  * PENYIMPANAN:
  *  - Screenshot disimpan sebagai file di folder Drive "TheRainVillas Proofs".
@@ -109,6 +110,7 @@ function doPost(e) {
 
     if (req.action === 'addProof') return json_(addProof_(req));
     if (req.action === 'deleteProof') return json_(deleteProof_(req));
+    if (req.action === 'listProofs') return json_(listProofs_(parseInt(req.limit, 10) || MAX_LIST));
     return json_({ ok: false, error: 'unknown action' });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
@@ -186,5 +188,10 @@ function listProofs_(limit) {
       data: data,
     });
   }
-  return { ok: true, items: items };
+  return {
+    ok: true,
+    items: items,
+    spreadsheetUrl: st.ss.getUrl(),
+    folderUrl: st.folder.getUrl(),
+  };
 }

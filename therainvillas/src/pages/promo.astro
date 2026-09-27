@@ -34,7 +34,7 @@ const promoFaq = [
   },
   {
     q: 'Kode promo saya tidak valid, kenapa?',
-    a: 'Pastikan kode ditulis persis sesuai yang tertera (tanpa spasi), masih dalam masa berlaku, dan sesuai dengan ketentuan promo yang dipilih.',
+    a: 'Kode promo bersifat unik dan sekali pakai, terbuka hanya 2 menit setelah anda klaim di halaman Promo lalu otomatis tertutup. Promo hanya berlaku untuk tanggal menginap s.d. 30 September 2026 — booking bulan Oktober tidak mendapat potongan. Jika kode tidak valid, lakukan klaim ulang lewat halaman Promo.',
   },
   {
     q: 'Apakah promo bisa digabungkan?',
@@ -42,7 +42,7 @@ const promoFaq = [
   },
   {
     q: 'Promo tidak berlaku untuk villa mana saja?',
-    a: 'Kode promo TRV10 tidak berlaku untuk Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2. Jika anda memilih salah satu villa tersebut, diskon otomatis tidak dihitung.',
+    a: 'Voucher diskon 10% tidak berlaku untuk Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2. Jika anda memilih salah satu villa tersebut, diskon otomatis tidak dihitung.',
   },
 ];
 ---
@@ -87,11 +87,11 @@ const promoFaq = [
             <div class="promo-card__code">
               <span>Kode</span>
               <strong class="promo-card__code-mask">••••••</strong>
-              <strong class="promo-card__code-value" data-code-value>{p.code}</strong>
+              <strong class="promo-card__code-value" data-code-value></strong>
             </div>
             <p class="promo-card__period">Berlaku {fmtDate(p.validFrom)} s.d. {fmtDate(p.validUntil)} — {fmtTime(p.validUntil)} WIB</p>
-            <div class="promo-card__claim-gate" data-claim-gate data-proof-api={PROOF_API}>
-              <p class="promo-card__gate-note">🔒 Kode tersembunyi. Untuk membuka kode: 1) beri rating di Google Maps kantor The Rain Villas, 2) ambil screenshot buktinya, 3) upload bukti, lalu klik "Kirim Bukti &amp; Buka Kode" — kode terbuka setelah bukti masuk ke admin dan berlaku 2 menit (habis tempo akan tertutup kembali).</p>
+            <div class="promo-card__claim-gate" data-claim-gate data-proof-api={PROOF_API} data-promo-code={p.code}>
+              <p class="promo-card__gate-note">🔒 Kode tersembunyi. Untuk membuka kode: 1) beri rating di Google Maps kantor The Rain Villas, 2) ambil screenshot buktinya, 3) upload bukti, lalu klik "Kirim Bukti &amp; Buka Kode" — kode terbuka setelah bukti masuk ke admin dan berlaku 2 menit (habis tempo akan tertutup kembali). Promo berlaku hanya untuk tanggal menginap s.d. 30 September 2026.</p>
               <a class="btn btn--primary promo-card__rate" href={MAPS_RATING_URL} target="_blank" rel="noopener" data-rate-btn>
                 ★ Rating di Google Maps
               </a>
@@ -115,10 +115,10 @@ const promoFaq = [
             <div class="promo-card__unlocked" data-unlocked>
               <span class="promo-card__unlocked-label" data-unlocked-label>✅ Kode promo terbuka</span>
               <div class="promo-card__actions">
-                <a class="btn btn--primary promo-card__claim" href={`/booking?promo=${p.code}`}>
+                <a class="btn btn--primary promo-card__claim" href="/booking" data-claim-link>
                   Klaim &amp; Booking
                 </a>
-                <button type="button" class="btn btn--ghost promo-card__copy" data-copy-code={p.code}>
+                <button type="button" class="btn btn--ghost promo-card__copy" data-copy-code>
                   Salin Kode
                 </button>
               </div>
@@ -152,7 +152,7 @@ const promoFaq = [
                 <p class="promo-card__desc">{p.description}</p>
                 <div class="promo-card__code">
                   <span>Kode</span>
-                  <strong>{p.code}</strong>
+                  <strong>••••••</strong>
                 </div>
                 <p class="promo-card__period">
                   {p.status === 'upcoming' ? `Mulai ${fmtDate(p.validFrom)}` : `Sampai ${fmtDate(p.validUntil)}`}
@@ -199,6 +199,20 @@ const promoFaq = [
   <div class="promo-lightbox" data-photo-lightbox aria-hidden="true">
     <img alt="Foto bukti rating" data-photo-lightbox-img />
     <button type="button" class="promo-lightbox__close" data-photo-lightbox-close aria-label="Tutup">&times;</button>
+  </div>
+
+  <div class="promo-code-popup" data-code-popup aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="promo-code-popup__card">
+      <button type="button" class="promo-code-popup__close" data-code-popup-close aria-label="Tutup">&times;</button>
+      <span class="promo-code-popup__badge">🎟️ Kode Promo Kamu</span>
+      <h3 class="promo-code-popup__title">Terima kasih! Bukti sudah terkirim.</h3>
+      <p class="promo-code-popup__subtitle">Gunakan kode di bawah ini saat booking. Berlaku 2 menit dan sekali pakai, untuk tanggal menginap s.d. 30 September 2026.</p>
+      <strong class="promo-code-popup__code" data-code-popup-code></strong>
+      <div class="promo-code-popup__actions">
+        <button type="button" class="btn btn--ghost promo-code-popup__copy" data-code-popup-copy>Salin Kode</button>
+        <a class="btn btn--primary promo-code-popup__booking" data-code-popup-book href="/booking">Klaim &amp; Booking</a>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -269,14 +283,30 @@ const promoFaq = [
         if (!card) return;
         var codeEl = card.querySelector('[data-code-value]');
         if (!codeEl) return;
-        var code = codeEl.textContent.trim();
-        if (!code) return;
-        function unlock(existingTs) {
+        var promoRef = String(gate.getAttribute('data-promo-code') || '').trim();
+        if (!promoRef) return;
+        var claimLink = card.querySelector('[data-claim-link]');
+        var currentCode = '';
+        var codePool = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+        function makeCode() {
+          var out = '';
+          for (var i = 0; i < 6; i++) out += codePool[Math.floor(Math.random() * codePool.length)];
+          return 'TRV-' + out;
+        }
+        function unlock(existingTs, existingCode) {
           var v = typeof existingTs === 'number' ? existingTs : Date.now();
+          if (existingCode) {
+            currentCode = existingCode;
+            if (codeEl) codeEl.textContent = existingCode;
+          } else {
+            currentCode = makeCode();
+            codeEl.textContent = currentCode;
+            var claims2 = readClaims();
+            claims2[currentCode] = { ts: v, promo: promoRef };
+            saveClaims(claims2);
+          }
           card.classList.add('promo-card--unlocked');
-          var claims = readClaims();
-          claims[code] = v;
-          saveClaims(claims);
+          if (claimLink) claimLink.setAttribute('href', '/booking?promo=' + encodeURIComponent(currentCode));
           startCountdown(v);
           scheduleReLock(v);
         }
@@ -288,9 +318,15 @@ const promoFaq = [
         }
         function reLock() {
           card.classList.remove('promo-card--unlocked');
-          var claims = readClaims();
-          delete claims[code];
-          saveClaims(claims);
+          if (currentCode) {
+            var cList = readClaims();
+            if (cList) {
+              delete cList[currentCode];
+              saveClaims(cList);
+            }
+            currentCode = '';
+            if (codeEl) codeEl.textContent = '';
+          }
           gate.PENDING = null;
           if (input) input.value = '';
           if (submitBtn) submitBtn.disabled = true;
@@ -376,10 +412,11 @@ const promoFaq = [
           if (submitBtn) submitBtn.disabled = true;
           if (api) {
             setStatus('Mengirim bukti ke admin…', 'wait');
-            sendProof(api, code, file, dataUrl)
+sendProof(api, promoRef, file, dataUrl)
               .then(function () {
                 setStatus('✅ Bukti terkirim ke admin — kode promo terbuka.', 'ok');
                 unlock();
+                if (window.trvShowCodePopup) window.trvShowCodePopup(currentCode);
               })
               .catch(function () {
                 setStatus('Gagal mengirim bukti ke admin. Periksa koneksi lalu klik tombol lagi.', 'err');
@@ -388,21 +425,25 @@ const promoFaq = [
           } else {
             setStatus('✅ Bukti terupload — kode terbuka (mode lokal, belum terhubung ke admin).', 'ok');
             unlock();
+            if (window.trvShowCodePopup) window.trvShowCodePopup(currentCode);
           }
         }
 
         gate.HANDLE = handleFile;
         gate.SUBMIT = submit;
         var stored = readClaims();
-        if (stored[code] !== undefined) {
-          var sv = stored[code];
-          if (sv === true) {
-            unlock(Date.now());
-          } else if (typeof sv === 'number' && Date.now() - sv <= CLAIM_TTL_MS) {
-            unlock(sv);
-          } else {
-            delete stored[code];
+        for (var ck in stored) {
+          if (!Object.prototype.hasOwnProperty.call(stored, ck)) continue;
+          var ev = stored[ck];
+          if (!ev || typeof ev !== 'object') continue;
+          if (typeof ev.ts !== 'number') continue;
+          if (Date.now() - ev.ts > CLAIM_TTL_MS) {
+            delete stored[ck];
             saveClaims(stored);
+            continue;
+          }
+          if (typeof ev.promo === 'string' && ev.promo === promoRef) {
+            unlock(ev.ts, ck);
           }
         }
       });
@@ -532,6 +573,49 @@ const promoFaq = [
 
       var photoLb = document.querySelector('[data-photo-lightbox]');
       var photoLbImg = document.querySelector('[data-photo-lightbox-img]');
+
+      var codePopup = document.querySelector('[data-code-popup]');
+      var codePopupCode = codePopup ? codePopup.querySelector('[data-code-popup-code]') : null;
+      var codePopupBook = codePopup ? codePopup.querySelector('[data-code-popup-book]') : null;
+
+      function closeCodePopup() {
+        if (!codePopup) return;
+        codePopup.classList.remove('promo-code-popup--open');
+        codePopup.setAttribute('aria-hidden', 'true');
+      }
+      function openCodePopup(code) {
+        if (!codePopup || !codePopupCode || !code) return;
+        codePopupCode.textContent = code;
+        if (codePopupBook) codePopupBook.setAttribute('href', '/booking?promo=' + encodeURIComponent(code));
+        codePopup.classList.add('promo-code-popup--open');
+        codePopup.setAttribute('aria-hidden', 'false');
+      }
+      function copyText(txt, btn, doneText) {
+        var original = btn.textContent;
+        function finish(ok) {
+          btn.textContent = ok ? doneText : original;
+          setTimeout(function () { btn.textContent = original; }, 1600);
+        }
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(txt).then(function () { finish(true); }, function () { finish(false); });
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = txt;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            finish(true);
+          } catch (e) {
+            finish(false);
+          }
+          document.body.removeChild(ta);
+        }
+      }
+      window.trvShowCodePopup = openCodePopup;
+
       document.addEventListener('click', function (e) {
         var t = e.target;
         if (!t || !t.closest) return;
@@ -543,13 +627,29 @@ const promoFaq = [
         }
         if ((t.closest('[data-photo-lightbox-close]') || (t.closest('[data-photo-lightbox]') && t === t.closest('[data-photo-lightbox]'))) && photoLb) {
           photoLb.classList.remove('promo-lightbox--open');
+          return;
         }
+        if (t.closest('[data-code-popup-close]') || (t.closest('[data-code-popup]') && t === t.closest('[data-code-popup]'))) {
+          closeCodePopup();
+          return;
+        }
+        if (t.closest('[data-code-popup-copy]') && codePopup && codePopupCode) {
+          copyText(codePopupCode.textContent, t.closest('[data-code-popup-copy]'), 'Tersalin!');
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeCodePopup();
       });
     })();
 
-    document.querySelectorAll('[data-copy-code]').forEach((btn) => {
+    document.querySelectorAll('[data-promo-card]').forEach((card) => {
+      const btn = card.querySelector('[data-copy-code]');
+      if (!btn) return;
       btn.addEventListener('click', async () => {
-        const code = btn.getAttribute('data-copy-code');
+        const codeEl = card.querySelector('[data-code-value]');
+        const code = codeEl ? codeEl.textContent.trim() : '';
+        if (!code) return;
         const original = btn.textContent;
         try {
           if (navigator.clipboard && window.isSecureContext) {
@@ -1179,5 +1279,97 @@ const promoFaq = [
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .promo-code-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 27, 43, 0.72);
+    z-index: 1300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .promo-code-popup--open {
+    display: flex;
+  }
+  .promo-code-popup__card {
+    position: relative;
+    width: min(440px, 94vw);
+    background: #fff;
+    border-radius: 20px;
+    padding: 34px 28px 28px;
+    text-align: center;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    animation: promoPopIn 0.24s ease;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+  @keyframes promoPopIn {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .promo-code-popup__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .promo-code-popup__badge {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #b45309;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+  }
+  .promo-code-popup__title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    color: #11120f;
+    margin-bottom: 10px;
+  }
+  .promo-code-popup__subtitle {
+    font-size: 0.88rem;
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+  .promo-code-popup__code {
+    display: block;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #7a5ce0;
+    background: linear-gradient(135deg, rgba(122, 92, 224, 0.1), rgba(91, 141, 239, 0.08));
+    border: 2px dashed rgba(122, 92, 224, 0.45);
+    border-radius: 14px;
+    padding: 16px 12px;
+    margin-bottom: 18px;
+    word-break: break-all;
+  }
+  .promo-code-popup__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .promo-code-popup__actions .btn {
+    width: 100%;
   }
 </style>

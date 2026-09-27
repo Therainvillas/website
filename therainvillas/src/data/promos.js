@@ -58,13 +58,12 @@ export function getPromo(raw) {
 export const promoOfferJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'AggregateOffer',
-  name: 'Promo TRV10 — Diskon 10%',
-  description: 'Diskon 10% dari subtotal menginap villa The Rain Villas dengan kode promo TRV10. Berlaku s.d. 30 September 2026 untuk semua villa, kecuali Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2. Potongan dihitung otomatis di formulir pemesanan.',
+  name: 'Promo Diskon 10% — Voucher The Rain Villas',
+  description: 'Diskon 10% dari subtotal menginap villa The Rain Villas dengan kode promo unik hasil klaim. Berlaku s.d. 30 September 2026 untuk semua villa, kecuali Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2. Potongan dihitung otomatis di formulir pemesanan.',
   priceCurrency: 'IDR',
   lowPrice: 1000000,
   highPrice: 4500000,
   discount: '10%',
-  discountCode: 'TRV10',
   availability: 'https://schema.org/InStock',
   validFrom: '2026-09-26T00:00:00+07:00',
   priceValidUntil: '2026-09-30T23:59:59+07:00',
@@ -72,7 +71,6 @@ export const promoOfferJsonLd = {
     '@type': 'Offer',
     priceCurrency: 'IDR',
     discount: '10%',
-    discountCode: 'TRV10',
     priceValidUntil: '2026-09-30T23:59:59+07:00',
     seller: {
       '@type': 'Organization',

@@ -429,6 +429,8 @@ export default {
       promoApplied: null,
       promoStatus: '',
       promoMessage: '',
+      appliedCode: '',
+      _promoInit: false,
     };
   },
   watch: {
@@ -442,11 +444,14 @@ export default {
     },
     'form.checkIn'() {
       this.checkBlockedDates();
+      this.revalidatePromoDates();
     },
     'form.checkOut'() {
       this.checkBlockedDates();
+      this.revalidatePromoDates();
     },
     'form.promo'() {
+      if (this._promoInit) return;
       this.promoApplied = null;
       this.promoStatus = '';
       this.promoMessage = '';
@@ -593,7 +598,14 @@ export default {
     }
     if (qCheckIn) this.form.checkIn = qCheckIn;
     if (qCheckOut) this.form.checkOut = qCheckOut;
-    if (qPromo) this.form.promo = qPromo;
+    if (qPromo) {
+      this._promoInit = true;
+      this.form.promo = qPromo;
+      this.$nextTick(() => {
+        this._promoInit = false;
+        if (this.form.promo) this.applyPromo();
+      });
+    }
 
     if (this.form.checkIn) {
       const d = new Date(this.form.checkIn + 'T00:00:00');
@@ -608,10 +620,6 @@ export default {
 
     if (this.form.villa) {
       this.fetchBlockedDates();
-    }
-
-    if (this.form.promo) {
-      this.applyPromo();
     }
 
     document.addEventListener('click', this.onDocClick);
@@ -795,7 +803,30 @@ export default {
         this.promoMessage = '';
         return;
       }
-      const promo = getPromo(raw);
+      const key = String(raw).trim().toUpperCase();
+      const claim = this.findClaim(key);
+      if (claim && Date.now() - claim.ts <= 2 * 60 * 1000) {
+        const promo = getPromo(claim.promo || '');
+        if (promo && isPromoActive(promo)) {
+          const dv = this.promoDateViolation(promo);
+          if (dv) {
+            this.promoApplied = null;
+            this.promoStatus = 'invalid';
+            this.promoMessage = dv;
+            return;
+          }
+          this.appliedCode = key;
+          this.promoApplied = promo;
+          this.promoStatus = 'valid';
+          this.promoMessage = `Kode ${key} diterapkan — ${promo.label}.`;
+          return;
+        }
+        this.promoApplied = null;
+        this.promoStatus = 'invalid';
+        this.promoMessage = 'Kode promo tidak valid.';
+        return;
+      }
+      const promo = getPromo(key);
       if (!promo) {
         this.promoApplied = null;
         this.promoStatus = 'invalid';
@@ -808,21 +839,36 @@ export default {
         this.promoMessage = `Promo sudah berakhir (berlaku s.d. ${this.formatValidUntil(promo.validUntil)}).`;
         return;
       }
-      if (!this.isPromoClaimed(promo.code)) {
+      this.promoApplied = null;
+      this.promoStatus = 'invalid';
+      this.promoMessage = `Kode ${key} belum diklaim atau sudah habis masa berlaku. Klaim dulu dengan memberi rating di Google Maps melalui halaman Promo.`;
+    },
+    promoDateViolation(promo) {
+      if (!promo || !this.form.checkIn) return null;
+      const until = new Date(promo.validUntil);
+      if (isNaN(until.getTime())) return null;
+      const checkInEnd = new Date(this.form.checkIn + 'T23:59:59');
+      if (checkInEnd > until) {
+        return `Promo ${promo.label} hanya berlaku untuk booking s.d. ${this.formatValidUntil(promo.validUntil)}. Pilih tanggal menginap sebelum Oktober untuk memakai kode ini.`;
+      }
+      return null;
+    },
+    revalidatePromoDates() {
+      if (!this.promoApplied || this.promoStatus !== 'valid') return;
+      const dv = this.promoDateViolation(this.promoApplied);
+      if (dv) {
         this.promoApplied = null;
         this.promoStatus = 'invalid';
-        this.promoMessage = `Kode ${promo.code} belum diklaim. Klaim dulu dengan memberi rating di Google Maps kantor The Rain Villas melalui halaman Promo.`;
-        return;
+        this.promoMessage = dv;
+        this.appliedCode = '';
       }
-      this.promoApplied = promo;
-      this.promoStatus = 'valid';
-      this.promoMessage = `Kode ${promo.code} diterapkan — ${promo.label}.`;
     },
     clearPromo() {
       this.form.promo = '';
       this.promoApplied = null;
       this.promoStatus = '';
       this.promoMessage = '';
+      this.appliedCode = '';
     },
     fillAmount() {
       if (!this.totalAfterPromoRaw) return;
@@ -833,27 +879,41 @@ export default {
       const d = new Date(dt);
       return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
     },
-    isPromoClaimed(code) {
+    readClaims() {
+      let claims = {};
       try {
-        let claims = {};
-        try {
-          const stored = JSON.parse(localStorage.getItem('trv_promo_claimed') || '{}');
-          if (stored && typeof stored === 'object') claims = stored;
-        } catch (e) {}
-        try {
-          const cm = document.cookie.match(/(?:^|;\s*)trv_promo_claimed=([^;]*)/);
-          if (cm) {
-            const ck = JSON.parse(decodeURIComponent(cm[1]));
-            if (ck && typeof ck === 'object') Object.assign(claims, ck);
-          }
-        } catch (e) {}
-        const key = String(code).trim().toUpperCase();
-        const val = claims[key];
-        if (val === true) return true;
-        return typeof val === 'number' && Date.now() - val <= 2 * 60 * 1000;
-      } catch (e) {
-        return false;
+        const stored = JSON.parse(localStorage.getItem('trv_promo_claimed') || '{}');
+        if (stored && typeof stored === 'object') claims = stored;
+      } catch (e) {}
+      try {
+        const cm = document.cookie.match(/(?:^|;\s*)trv_promo_claimed=([^;]*)/);
+        if (cm) {
+          const ck = JSON.parse(decodeURIComponent(cm[1]));
+          if (ck && typeof ck === 'object') Object.assign(claims, ck);
+        }
+      } catch (e) {}
+      return claims;
+    },
+    findClaim(raw) {
+      const claims = this.readClaims();
+      const key = String(raw).trim().toUpperCase();
+      const val = claims[key];
+      if (val === true) return { ts: Date.now(), promo: key };
+      if (typeof val === 'number') return { ts: val, promo: key };
+      if (val && typeof val === 'object' && typeof val.ts === 'number') {
+        return { ts: val.ts, promo: val.promo || key };
       }
+      return null;
+    },
+    consumeClaim(raw) {
+      const key = String(raw).trim().toUpperCase();
+      const claims = this.readClaims();
+      if (!claims[key]) return;
+      delete claims[key];
+      try { localStorage.setItem('trv_promo_claimed', JSON.stringify(claims)); } catch (e) {}
+      try {
+        document.cookie = 'trv_promo_claimed=' + encodeURIComponent(JSON.stringify(claims)) + '; path=/; max-age=2592000; SameSite=Lax';
+      } catch (e) {}
     },
     validateStep() {
       this.error = '';
@@ -897,6 +957,7 @@ export default {
       }
     },
     submit() {
+      if (this.appliedCode) this.consumeClaim(this.appliedCode);
       this.done = true;
     },
     reset() {
@@ -909,6 +970,7 @@ export default {
       this.promoApplied = null;
       this.promoStatus = '';
       this.promoMessage = '';
+      this.appliedCode = '';
     },
   },
 };

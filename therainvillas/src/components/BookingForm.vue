@@ -683,6 +683,10 @@ export default {
     },
     calSelectable(cell) {
       if (this.calUnavailable(cell)) return this.calCheckoutOnly(cell);
+      if (this.form.checkIn && !this.form.checkOut) {
+        const s = this.calStr(cell);
+        if (s > this.form.checkIn && this.hasBlockedNight(this.form.checkIn, s)) return false;
+      }
       return true;
     },
     calSelected(cell) {
@@ -716,6 +720,10 @@ export default {
           if (this.calUnavailable(cell)) return;
           this.form.checkIn = s;
         } else {
+          if (this.hasBlockedNight(this.form.checkIn, s)) {
+            this.error = `Villa ${this.form.villa} sudah terbooking pada salah satu tanggal antara check-in dan check-out tersebut. Silakan pilih check-out sebelum tanggal terbooking.`;
+            return;
+          }
           this.form.checkOut = s;
         }
       }
@@ -761,6 +769,18 @@ export default {
       } catch (e) {
         return [];
       }
+    },
+    hasBlockedNight(fromStr, toStr) {
+      const cur = new Date(fromStr + 'T00:00:00');
+      const end = new Date(toStr + 'T00:00:00');
+      while (cur < end) {
+        const y = cur.getFullYear();
+        const m = String(cur.getMonth() + 1).padStart(2, '0');
+        const d = String(cur.getDate()).padStart(2, '0');
+        if (this.blockedSet.has(`${y}-${m}-${d}`)) return true;
+        cur.setDate(cur.getDate() + 1);
+      }
+      return false;
     },
     checkBlockedDates() {
       if (this.step !== 1) return;

@@ -412,6 +412,10 @@ export default {
     },
     isSelectable(cell) {
       if (this.isUnavailable(cell)) return this.isCheckoutOnly(cell);
+      if (this.checkIn && !this.checkOut) {
+        const selected = new Date(cell.year, cell.month, cell.day);
+        if (selected > this.checkIn && this.hasBlockedNight(this.checkIn, selected)) return false;
+      }
       return true;
     },
     isCheckoutOnly(cell) {
@@ -419,6 +423,15 @@ export default {
       if (!this.checkIn) return false;
       const d = new Date(cell.year, cell.month, cell.day);
       return d.getTime() > this.checkIn.getTime();
+    },
+    hasBlockedNight(from, toExcl) {
+      const d = new Date(from);
+      while (d < toExcl) {
+        const s = this.localDate(d);
+        if (this.apiBlockedDates.includes(s) || this.getAdminBlocked().includes(s) || (this.selectedVilla && this.selectedVilla.unavailable.includes(s))) return true;
+        d.setDate(d.getDate() + 1);
+      }
+      return false;
     },
     getAdminBlocked() {
       try {
@@ -463,6 +476,10 @@ export default {
           if (this.isUnavailable(cell)) return;
           this.checkIn = selected;
         } else {
+          if (this.hasBlockedNight(this.checkIn, selected)) {
+            this.error = "Tanggal tersebut sudah terbooking di antara tanggal check-in. Silakan pilih check-out lain.";
+            return;
+          }
           this.checkOut = selected;
         }
       }

@@ -338,7 +338,8 @@ export default {
 .avail__month {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e293b;
+  color: #ffffff;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
   min-width: 160px;
   text-align: center;
 }

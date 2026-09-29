@@ -263,6 +263,11 @@
               </div>
             </div>
 
+            <div v-if="nightCount > 0" class="bf__amount-hint">
+              <span>DP otomatis 30% dari total: <strong>Rp {{ dp30 }}</strong></span>
+              <button type="button" class="bf__amount-fill" @click="fillDp">Isi DP otomatis</button>
+            </div>
+
             <div v-if="nightCount > 0 && promoApplied && !promoBlockedVilla" class="bf__amount-hint">
               <span>Saran nominal transfer (sudah termasuk diskon): <strong>Rp {{ totalAfterPromo }}</strong></span>
               <button type="button" class="bf__amount-fill" @click="fillAmount">Isi otomatis</button>
@@ -441,20 +446,27 @@ export default {
         this.apiBlockedDates = [];
       }
       this.checkBlockedDates();
+      this.$nextTick(() => this.maybeAutoFillDp());
     },
     'form.checkIn'() {
       this.checkBlockedDates();
       this.revalidatePromoDates();
+      this.$nextTick(() => this.maybeAutoFillDp());
     },
     'form.checkOut'() {
       this.checkBlockedDates();
       this.revalidatePromoDates();
+      this.$nextTick(() => this.maybeAutoFillDp());
     },
     'form.promo'() {
       if (this._promoInit) return;
       this.promoApplied = null;
       this.promoStatus = '';
       this.promoMessage = '';
+      this.$nextTick(() => this.maybeAutoFillDp());
+    },
+    promoApplied() {
+      this.$nextTick(() => this.maybeAutoFillDp());
     },
   },
   computed: {
@@ -536,6 +548,14 @@ export default {
     totalAfterPromo() {
       return this.formatNum(this.totalAfterPromoRaw);
     },
+    dp30Raw() {
+      if (!this.totalPriceRaw) return 0;
+      const base = this.promoApplied && !this.promoBlockedVilla ? this.totalAfterPromoRaw : this.totalPriceRaw;
+      return Math.round((base * 30) / 100);
+    },
+    dp30() {
+      return this.formatNum(this.dp30Raw);
+    },
     dateRange() {
       if (!this.form.checkIn) return '-';
       const out = this.form.checkOut ? ' - ' + this.formatDate(this.form.checkOut) : '';
@@ -556,6 +576,12 @@ export default {
         l('Jumlah orang', this.form.guests),
         l('Akun sosial media', this.form.socialMedia),
         '',
+        ...(this.dp30Raw
+          ? [
+            l('DP otomatis 30%', `Rp ${this.formatNum(this.dp30Raw)}`),
+            '',
+          ]
+          : []),
         ...(this.promoApplied && !this.promoBlockedVilla
           ? [
             l('Kode promo', this.promoApplied.code),
@@ -893,6 +919,14 @@ export default {
     fillAmount() {
       if (!this.totalAfterPromoRaw) return;
       this.form.amount = String(this.totalAfterPromoRaw);
+    },
+    fillDp() {
+      if (!this.dp30Raw) return;
+      this.form.amount = String(this.dp30Raw);
+    },
+    maybeAutoFillDp() {
+      if (!this.dp30Raw || this.form.amount) return;
+      this.form.amount = String(this.dp30Raw);
     },
     formatValidUntil(dt) {
       const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -1733,6 +1767,9 @@ export default {
 }
 .bf__amount-hint strong {
   color: #15803d;
+}
+.bf__amount-hint + .bf__amount-hint {
+  margin-top: 8px;
 }
 .bf__amount-fill {
   background: linear-gradient(135deg, #16a34a, #15803d);

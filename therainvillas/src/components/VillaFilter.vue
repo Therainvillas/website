@@ -87,10 +87,10 @@
             <h3 class="vf-card__title">{{ villa.name }}</h3>
             <p class="vf-card__desc">{{ villa.description }}</p>
             <ul class="vf-card__stats">
-              <li><span class="vf-card__stat-icon"><img src="/icon/bed.png" alt="" /></span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
-              <li><span class="vf-card__stat-icon"><img src="/icon/bathtub.png" alt="" /></span> <strong>{{ villa.bathrooms }}</strong> mandi</li>
-              <li><span>👥</span> <strong>{{ villa.capacity }}</strong> tamu</li>
-              <li><span>🅿️</span> <strong>{{ villa.parking }}</strong> parkir</li>
+              <li><span class="vf-card__stat-icon"><img src="/icon/bedroom.png" alt="" /></span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
+              <li><span class="vf-card__stat-icon"><img src="/icon/bathroom.png" alt="" /></span> <strong>{{ villa.bathrooms }}</strong> mandi</li>
+              <li><span class="vf-card__stat-icon"><img src="/icon/grup.png" alt="" /></span> <strong>{{ villa.capacity }}</strong> tamu</li>
+              <li><span class="vf-card__stat-icon"><img src="/icon/parking.png" alt="" /></span> <strong>{{ villa.parking }}</strong> parkir</li>
             </ul>
             <div class="vf-card__tags">
               <span v-for="tag in villaAmenities(villa).slice(0, 4)" :key="tag" class="vf-card__tag">{{ tag }}</span>

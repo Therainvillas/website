@@ -7,63 +7,63 @@
 
     <div class="himbauan__grid">
       <div class="himbauan__card reveal reveal--delay-1">
-        <span class="himbauan__icon">🚭</span>
+        <img class="himbauan__icon" src="/icon/smoking.png" alt="" />
         <p>Dilarang merokok di dalam glamping atau kamar.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-2">
-        <span class="himbauan__icon">⏰</span>
+        <img class="himbauan__icon" src="/icon/jam.png" alt="" />
         <p>Check-out jam <strong>12.00</strong>. Lebih dari jam tersebut akan dikenakan charge <strong>Rp 500.000</strong>.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-3">
-        <span class="himbauan__icon">🧴</span>
+        <img class="himbauan__icon" src="/icon/shampoo.png" alt="" />
         <p>Tidak menggunakan sampo atau sabun di dalam kolam renang.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-4">
-        <span class="himbauan__icon">🧹</span>
+        <img class="himbauan__icon" src="/icon/kebersihan.png" alt="" />
         <p>Pembersihan khusus akan dikenakan biaya tambahan.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-1">
-        <span class="himbauan__icon">🔇</span>
+        <img class="himbauan__icon" src="/icon/sound.png" alt="" />
         <p>Jam malam berlaku sampai jam <strong>22.00</strong>. Tidak berteriak dan volume tidak terlalu keras.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-2">
-        <span class="himbauan__icon">💔</span>
+        <img class="himbauan__icon" src="/icon/rusak.png" alt="" />
         <p>Kerusakan barang yang ditimbulkan oleh tamu akan dikenakan biaya ganti rugi (sesuai nominal harga barang).</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-3">
-        <span class="himbauan__icon">🔑</span>
+        <img class="himbauan__icon" src="/icon/kunci.png" alt="" />
         <p>Harap perhatikan barang pribadi dan kunci ganda kendaraan.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-4">
-        <span class="himbauan__icon">🎱</span>
+        <img class="himbauan__icon" src="/icon/billiard.png" alt="" />
         <p>Tidak menaruh barang apapun dan menduduki meja billiard.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-1">
-        <span class="himbauan__icon">📦</span>
+        <img class="himbauan__icon" src="/icon/barang.png" alt="" />
         <p>Dilarang menindah-mindahkan barang tanpa seizin penjaga.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-2">
-        <span class="himbauan__icon">🏏</span>
+        <img class="himbauan__icon" src="/icon/stick.png" alt="" />
         <p>Bola billiard atau stik patah dikenakan biaya ganti rugi <strong>Rp 100.000</strong>.</p>
       </div>
       <div class="himbauan__card himbauan__card--danger reveal reveal--delay-3">
-        <span class="himbauan__icon">⚠️</span>
+        <img class="himbauan__icon" src="/icon/alert.png" alt="" />
         <p><strong>Tidak membawa SAJAM & BARANG ILEGAL.</strong></p>
       </div>
       <div class="himbauan__card himbauan__card--danger reveal reveal--delay-4">
-        <span class="himbauan__icon">🍺</span>
+        <img class="himbauan__icon" src="/icon/alkohol.png" alt="" />
         <p><strong>Dilarang membawa atau meminum-minuman keras dan obat terlarang.</strong></p>
       </div>
       <div class="himbauan__card reveal reveal--delay-1">
-        <span class="himbauan__icon">👤</span>
+        <img class="himbauan__icon" src="/icon/responsibility.png" alt="" />
         <p>Kehilangan barang <strong>bukan tanggung jawab kami</strong>. Pastikan barang pribadi sudah aman.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-2">
-        <span class="himbauan__icon">📢</span>
+        <img class="himbauan__icon" src="/icon/horn.png" alt="" />
         <p>Jika melanggar peraturan, pihak kami berhak menegur pengunjung.</p>
       </div>
       <div class="himbauan__card reveal reveal--delay-3">
-        <span class="himbauan__icon">🐾</span>
+        <img class="himbauan__icon" src="/icon/animal.png" alt="" />
         <p><strong>Dilarang membawa peliharaan.</strong></p>
       </div>
     </div>
@@ -120,11 +120,13 @@
     border: 1px solid rgba(239, 68, 68, 0.15);
   }
 
-  .himbauan__icon {
-    font-size: 1.3rem;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
+.himbauan__icon {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
 
   .himbauan__card p {
     font-size: 0.9rem;

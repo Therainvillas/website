@@ -292,18 +292,22 @@ const villaFaq = [
 
           <div class="vd-specs reveal reveal--delay-3">
             <div class="vd-spec">
+              <img class="vd-spec__icon" src="/icon/grup.png" alt="" />
               <span class="vd-spec__label">Kapasitas</span>
               <strong>{villa.capacity} orang</strong>
             </div>
             <div class="vd-spec">
+              <img class="vd-spec__icon" src="/icon/bedroom.png" alt="" />
               <span class="vd-spec__label">Kamar tidur</span>
               <strong>{villa.bedrooms} kamar{villa.bedroomsNote ? ` (${villa.bedroomsNote})` : ''}</strong>
             </div>
             <div class="vd-spec">
+              <img class="vd-spec__icon" src="/icon/bathroom.png" alt="" />
               <span class="vd-spec__label">Kamar mandi</span>
               <strong>{villa.bathrooms} kamar</strong>
             </div>
             <div class="vd-spec">
+              <img class="vd-spec__icon" src="/icon/parking.png" alt="" />
               <span class="vd-spec__label">Parkir</span>
               <strong>{villa.parking} mobil</strong>
             </div>
@@ -1009,6 +1013,14 @@ const villaFaq = [
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0;
+  }
+
+  .vd-spec__icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 10px;
   }
 
   .vd-spec--price .vd-spec__label {

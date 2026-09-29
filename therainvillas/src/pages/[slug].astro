@@ -377,7 +377,7 @@ const villaFaq = [
             <span>{villa.capacity} tamu maksimal</span>
             <span>{villa.bedrooms} kamar tidur</span>
             <span>{villa.bathrooms} kamar mandi</span>
-            <span>🅿️ {villa.parking} parkir mobil</span>
+            <span><img class="vd-booking__row-icon" src="/icon/parking.png" alt="" /> {villa.parking} parkir mobil</span>
           </div>
 
           {villa.pricingLabels && (
@@ -1296,6 +1296,16 @@ const villaFaq = [
   .vd-booking__rows span {
     color: rgba(23, 24, 19, 0.82);
     font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vd-booking__row-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    flex-shrink: 0;
   }
 
   .vd-booking__button,

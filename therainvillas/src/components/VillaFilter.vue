@@ -67,7 +67,6 @@
         :class="{ 'vf__amenity-btn--on': selectedAmenities.includes(a.value) }"
         @click="toggleAmenity(a.value)"
       >
-        <span class="vf__amenity-icon">{{ a.icon }}</span>
         {{ a.label }}
       </button>
     </div>
@@ -140,15 +139,15 @@ const BED_OPTIONS = [
 ];
 
 const AMENITY_OPTIONS = [
-  { label: 'Private Pool', value: 'pool', icon: '🏊' },
-  { label: 'Billiard', value: 'billiard', icon: '🎱' },
-  { label: 'Karaoke', value: 'karaoke', icon: '🎤' },
-  { label: 'BBQ', value: 'bbq', icon: '🔥' },
-  { label: 'Kitchen Set', value: 'kitchen', icon: '🍳' },
-  { label: 'Gazebo', value: 'gazebo', icon: '🏡' },
-  { label: 'Playground', value: 'playground', icon: '🎠' },
-  { label: 'Mountain View', value: 'mountain', icon: '🏔️' },
-  { label: 'WiFi & TV', value: 'wifi', icon: '📶' },
+  { label: 'Private Pool', value: 'pool' },
+  { label: 'Billiard', value: 'billiard' },
+  { label: 'Karaoke', value: 'karaoke' },
+  { label: 'BBQ', value: 'bbq' },
+  { label: 'Kitchen Set', value: 'kitchen' },
+  { label: 'Gazebo', value: 'gazebo' },
+  { label: 'Playground', value: 'playground' },
+  { label: 'Mountain View', value: 'mountain' },
+  { label: 'WiFi & TV', value: 'wifi' },
 ];
 
 const AMENITY_KEYWORDS = {
@@ -434,10 +433,6 @@ export default {
   border-color: #5b8def;
   background: rgba(91, 141, 239, 0.12);
   color: #3b6fd4;
-}
-
-.vf__amenity-icon {
-  font-size: 0.95rem;
 }
 
 .vf__count {

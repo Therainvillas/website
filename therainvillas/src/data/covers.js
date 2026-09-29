@@ -29,5 +29,5 @@ export const villaCovers = {
   'Villa Thymi': '/Thymi/Cover.jpeg',
   'Villa Twins': '/Twins/cover.jpeg',
   'Villa Valora': '/Valora/Cover.jpg',
-  'Villa Wanela': '/wanela/cover.jpeg',
+  'Villa Wanela': '/wanela/cover.webp',
 };

@@ -105,18 +105,18 @@
 <script>
   const slugify = (s) => String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   const villasData = [
-    { id: 8, name: "Villa Cyrena", price: "Rp 1.200.000/malam", image: "/thumbnail/Cyrena%20Thumb.jpg", desc: "Villa elegan dengan private pool dan area bersantai. Cocok untuk liburan keluarga atau kumpul teman." },
-    { id: 10, name: "Villa Cempaka", price: "Rp 1.200.000/malam", image: "/thumbnail/Cempaka%20Thumb.jpg", desc: "Villa bergaya Eropa dengan arsitektur klasik elegan, private pool, dan taman mediterania." },
-    { id: 1, name: "Villa Agave", price: "Rp 1.700.000/malam", image: "/thumbnail/Agave%20Thumb.jpg", desc: "Villa luas dengan 3 bangunan, private pool, dan area billiard. Cocok untuk acara besar dan gathering." },
-    { id: 12, name: "Villa Rayya", price: "Rp 1.350.000/malam", image: "/thumbnail/Rayya%20Thumb.jpg", desc: "Villa cozy dengan queen bed, private pool, karaoke, dan chill space. Cocok untuk staycation romantis." },
-    { id: 11, name: "Villa Arsy", price: "Rp 1.700.000/malam", image: "/thumbnail/Griya%20Arsy%20Thumb.jpg", desc: "Villa dengan private pool, mushola, dan suasana nyaman. Cocok untuk liburan keluarga yang tenang." },
-    { id: 2, name: "Villa Wanela", price: "Rp 1.000.000/malam", image: "/thumbnail/Wanela%20Thumb.jpg", desc: "Villa cozy dengan private pool dan billiard. Cocok untuk staycation santai bersama teman atau keluarga." },
-    { id: 4, name: "Villa Aleia", price: "Rp 1.400.000/malam", image: "/thumbnail/Aleia%20Thumb.jpg", desc: "Villa cozy dengan private pool, gazebo, dan kitchen set lengkap. Cocok untuk liburan santai bersama keluarga." },
-    { id: 9, name: "Villa Arisyfa", price: "Rp 1.500.000/malam", image: "/thumbnail/Arisyfa%20Thumb.jpg", desc: "Villa luas 3 lantai dengan lapangan badminton dan private pool. Cocok untuk gathering keluarga besar." },
-    { id: 3, name: "Villa Cemara", price: "Rp 1.300.000/malam", image: "/thumbnail/Cemara%20Thumb.jpg", desc: "Villa asri dengan private pool, balkon, dan halaman luas. Cocok untuk healing dan quality time." },
-    { id: 5, name: "Villa 4D", price: "Rp 1.200.000/malam", image: "/thumbnail/4D%20Thumb.jpg", desc: "Villa dengan konsep ala cafe, private pool, gazebo, dan area billiard. Cocok untuk nongkrong santai." },
-    { id: 19, name: "Villa De Summit", price: "Rp 2.000.000/malam", image: "/thumbnail/De%20Summit%20Thumb.jpg", desc: "Villa dengan pendopo view 360, private pool, dan space api unggun. Cocok untuk gathering eksklusif." },
-    { id: 7, name: "Villa Twins", price: "Rp 1.500.000/malam", image: "/thumbnail/Twins%20Thumb.jpg", desc: "Villa twin dengan lapangan basket, playground, dan free 2 glamping. Cocok untuk gathering dan acara keluarga." },
+    { id: 8, name: "Villa Cyrena", price: "Rp 1.200.000/malam", image: "/thumbnail/Cyrena%20Thumb.webp", desc: "Villa elegan dengan private pool dan area bersantai. Cocok untuk liburan keluarga atau kumpul teman." },
+    { id: 10, name: "Villa Cempaka", price: "Rp 1.200.000/malam", image: "/thumbnail/Cempaka%20Thumb.webp", desc: "Villa bergaya Eropa dengan arsitektur klasik elegan, private pool, dan taman mediterania." },
+    { id: 1, name: "Villa Agave", price: "Rp 1.700.000/malam", image: "/thumbnail/Agave%20Thumb.webp", desc: "Villa luas dengan 3 bangunan, private pool, dan area billiard. Cocok untuk acara besar dan gathering." },
+    { id: 12, name: "Villa Rayya", price: "Rp 1.350.000/malam", image: "/thumbnail/Rayya%20Thumb.webp", desc: "Villa cozy dengan queen bed, private pool, karaoke, dan chill space. Cocok untuk staycation romantis." },
+    { id: 11, name: "Villa Arsy", price: "Rp 1.700.000/malam", image: "/thumbnail/Griya%20Arsy%20Thumb.webp", desc: "Villa dengan private pool, mushola, dan suasana nyaman. Cocok untuk liburan keluarga yang tenang." },
+    { id: 2, name: "Villa Wanela", price: "Rp 1.000.000/malam", image: "/thumbnail/Wanela%20Thumb.webp", desc: "Villa cozy dengan private pool dan billiard. Cocok untuk staycation santai bersama teman atau keluarga." },
+    { id: 4, name: "Villa Aleia", price: "Rp 1.400.000/malam", image: "/thumbnail/Aleia%20Thumb.webp", desc: "Villa cozy dengan private pool, gazebo, dan kitchen set lengkap. Cocok untuk liburan santai bersama keluarga." },
+    { id: 9, name: "Villa Arisyfa", price: "Rp 1.500.000/malam", image: "/thumbnail/Arisyfa%20Thumb.webp", desc: "Villa luas 3 lantai dengan lapangan badminton dan private pool. Cocok untuk gathering keluarga besar." },
+    { id: 3, name: "Villa Cemara", price: "Rp 1.300.000/malam", image: "/thumbnail/Cemara%20Thumb.webp", desc: "Villa asri dengan private pool, balkon, dan halaman luas. Cocok untuk healing dan quality time." },
+    { id: 5, name: "Villa 4D", price: "Rp 1.200.000/malam", image: "/thumbnail/4D%20Thumb.webp", desc: "Villa dengan konsep ala cafe, private pool, gazebo, dan area billiard. Cocok untuk nongkrong santai." },
+    { id: 19, name: "Villa De Summit", price: "Rp 2.000.000/malam", image: "/thumbnail/De%20Summit%20Thumb.webp", desc: "Villa dengan pendopo view 360, private pool, dan space api unggun. Cocok untuk gathering eksklusif." },
+    { id: 7, name: "Villa Twins", price: "Rp 1.500.000/malam", image: "/thumbnail/Twins%20Thumb.webp", desc: "Villa twin dengan lapangan basket, playground, dan free 2 glamping. Cocok untuk gathering dan acara keluarga." },
   ];
 
   const scoring = {

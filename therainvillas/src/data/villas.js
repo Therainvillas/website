@@ -12,7 +12,7 @@ export const villas = [
     bedrooms: 7,
     bathrooms: 7,
     parking: 12,
-    image: "/thumbnail/Agave%20Thumb.jpg",
+    image: "/thumbnail/Agave%20Thumb.webp",
     amenities: ["3 Bangunan", "Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Halaman Luas", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2500000, 4500000],
     pricingLabels: [
@@ -36,7 +36,7 @@ export const villas = [
     bedroomsNote: "Free extrabed 5",
     bathrooms: 2,
     parking: 4,
-    image: "/thumbnail/Wanela%20Thumb.jpg",
+    image: "/thumbnail/Wanela%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Kitchen Set", "BBQ Space"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1500000, 2500000],
     pricingLabels: [
@@ -59,7 +59,7 @@ export const villas = [
     bedrooms: 5,
     bathrooms: 4,
     parking: 7,
-    image: "/thumbnail/Cemara%20Thumb.jpg",
+    image: "/thumbnail/Cemara%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "2 Smart TV & WiFi", "Billiard", "Karaoke", "Halaman Luas", "Private Pool", "BBQ Space", "Balkon", "Kitchen Set"],
     dayPrices: [1300000, 1300000, 1300000, 1300000, 1300000, 1800000, 3500000],
     pricingLabels: [
@@ -82,7 +82,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/Aleia%20Thumb.jpg",
+    image: "/thumbnail/Aleia%20Thumb.webp",
     amenities: ["Karaoke", "Gazebo", "Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set Lengkap", "BBQ Space", "Chill Space"],
     dayPrices: [1400000, 1400000, 1400000, 1400000, 1400000, 2000000, 3500000],
     pricingLabels: [
@@ -105,7 +105,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/4D%20Thumb.jpg",
+    image: "/thumbnail/4D%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Gazebo", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 1800000, 3000000],
     pricingLabels: [
@@ -131,7 +131,7 @@ export const villas = [
     bedroomsNote: "6 Queen Bed",
     bathrooms: 6,
     parking: 4,
-    image: "/thumbnail/Calmora%20Thumb.jpg",
+    image: "/thumbnail/Calmora%20Thumb.webp",
     amenities: ["Water Heater", "Karaoke", "WiFi & Smart TV", "Living Room", "Private Pool", "Gazebo", "Billiard", "Kitchen Set", "Chill Space", "Best View (Mountain & Citylight)"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 1700000],
     pricingLabels: [
@@ -152,7 +152,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 15,
-    image: "/thumbnail/Twins%20Thumb.jpg",
+    image: "/thumbnail/Twins%20Thumb.webp",
     amenities: ["Lapangan Basket", "Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Halaman Luas", "Playground", "Private Pool", "BBQ Space", "Kitchen Set", "Gazebo", "Free 2 Glamping"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 2000000, 3500000],
     pricingLabels: [
@@ -175,7 +175,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/Cyrena%20Thumb.jpg",
+    image: "/thumbnail/Cyrena%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Halaman", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 1700000, 3000000],
     pricingLabels: [
@@ -199,7 +199,7 @@ export const villas = [
     bedroomsNote: "7 tempat tidur",
     bathrooms: 5,
     parking: 7,
-    image: "/thumbnail/Arisyfa%20Thumb.jpg",
+    image: "/thumbnail/Arisyfa%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard Area", "Karaoke", "Chill Area", "Halaman Luas", "Lapangan Badminton", "Private Pool", "Gazebo", "BBQ Space", "Kitchen Set"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 1800000, 3500000],
     pricingLabels: [
@@ -222,7 +222,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 3,
     parking: 5,
-    image: "/thumbnail/Cempaka%20Thumb.jpg",
+    image: "/thumbnail/Cempaka%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Halaman", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1400000, 1200000, 1200000, 1200000, 1200000, 1700000, 3200000],
     pricingLabels: [
@@ -247,7 +247,7 @@ export const villas = [
     bedroomsNote: "Masing-masing kamar double bed",
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/Griya%20Arsy%20Thumb.jpg",
+    image: "/thumbnail/Griya%20Arsy%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Mushola", "Karaoke", "Billiard", "Private Pool", "Kitchen Set", "BBQ Space"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2000000, 4000000],
     pricingLabels: [
@@ -271,7 +271,7 @@ export const villas = [
     bedroomsNote: "Queen Bed",
     bathrooms: 5,
     parking: 7,
-    image: "/thumbnail/Rayya%20Thumb.jpg",
+    image: "/thumbnail/Rayya%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Api Unggun Space", "Playground", "Karaoke", "Billiard", "Private Pool", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [1350000, 1350000, 1350000, 1350000, 1350000, 2500000, 4000000],
     pricingLabels: [
@@ -295,7 +295,7 @@ export const villas = [
     bedroomsNote: "3 extrabed",
     bathrooms: 3,
     parking: 5,
-    image: "/thumbnail/Opung%20Thumb.jpg",
+    image: "/thumbnail/Opung%20Thumb.webp",
     amenities: ["Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Chill Area", "Halaman"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2000000, 3500000],
     pricingLabels: [
@@ -318,7 +318,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 5,
-    image: "/thumbnail/RJS%20Cottage%201%20Thumb.jpg",
+    image: "/thumbnail/RJS%20Cottage%201%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Gazebo", "Kitchen Set", "BBQ Space"],
     dayPrices: [1800000, 1800000, 1800000, 1800000, 1800000, 2300000, 3700000],
     pricingLabels: [
@@ -341,7 +341,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 5,
-    image: "/thumbnail/RJS%202%20Thumb.jpg",
+    image: "/thumbnail/RJS%202%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 2700000, 3800000],
     pricingLabels: [
@@ -364,7 +364,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 5,
-    image: "/thumbnail/RJS%203%20Thumb.jpg",
+    image: "/thumbnail/RJS%203%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 2700000, 3800000],
     pricingLabels: [
@@ -389,7 +389,7 @@ export const villas = [
     bedrooms: 7,
     bathrooms: 4,
     parking: 7,
-    image: "/thumbnail/Kaca%201%20Thumb.jpg",
+    image: "/thumbnail/Kaca%201%20Thumb.webp",
     amenities: ["Billiard", "Private Pool", "Smart TV & WiFi", "2 Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Chill Area", "Gazebo", "Halaman"],
     dayPrices: [2500000, 2500000, 2500000, 2500000, 2500000, 3000000, 5000000],
     pricingLabels: [
@@ -414,7 +414,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 4,
     parking: 4,
-    image: "/thumbnail/Kaca%202%20Thumb.jpg",
+    image: "/thumbnail/Kaca%202%20Thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Chill Space", "BBQ Space", "Kitchen Set"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 2000000, 3500000],
     pricingLabels: [
@@ -438,7 +438,7 @@ export const villas = [
     bedroomsNote: "5 queen bed, 3 single bed (slide out)",
     bathrooms: 4,
     parking: 0,
-    image: "/thumbnail/De%20Summit%20Thumb.jpg",
+    image: "/thumbnail/De%20Summit%20Thumb.webp",
     amenities: ["2 Smart TV", "Karaoke", "WiFi", "Space Api Unggun", "Private Pool", "Billiard", "Pendopo View 360"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 4500000],
     pricingLabels: [
@@ -462,7 +462,7 @@ export const villas = [
     bedroomsNote: "1 kamar barracks",
     bathrooms: 6,
     parking: 20,
-    image: "/thumbnail/Bodas%20Thumb.jpg",
+    image: "/thumbnail/Bodas%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Mushola", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman Luas", "Kitchen Set", "BBQ Space"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 2500000, 5000000],
     pricingLabels: [
@@ -485,7 +485,7 @@ export const villas = [
     bedrooms: 6,
     bathrooms: 6,
     parking: 8,
-    image: "/thumbnail/Thymi%20Thumb.jpg",
+    image: "/thumbnail/Thymi%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Gazebo", "Halaman", "Private Pool", "BBQ Space", "Kitchen Set", "Mountain View", "Playground"],
     dayPrices: [1600000, 1600000, 1600000, 1600000, 1600000, 2000000, 4000000],
     pricingLabels: [
@@ -508,7 +508,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 4,
     parking: 4,
-    image: "/thumbnail/Albi%20Thumb.jpg",
+    image: "/thumbnail/Albi%20Thumb.webp",
     amenities: ["Water Heater", "Karaoke", "Smart TV & WiFi", "Chill Space & BBQ Space", "Private Pool", "Billiard & View Pegunungan", "Kitchen Set"],
     dayPrices: [1300000, 1300000, 1300000, 1300000, 1300000, 1800000, 3000000],
     pricingLabels: [
@@ -532,7 +532,7 @@ export const villas = [
     bedroomsNote: "1 kamar mezanine",
     bathrooms: 4,
     parking: 2,
-    image: "/thumbnail/Valora%20Thumb.jpg",
+    image: "/thumbnail/Valora%20Thumb.webp",
     amenities: ["Billiard", "Private Pool", "Karaoke", "Living Room", "Smart TV & WiFi", "Chill Space", "Mountain View", "Kitchen Set", "BBQ Space"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1500000, 2500000],
     pricingLabels: [
@@ -555,7 +555,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 3,
     parking: 3,
-    image: "/thumbnail/Echa%20Village%20Thumb.jpg",
+    image: "/thumbnail/Echa%20Village%20Thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Rooftop", "Kitchen Set", "BBQ Space"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 2000000, 3500000],
     pricingLabels: [
@@ -579,7 +579,7 @@ export const villas = [
     bathrooms: 2,
     bedroomsNote: "1 kamar bilas",
     parking: 4,
-    image: "/thumbnail/Awan%20Thumb.jpg",
+    image: "/thumbnail/Awan%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [1400000, 1350000, 1350000, 1350000, 1350000, 1800000, 3500000],
     pricingLabels: [
@@ -604,7 +604,7 @@ export const villas = [
     bathrooms: 3,
     bedroomsNote: "1 musolah",
     parking: 3,
-    image: "/thumbnail/Baduo%20Thumb.jpg",
+    image: "/thumbnail/Baduo%20Thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Kitchen Set", "BBQ Space", "Playground"],
     dayPrices: [1350000, 1350000, 1350000, 1350000, 1350000, 1800000, 3300000],
     pricingLabels: [
@@ -628,7 +628,7 @@ export const villas = [
     bedrooms: 5,
     bathrooms: 7,
     parking: 5,
-    image: "/thumbnail/Hala%20Thumb.jpg",
+    image: "/thumbnail/Hala%20Thumb.webp",
     amenities: ["Mountain View", "Billiard", "Tennis Meja", "Balkon", "Water Heater", "Living Room", "Smart TV & WiFi", "Karaoke & Mini Bar", "Halaman Luas", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 4500000],
     pricingLabels: [
@@ -652,7 +652,7 @@ export const villas = [
     bedroomsNote: "4 queen bed, free extrabed 3",
     bathrooms: 3,
     parking: 5,
-    image: "/thumbnail/Ranna%20Thumb.jpg",
+    image: "/thumbnail/Ranna%20Thumb.webp",
     amenities: ["Smart TV & WiFi", "Living Room", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Kitchen Set", "BBQ Space"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 1700000, 3000000],
     pricingLabels: [
@@ -677,7 +677,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 5,
     parking: 4,
-    image: "/thumbnail/Rio%205%20Thumb.jpg",
+    image: "/thumbnail/Rio%205%20Thumb.webp",
     amenities: ["Lapang Bola (Mini Soccer)", "Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Halaman Luas", "Gazebo"],
     dayPrices: [1300000, 1300000, 1300000, 1300000, 1300000, 1700000, 3000000],
     pricingLabels: [
@@ -702,7 +702,7 @@ export const villas = [
     bedroomsNote: "Free 2 extrabed",
     bathrooms: 3,
     parking: 7,
-    image: "/thumbnail/The%20Herlina%20Thumb.jpg",
+    image: "/thumbnail/The%20Herlina%20Thumb.webp",
     amenities: ["Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Chill Area", "Halaman"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 5000000],
     pricingLabels: [
@@ -725,7 +725,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 2,
     parking: 4,
-    image: "/thumbnail/Hariza%20Thumb.jpg",
+    image: "/thumbnail/Hariza%20Thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Chill Space", "BBQ Space", "Kitchen Set"],
     dayPrices: [1100000, 1100000, 1100000, 1100000, 1100000, 1600000, 2700000],
     pricingLabels: [

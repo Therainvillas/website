@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref, watch, nextTick } from 'vue';
+import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from 'vue';
+import { villas as villaCatalog } from '../data/villas';
+import { DRIVE_MINUTES } from '../data/driveTimes';
 
 const LEAF_VERSION = '1.9.4';
 
@@ -91,6 +93,9 @@ const ready = ref(false);
 const viewport = ref({ w: 0, h: 0 });
 const activeId = ref(null);
 const line = ref(null);
+const cardOpen = ref(false);
+const selectedId = ref(null);
+const cardEl = ref(null);
 
 let map = null;
 let onResize = null;
@@ -144,11 +149,97 @@ watch(activeId, (id) => {
   }
 });
 
+watch(selectedId, (id) => {
+  const el = mapEl.value;
+  if (!el) return;
+  el.querySelectorAll('.vdm-villa').forEach((n) => n.classList.remove('vdm-villa--selected'));
+  if (id != null) {
+    const target = el.querySelector(`[data-vdm-id="${String(id)}"]`);
+    if (target) target.classList.add('vdm-villa--selected');
+  }
+});
+
+// Card di samping kanan membuat lebar peta berubah → segarkan ukuran Leaflet.
+watch(cardOpen, async () => {
+  await nextTick();
+  if (!map) return;
+  map.invalidateSize();
+  setTimeout(() => {
+    if (!map) return;
+    map.invalidateSize();
+    onMapMove();
+  }, 420);
+});
+
 function goTo(href) {
   if (href) window.location.href = href;
 }
 
+function driveLabelFor(id) {
+  const known = DRIVE_MINUTES[String(id)];
+  if (known != null) return `${known} MIN DRIVE BY CAR`;
+  const loc = props.villas.find((v) => String(v.id) === String(id));
+  const km = loc
+    ? haversineKm(props.office.lat, props.office.lng, loc.lat, loc.lng)
+    : 1;
+  const minutes = Math.max(3, Math.round((km * 1.6) / 30 * 60));
+  return `${minutes} MIN DRIVE BY CAR`;
+}
+
+function villaCardInfo(id) {
+  const loc = props.villas.find((v) => String(v.id) === String(id));
+  if (!loc) return null;
+  const cat =
+    villaCatalog.find((v) => String(v.id) === String(id)) ||
+    villaCatalog.find((v) => v.name === loc.name) ||
+    {};
+  return {
+    id: String(loc.id),
+    name: loc.name,
+    href: loc.href || '#',
+    image: cat.image || '/pin.png',
+    description: cat.description || '',
+    driveLabel: driveLabelFor(loc.id),
+  };
+}
+
+const card = computed(() => (selectedId.value == null ? null : villaCardInfo(selectedId.value)));
+
+function openLocation(id) {
+  selectedId.value = String(id);
+  cardOpen.value = true;
+  setActive(id);
+  nextTick(() => {
+    if (cardEl.value && cardEl.value.scrollIntoView) {
+      setTimeout(() => {
+        cardEl.value.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 120);
+    }
+  });
+}
+
+function closeLocation() {
+  cardOpen.value = false;
+  selectedId.value = null;
+  activeId.value = null;
+  line.value = null;
+}
+
+function onDocClick(e) {
+  if (!cardOpen.value) return;
+  const target = e.target instanceof Element ? e.target : null;
+  if (!target) return;
+  if (target.closest('.vdm-mapwrap') || target.closest('.vdm-location')) return;
+  closeLocation();
+}
+
+function onDocKey(e) {
+  if (e.key === 'Escape') closeLocation();
+}
+
 onMounted(async () => {
+  document.addEventListener('click', onDocClick);
+  document.addEventListener('keydown', onDocKey);
   // Leaflet dimuat dari CDN (client-only), mengikuti pola LocationMap.vue,
   // agar konsisten dan terhindar dari error import UMD saat bundle Astro.
   const L = await loadLeaflet();
@@ -186,16 +277,28 @@ onMounted(async () => {
   props.villas.forEach((v) => {
     const icon = L.divIcon({
       className: 'vdm-icon',
-      html: `<div class="vdm-villa" data-vdm-id="${String(v.id)}"><span class="vdm-villa-icon"><img src="/pin.png" alt="" /></span><span class="vdm-villa-name">${v.name}</span></div>`,
+      html: `<button type="button" class="vdm-villa" data-vdm-id="${String(v.id)}" tabindex="0" aria-label="Lihat detail ${v.name}"><span class="vdm-villa-icon"><img class="vdm-villa-pin vdm-villa-pin--close" src="/pin%20close%20new.png" alt="" /><img class="vdm-villa-pin vdm-villa-pin--open" src="/pin%20open.png" alt="" /></span><span class="vdm-villa-name">${v.name}</span></button>`,
       iconSize: [0, 0],
       iconAnchor: [0, 0],
     });
     const marker = L.marker([v.lat, v.lng], { icon }).addTo(map);
-    marker.on('mouseover', () => setActive(v.id));
-    marker.on('mouseout', () => setActive(null));
-    marker.on('focus', () => setActive(v.id));
-    marker.on('blur', () => setActive(null));
-    marker.on('click', () => goTo(v.href));
+    const hoverActive = () => {
+      if (!cardOpen.value) setActive(v.id);
+    };
+    const hoverIdle = () => {
+      if (!cardOpen.value) setActive(null);
+    };
+    marker.on('mouseover', hoverActive);
+    marker.on('mouseout', hoverIdle);
+    marker.on('click', () => openLocation(v.id));
+    const markerEl = marker.getElement();
+    if (markerEl) {
+      const btn = markerEl.querySelector('.vdm-villa');
+      if (btn) {
+        btn.addEventListener('focus', hoverActive);
+        btn.addEventListener('blur', hoverIdle);
+      }
+    }
     markers.set(String(v.id), marker);
   });
 
@@ -221,6 +324,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  document.removeEventListener('click', onDocClick);
+  document.removeEventListener('keydown', onDocKey);
   if (onResize) window.removeEventListener('resize', onResize);
   markers.forEach((m) => m.remove());
   markers.clear();
@@ -232,7 +337,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="vdm">
+  <section class="vdm" :class="{ 'vdm--card-open': cardOpen }">
     <div class="vdm-mapwrap">
       <div ref="mapEl" class="vdm-map"></div>
 
@@ -272,38 +377,41 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <aside class="vdm-sidebar">
-      <header class="vdm-sidebar-head">
-        <div class="vdm-sidebar-titlewrap">
-          <h3 class="vdm-sidebar-title">{{ title }}</h3>
-          <p v-if="subtitle" class="vdm-sidebar-sub">{{ subtitle }}</p>
+    <div
+      ref="cardEl"
+      class="vdm-location"
+      :class="{ 'vdm-location--open': cardOpen }"
+      v-show="cardOpen"
+      data-vdm-card
+    >
+      <button
+        v-if="cardOpen"
+        type="button"
+        class="vdm-location__close"
+        aria-label="Tutup kartu lokasi"
+        @click.stop="closeLocation"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+
+      <transition name="vdm-swap" mode="out-in">
+        <div
+          v-if="card && cardOpen"
+          :key="card.id"
+          class="vdm-location__box"
+          role="region"
+          aria-live="polite"
+        >
+          <img class="vdm-location__media" :src="card.image" :alt="card.name" loading="lazy" />
+          <div class="vdm-location__content">
+            <span class="vdm-location__dist">{{ card.driveLabel }}</span>
+            <h4 class="vdm-location__name">{{ card.name }}</h4>
+            <p class="vdm-location__desc">{{ card.description }}</p>
+            <a class="vdm-location__link" :href="card.href">Lihat Detail Villa</a>
+          </div>
         </div>
-        <span class="vdm-count">{{ villas.length }} villa</span>
-      </header>
-
-      <ul class="vdm-list">
-        <li v-for="(v, i) in villas" :key="String(v.id)">
-          <a
-            :href="v.href || '#'"
-            class="vdm-item"
-            :class="{ 'vdm-item--active': activeId === String(v.id) }"
-            @mouseenter="setActive(v.id)"
-            @mouseleave="setActive(null)"
-            @focus="setActive(v.id)"
-            @blur="setActive(null)"
-          >
-            <span class="vdm-item-name">{{ v.name }}</span>
-            <span class="vdm-item-dist">
-              {{ formatDistance(haversineKm(office.lat, office.lng, v.lat, v.lng)) }}
-            </span>
-          </a>
-        </li>
-      </ul>
-
-      <footer class="vdm-sidebar-foot">
-        Jarak dihitung real-time dari koordinat (rumus Haversine)
-      </footer>
-    </aside>
+      </transition>
+    </div>
   </section>
 </template>
 
@@ -318,16 +426,20 @@ onBeforeUnmount(() => {
   --vdm-gold-soft: #e8c76a;
   --vdm-ink: #2c3a2e;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
-  align-items: stretch;
+  align-items: start;
   color: var(--vdm-ink);
   font-family: inherit;
 }
 
+.vdm--card-open {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+}
+
 .vdm-mapwrap {
   position: relative;
-  min-height: 480px;
+  min-height: 560px;
   border-radius: 18px;
   overflow: hidden;
   background: #e8efe4;
@@ -499,6 +611,12 @@ onBeforeUnmount(() => {
   position: relative;
   width: 0;
   height: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 .vdm-villa-icon {
   position: absolute;
@@ -521,6 +639,29 @@ onBeforeUnmount(() => {
   height: 100%;
   object-fit: contain;
 }
+.vdm-villa-pin {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: opacity 0.16s ease;
+}
+.vdm-villa-pin--open {
+  opacity: 0;
+}
+.vdm-villa:hover .vdm-villa-pin--close,
+.vdm-villa--active .vdm-villa-pin--close,
+.vdm-villa--selected .vdm-villa-pin--close,
+.vdm-villa:focus-visible .vdm-villa-pin--close {
+  opacity: 0;
+}
+.vdm-villa:hover .vdm-villa-pin--open,
+.vdm-villa--active .vdm-villa-pin--open,
+.vdm-villa--selected .vdm-villa-pin--open,
+.vdm-villa:focus-visible .vdm-villa-pin--open {
+  opacity: 1;
+}
 .vdm-villa-name {
   position: absolute;
   left: 0;
@@ -542,14 +683,28 @@ onBeforeUnmount(() => {
 }
 .vdm-villa:hover .vdm-villa-icon,
 .vdm-villa--active .vdm-villa-icon {
-  transform: scale(1.25);
-  filter: drop-shadow(0 4px 10px rgba(20, 39, 26, 0.45)) drop-shadow(0 0 6px rgba(213, 166, 46, 0.9));
+  transform: scale(1.22);
+  filter: drop-shadow(0 5px 10px rgba(20, 39, 26, 0.45));
 }
 .vdm-villa:hover .vdm-villa-name,
 .vdm-villa--active .vdm-villa-name {
   background: var(--vdm-gold);
   border-color: rgba(213, 166, 46, 0.5);
   color: var(--vdm-pine-deep);
+}
+.vdm-villa--selected .vdm-villa-icon {
+  transform: scale(1.28);
+  filter: drop-shadow(0 6px 12px rgba(20, 39, 26, 0.5));
+}
+.vdm-villa--selected .vdm-villa-name {
+  background: var(--vdm-gold);
+  border-color: rgba(213, 166, 46, 0.55);
+  color: var(--vdm-pine-deep);
+}
+.vdm-villa:focus-visible .vdm-villa-name {
+  box-shadow:
+    0 3px 10px rgba(20, 39, 26, 0.3),
+    0 0 0 3px rgba(213, 166, 46, 0.55);
 }
 
 .vdm-legend {
@@ -587,114 +742,157 @@ onBeforeUnmount(() => {
   box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px rgba(113, 132, 90, 0.4);
 }
 
-.vdm-sidebar {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+.vdm-location {
+  position: relative;
   border-radius: 18px;
   background: #fff;
   border: 1px solid #e2e8dd;
   box-shadow: 0 10px 32px rgba(20, 39, 26, 0.12);
   overflow: hidden;
 }
-.vdm-sidebar-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 14px 16px 12px;
-  border-bottom: 1px solid #eef1e6;
+.vdm--card-open .vdm-location {
+  align-self: stretch;
 }
-.vdm-sidebar-titlewrap {
-  min-width: 0;
+.vdm-location--open .vdm-location__box {
+  animation: vdm-card-in 0.4s ease both;
 }
-.vdm-sidebar-title {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: var(--vdm-pine);
-  margin: 0;
+@keyframes vdm-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
-.vdm-sidebar-sub {
-  font-size: 11.5px;
-  color: #6f7d68;
-  margin: 3px 0 0;
-}
-.vdm-count {
-  flex-shrink: 0;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--vdm-sage-soft);
-  color: var(--vdm-sage-deep);
-  font-size: 11px;
-  font-weight: 800;
-}
-.vdm-list {
-  list-style: none;
-  margin: 0;
-  padding: 6px;
-  overflow-y: auto;
-  max-height: 520px;
+.vdm-location__box {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  height: 100%;
+  background: #fff;
 }
-.vdm-item {
+.vdm-location__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+.vdm-location__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 18px 20px 20px;
+}
+.vdm-location__desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #5c6b58;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.vdm-location__dist {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #a77e14;
+  background: #fff8e6;
+  border: 1px solid rgba(213, 166, 46, 0.45);
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+.vdm-location__name {
+  margin: 0;
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--vdm-pine-deep);
+}
+.vdm-location__desc {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #5c6b58;
+}
+.vdm-location__link {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  background: var(--vdm-pine);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 8px 18px rgba(20, 39, 26, 0.22);
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.vdm-location__link:hover {
+  background: var(--vdm-pine-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(20, 39, 26, 0.3);
+}
+.vdm-location__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid transparent;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  background: rgba(20, 39, 26, 0.78);
+  color: #fff;
+  cursor: pointer;
   transition:
     background 0.15s ease,
-    border-color 0.15s ease;
+    transform 0.15s ease;
 }
-.vdm-item:hover,
-.vdm-item--active {
-  background: var(--vdm-sage-soft);
-  border-color: #dbe4c9;
+.vdm-location__close:hover {
+  background: var(--vdm-pine-deep);
+  transform: scale(1.08);
 }
-.vdm-item--active {
-  background: #f5eed7;
-  border-color: rgba(213, 166, 46, 0.55);
+.vdm-location__close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
 }
-.vdm-item-name {
-  flex: 1;
-  min-width: 0;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--vdm-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.vdm-swap-enter-active {
+  transition:
+    opacity 0.38s ease,
+    transform 0.38s ease;
 }
-.vdm-item-dist {
-  flex-shrink: 0;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--vdm-sage-deep);
-  background: #fff;
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid #e3e9d5;
+.vdm-swap-leave-active {
+  transition: opacity 0.15s ease;
 }
-.vdm-item:hover .vdm-item-dist,
-.vdm-item--active .vdm-item-dist {
-  color: #a77e14;
-  border-color: rgba(213, 166, 46, 0.5);
-  background: #fff8e6;
+.vdm-swap-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
 }
-.vdm-sidebar-foot {
-  padding: 10px 14px;
-  border-top: 1px solid #eef1e6;
-  font-size: 11px;
-  color: #94a08b;
-  text-align: center;
-  background: #fbfcf8;
+.vdm-swap-leave-to {
+  opacity: 0;
 }
 
 .vdm .leaflet-container {
@@ -702,14 +900,18 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 900px) {
-  .vdm {
+  .vdm,
+  .vdm--card-open {
     grid-template-columns: 1fr;
   }
   .vdm-mapwrap {
-    min-height: 380px;
+    min-height: 400px;
   }
-  .vdm-list {
-    max-height: 320px;
+  .vdm--card-open .vdm-location {
+    align-self: start;
+  }
+  .vdm-location__desc {
+    -webkit-line-clamp: none;
   }
 }
 </style>

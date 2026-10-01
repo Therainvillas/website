@@ -1,16 +1,14 @@
 /**
  * Event tracking GA4 (thedrainvillas.com).
  * Satu listener global di level `document` (event delegation), bukan onclick per tombol,
- * sehingga elemen yang dirender Vue/Astro ikut terdeteksi. Aktif hanya bila
- * Layout.astro menyuntikkan `window.__TRV_GA__` (production + PUBLIC_GA_ID terisi).
+ * sehingga elemen yang dirender Vue/Astro ikut terdeteksi. Aktif hanya bila `gtag`
+ * tersedia, yaitu pada blok gtag milik Layout.astro di production.
  *
  * Prioritas saat satu klik cocok dengan >1 pola: Aturan eksplisit menang atas
  * tebakan dari href, dan generate_lead menang atas whatsapp_click karena klik
  * Pemesanan di form multi-step sekaligus membuka WhatsApp.
  */
-const cfg = window.__TRV_GA__;
-
-if (cfg && cfg.id && !window.__trvAnalyticsBound) {
+if (!window.__trvAnalyticsBound && typeof window.gtag === 'function') {
   window.__trvAnalyticsBound = true;
 
   const MAX_TEXT = 120;
@@ -18,7 +16,6 @@ if (cfg && cfg.id && !window.__trvAnalyticsBound) {
   const pagePath = () => window.location.pathname;
 
   function send(name, params) {
-    if (typeof window.gtag !== 'function') return;
     window.gtag('event', name, { page_path: pagePath(), ...params });
   }
 

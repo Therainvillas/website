@@ -27,16 +27,15 @@ const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 const isHome = Astro.url.pathname === '/';
 
+// Satu gtag.js saja (milik Google Ads). GA4 dikirim lewat config tambahan di
+// blok yang sama, jadi tidak ada permintaan kedua ke googletagmanager.com.
 const gaId = import.meta.env.PUBLIC_GA_ID ?? '';
-const gaEnabled = import.meta.env.PROD && Boolean(gaId);
+const gaConfig = import.meta.env.PROD && gaId ? `\n  gtag('config', ${JSON.stringify(gaId)});` : '';
 const gaBootstrap = `
-window.dataLayer = window.dataLayer || [];
-if (typeof window.gtag !== 'function') {
-  window.gtag = function () { window.dataLayer.push(arguments); };
-}
-window.__TRV_GA__ = { id: ${JSON.stringify(gaId)} };
-gtag('js', new Date());
-gtag('config', ${JSON.stringify(gaId)});
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'AW-18476533015');${gaConfig}
 `;
 ---
 
@@ -49,20 +48,7 @@ gtag('config', ${JSON.stringify(gaId)});
       document.documentElement.classList.replace('no-js', 'js');
     </script>
     <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=AW-18476533015"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'AW-18476533015');
-    </script>
-    {
-      gaEnabled && (
-        <>
-          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
-          <script is:inline set:html={gaBootstrap}></script>
-        </>
-      )
-    }
+    <script is:inline set:html={gaBootstrap}></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
     <meta name="theme-color" content="#11120f" />

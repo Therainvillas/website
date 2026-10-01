@@ -417,6 +417,16 @@ html[data-theme="dark"] .info-section {
   background: var(--color-light) !important;
 }
 
+/* ===== IKON DUAL VARIANT =====
+   .ti--light  -> /icon/icon light/  (ikon gelap, untuk light mode)
+   .ti--dark   -> /icon/icon dark/   (ikon terang, untuk dark mode)
+   Hanya varian yang tidak aktif disembunyikan; display ikon yang aktif
+   dibiarkan apa adanya supaya aturan komponen (block/inline-flex) tidak kena. */
+html:not([data-theme="dark"]) .ti--dark,
+html[data-theme="dark"] .ti--light {
+  display: none !important;
+}
+
 html[data-theme="dark"] .booking-section__overlay {
   background: rgba(14, 21, 19, 0.82) !important;
 }

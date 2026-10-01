@@ -10,6 +10,7 @@ const MAX_W = 1200;
 const MAP = {
   'thumb 4d.PNG': ['4D Thumb.webp'],
   'thumb agave.PNG': ['Agave Thumb.webp'],
+  'albi thumb.PNG': ['Albi Thumb.webp'],
   'thumb aleia.PNG': ['Aleia Thumb.webp'],
   'thumb arisyfa.PNG': ['Arisyfa Thumb.webp'],
   'thumb arsy.PNG': ['Griya Arsy Thumb.webp'],

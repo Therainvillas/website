@@ -174,7 +174,7 @@ const villaFaq = [
           <a href="/our-villas" class="vd-nav__pill">Villa</a>
           <a href="#gallery" class="vd-nav__pill">Foto</a>
           <a href="#facilities" class="vd-nav__pill">Fasilitas</a>
-          <a href="#booking" class="vd-nav__pill">Booking</a>
+          <a href="#booking" class="vd-nav__pill" data-track="booking_click" data-villa={villa.name}>Booking</a>
         </div>
 
         <a href="/" class="vd-brand" aria-label="The Rain Villas home">
@@ -186,7 +186,7 @@ const villaFaq = [
 
         <div class="vd-nav__actions">
           <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="nofollow" class="vd-nav__contact">Kontak</a>
-          <a href={waLink} target="_blank" rel="nofollow" class="vd-nav__order">Reservasi <span aria-hidden="true">&rarr;</span></a>
+          <a href={waLink} target="_blank" rel="nofollow" class="vd-nav__order" data-track="booking_click" data-villa={villa.name}>Reservasi <span aria-hidden="true">&rarr;</span></a>
         </div>
       </nav>
 
@@ -215,7 +215,7 @@ const villaFaq = [
               {meta.location} • {meta.area}
             </span>
           </div>
-          <a href={waLink} target="_blank" rel="nofollow" class="vd-property__round" aria-label="Pesan sekarang">
+          <a href={waLink} target="_blank" rel="nofollow" class="vd-property__round" aria-label="Pesan sekarang" data-track="booking_click" data-villa={villa.name}>
             <svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
           </a>
         </div>
@@ -252,7 +252,7 @@ const villaFaq = [
           </div>
         )}
 
-        <a href="#booking" class="vd-property__cta">Pesan Sekarang</a>
+        <a href="#booking" class="vd-property__cta" data-track="booking_click" data-villa={villa.name}>Pesan Sekarang</a>
       </div>
 
       <div class="vd-stat glass">
@@ -391,8 +391,8 @@ const villaFaq = [
             </div>
           )}
 
-          <a href={waLink} target="_blank" rel="nofollow" class="vd-booking__button">Pesan Sekarang</a>
-          <a href="/availability" class="vd-booking__link">Cek kalender semua villa &rarr;</a>
+          <a href={waLink} target="_blank" rel="nofollow" class="vd-booking__button" data-track="booking_click" data-villa={villa.name}>Pesan Sekarang</a>
+          <a href="/availability" class="vd-booking__link" data-track="booking_click" data-villa={villa.name}>Cek kalender semua villa &rarr;</a>
 
           <div class="vd-calendar">
             <h4>Ketersediaan</h4>

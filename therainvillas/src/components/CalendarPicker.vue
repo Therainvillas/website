@@ -101,6 +101,8 @@
           target="_blank"
           rel="nofollow"
           class="btn btn--whatsapp booking__wa"
+          data-track="booking_click"
+          :data-villa="selectedVilla ? selectedVilla.name : ''"
         >
           Lanjut ke Form Booking
         </a>

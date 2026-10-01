@@ -28,5 +28,7 @@ Desktop.ini
 # Env / secrets
 .env
 .env.*
+# ...tapi tetap commit contoh konfigurasi
+!.env.example
 
 therainvillas/preview-avail.log

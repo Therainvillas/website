@@ -345,7 +345,7 @@
           <button v-if="step < 4" type="submit" class="bf__nav-next">
             Lanjut →
           </button>
-          <a v-else :href="waLink" target="_blank" rel="nofollow" class="bf__nav-submit bf__nav-submit--link" @click="submit">
+          <a v-else :href="waLink" target="_blank" rel="nofollow" class="bf__nav-submit bf__nav-submit--link" @click="submit" data-track="lead_submit" data-form-name="booking_form" :data-villa="form.villa">
             Kirim ke WhatsApp
           </a>
         </div>

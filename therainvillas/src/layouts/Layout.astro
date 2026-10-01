@@ -26,6 +26,18 @@ const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 const isHome = Astro.url.pathname === '/';
+
+const gaId = import.meta.env.PUBLIC_GA_ID ?? '';
+const gaEnabled = import.meta.env.PROD && Boolean(gaId);
+const gaBootstrap = `
+window.dataLayer = window.dataLayer || [];
+if (typeof window.gtag !== 'function') {
+  window.gtag = function () { window.dataLayer.push(arguments); };
+}
+window.__TRV_GA__ = { id: ${JSON.stringify(gaId)} };
+gtag('js', new Date());
+gtag('config', ${JSON.stringify(gaId)});
+`;
 ---
 
 <!DOCTYPE html>
@@ -43,6 +55,14 @@ const isHome = Astro.url.pathname === '/';
       gtag('js', new Date());
       gtag('config', 'AW-18476533015');
     </script>
+    {
+      gaEnabled && (
+        <>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+          <script is:inline set:html={gaBootstrap}></script>
+        </>
+      )
+    }
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
     <meta name="theme-color" content="#11120f" />
@@ -130,6 +150,9 @@ const isHome = Astro.url.pathname === '/';
       document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
       });
+    </script>
+    <script>
+      import '../scripts/analytics.js';
     </script>
     {showPromo && <PromoPopup />}
   </body>

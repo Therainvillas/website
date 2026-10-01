@@ -40,6 +40,8 @@
                   :href="dateHref(v, cell)"
                   class="avail-cell avail-cell--ready"
                   :title="'Booking ' + v.name + ' mulai ' + dateStr(cell)"
+                  data-track="booking_click"
+                  :data-villa="v.name"
                 >
                   <span class="avail-cell__num">{{ cell.day }}</span>
                   <span class="avail-cell__price">{{ cellPrice(v, cell) }}</span>

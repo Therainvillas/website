@@ -204,7 +204,7 @@ const promoFaq = [
             <div class="promo-card__unlocked" data-unlocked>
               <span class="promo-card__unlocked-label" data-unlocked-label>✅ Kode promo terbuka</span>
               <div class="promo-card__actions">
-                <a class="btn btn--primary promo-card__claim" href="/booking" data-claim-link>
+                <a class="btn btn--primary promo-card__claim" href="/booking" data-claim-link data-track="booking_click">
                   Klaim &amp; Booking
                 </a>
                 <button type="button" class="btn btn--ghost promo-card__copy" data-copy-code>
@@ -299,7 +299,7 @@ const promoFaq = [
       <strong class="promo-code-popup__code" data-code-popup-code></strong>
       <div class="promo-code-popup__actions">
         <button type="button" class="btn btn--ghost promo-code-popup__copy" data-code-popup-copy>Salin Kode</button>
-        <a class="btn btn--primary promo-code-popup__booking" data-code-popup-book href="/booking">Klaim &amp; Booking</a>
+        <a class="btn btn--primary promo-code-popup__booking" data-code-popup-book href="/booking" data-track="booking_click">Klaim &amp; Booking</a>
       </div>
     </div>
   </div>

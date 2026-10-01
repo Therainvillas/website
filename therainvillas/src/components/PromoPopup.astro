@@ -25,6 +25,44 @@
       if (e.target === e.currentTarget) close();
     });
   });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const target = (function () {
+      const now = new Date();
+      let t = new Date(now.getFullYear(), 9, 10, 0, 0, 0);
+      if (t.getTime() <= now.getTime()) t = new Date(now.getFullYear() + 1, 9, 10, 0, 0, 0);
+      return t;
+    })();
+
+    const countEl = document.querySelector('.promo-popup__count');
+    const endedEl = document.querySelector('.promo-popup__ended');
+    const daysEl = document.querySelector('[data-cd-days]');
+    const hoursEl = document.querySelector('[data-cd-hours]');
+    const minutesEl = document.querySelector('[data-cd-minutes]');
+    const secondsEl = document.querySelector('[data-cd-seconds]');
+    if (!countEl && !endedEl) return;
+
+    function tick() {
+      const diff = target.getTime() - Date.now();
+      if (diff <= 0) {
+        if (countEl) countEl.hidden = true;
+        if (endedEl) endedEl.hidden = false;
+        return;
+      }
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor(diff / 3600000) % 24;
+      const minutes = Math.floor(diff / 60000) % 60;
+      const seconds = Math.floor(diff / 1000) % 60;
+      const pad = (n) => ('0' + n).slice(-2);
+      if (daysEl) daysEl.textContent = days;
+      if (hoursEl) hoursEl.textContent = pad(hours);
+      if (minutesEl) minutesEl.textContent = pad(minutes);
+      if (secondsEl) secondsEl.textContent = pad(seconds);
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  });
 </script>
 
 <div id="promo-popup" class="promo-popup">
@@ -46,9 +84,28 @@
       />
     </picture>
     <div class="promo-popup__body">
-      <h2 class="promo-popup__title">Flash Sale 10%-20%</h2>
-      <p class="promo-popup__desc">Untuk September!!. Untuk 20% kuota terbatas!!, Grab the best deals before it's too late</p>
-      <a href="https://wa.me/6282125492037?text=Halo%20The%20Rain%20Villas%2C%20saya%20tertarik%20dengan%20Flash%20Sale%2010%25-20%25%20untuk%20September" target="_blank" rel="nofollow" class="btn btn--primary promo-popup__cta">Klaim Sekarang</a>
+      <h2 class="promo-popup__title">Flash Sale 10.10</h2>
+      <p class="promo-popup__desc">Promo spesial The Rain Villas — hitung mundur hingga flash sale dibuka:</p>
+      <div class="promo-popup__count">
+        <div class="promo-popup__count-item">
+          <strong data-cd-days>0</strong>
+          <span>Hari</span>
+        </div>
+        <div class="promo-popup__count-item">
+          <strong data-cd-hours>0</strong>
+          <span>Jam</span>
+        </div>
+        <div class="promo-popup__count-item">
+          <strong data-cd-minutes>0</strong>
+          <span>Menit</span>
+        </div>
+        <div class="promo-popup__count-item">
+          <strong data-cd-seconds>0</strong>
+          <span>Detik</span>
+        </div>
+      </div>
+      <p class="promo-popup__ended" data-cd-ended hidden>🔥 Flash Sale 10.10 telah dimulai!</p>
+      <a href="/promo" class="btn btn--primary promo-popup__cta">Lihat Promo Sekarang</a>
     </div>
   </div>
 </div>
@@ -142,8 +199,48 @@
   .promo-popup__desc {
     font-size: 0.95rem;
     opacity: 0.85;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     line-height: 1.5;
+  }
+
+  .promo-popup__count {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .promo-popup__count-item {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 12px;
+    padding: 12px 6px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .promo-popup__count-item strong {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #ffd76a;
+  }
+
+  .promo-popup__count-item span {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+  }
+
+  .promo-popup__ended {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffd76a;
+    margin-bottom: 20px;
   }
 
   .promo-popup__cta {

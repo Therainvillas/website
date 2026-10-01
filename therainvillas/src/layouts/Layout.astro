@@ -29,8 +29,10 @@ const isHome = Astro.url.pathname === '/';
 
 // Satu gtag.js saja (milik Google Ads). GA4 dikirim lewat config tambahan di
 // blok yang sama, jadi tidak ada permintaan kedua ke googletagmanager.com.
-const gaId = import.meta.env.PUBLIC_GA_ID ?? '';
-const gaConfig = import.meta.env.PROD && gaId ? `\n  gtag('config', ${JSON.stringify(gaId)});` : '';
+// PUBLIC_GA_ID dipakai bila tersedia; fallback di bawah menjaga tag tetap
+// terkirim pada build server yang tidak menyetel environment variable.
+const gaId = import.meta.env.PUBLIC_GA_ID || 'G-7VMR5WEJP2';
+const gaConfig = import.meta.env.PROD ? `\n  gtag('config', ${JSON.stringify(gaId)});` : '';
 const gaBootstrap = `
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }

@@ -49,7 +49,10 @@
         <transition name="bf-slide" mode="out-in">
           <div v-if="step === 1" key="step1" class="bf__section">
             <div class="bf__section-header">
-              <div class="bf__section-icon">🏠</div>
+              <div class="bf__section-icon">
+                <img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" />
+                <img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" />
+              </div>
               <div>
                 <h2 class="bf__title">Villa & Tanggal</h2>
                 <p class="bf__subtitle">Tentukan villa dan tanggal menginap Anda</p>
@@ -217,7 +220,10 @@
         <transition name="bf-slide" mode="out-in">
           <div v-if="step === 2" key="step2" class="bf__section">
             <div class="bf__section-header">
-              <div class="bf__section-icon">👤</div>
+              <div class="bf__section-icon">
+                <img class="ti ti--light" src="/icon/icon%20light/groupp.png" alt="" />
+                <img class="ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" />
+              </div>
               <div>
                 <h2 class="bf__title">Data Pembooking</h2>
                 <p class="bf__subtitle">Lengkapi informasi pemesan</p>
@@ -1197,6 +1203,12 @@ export default {
   justify-content: center;
   font-size: 1.4rem;
   flex-shrink: 0;
+}
+.bf__section-icon img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  display: block;
 }
 .bf__title {
   font-size: 1.3rem;

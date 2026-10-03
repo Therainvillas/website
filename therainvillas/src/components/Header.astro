@@ -15,7 +15,15 @@ const navLinks = [
 <header class="header" id="main-header" data-header-theme="light">
   <div class="container header__inner">
     <a href="/" class="header__logo" aria-label="The Rain Villas beranda">
-      <img src="/logo%20trv2.png" alt="The Rain Villas" class="header__logo-img" />
+      <span class="header__logo-media">
+        <img src="/logo%20trv2.png" alt="The Rain Villas" class="header__logo-img header__logo-img--dark" />
+        <img
+          src="/logo%20trv2%20putih.png"
+          alt=""
+          aria-hidden="true"
+          class="header__logo-img header__logo-img--light"
+        />
+      </span>
     </a>
 
     <nav class="header__nav" id="mainNav" aria-label="Navigasi utama">
@@ -162,10 +170,37 @@ const navLinks = [
     flex: 0 0 auto;
   }
 
+  .header__logo-media {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
   .header__logo-img {
+    display: block;
     width: auto;
     height: 42px;
     object-fit: contain;
+    transition: opacity 0.25s ease;
+  }
+
+  .header__logo-img--light {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .header[data-header-theme="dark"] .header__logo-img--dark,
+  html[data-theme="dark"] .header__logo-img--dark {
+    opacity: 0;
+  }
+
+  .header[data-header-theme="dark"] .header__logo-img--light,
+  html[data-theme="dark"] .header__logo-img--light {
+    opacity: 1;
   }
 
   .header__nav {

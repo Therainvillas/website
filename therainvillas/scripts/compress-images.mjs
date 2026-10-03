@@ -6,7 +6,7 @@ const PUBLIC = path.resolve('./public');
 const MAX_W = 2560;
 const THUMB_MAX_W = 1200;
 const THUMB_DIRS = new Set(['thumbnail', 'promo']);
-const KEEP_PNG = new Set(['logo trv2.png', 'man-phone.png']);
+const KEEP_PNG = new Set(['logo trv2.png', 'logo trv2 putih.png', 'man-phone.png']);
 
 let processed = 0;
 let converted = 0;

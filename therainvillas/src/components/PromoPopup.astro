@@ -73,14 +73,18 @@
       </svg>
     </button>
     <picture class="promo-popup__picture">
-      <source srcset="/promo/promo-3.webp" type="image/webp" />
+      <source
+        srcset="/promo/promo%204.webp"
+        type="image/webp"
+        media="(min-width: 641px)"
+      />
+      <source srcset="/promo/promo%204-900.webp" type="image/webp" />
       <img
         class="promo-popup__image"
-        src="/promo/promo-3.webp"
+        src="/promo/promo%204-1400.webp"
         alt="Flash Sale 10%-20% The Rain Villas"
-        loading="lazy"
-        width="840"
-        height="594"
+        width="2000"
+        height="1414"
       />
     </picture>
     <div class="promo-popup__body">
@@ -139,7 +143,7 @@
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
-    max-width: 420px;
+    max-width: 520px;
     width: 100%;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
@@ -175,13 +179,16 @@
 
   .promo-popup__image {
     width: 100%;
-    height: 240px;
-    object-fit: cover;
+    height: auto;
+    aspect-ratio: 2000 / 1414;
+    object-fit: contain;
     display: block;
   }
 
   .promo-popup__picture {
     display: block;
+    width: 100%;
+    line-height: 0;
   }
 
   .promo-popup__body {
@@ -251,17 +258,52 @@
     text-decoration: none;
   }
 
-  @media (max-width: 480px) {
-    .promo-popup__image {
-      height: 180px;
+  @media (max-width: 640px) {
+    .promo-popup {
+      padding: 12px;
+      align-items: flex-start;
+      overflow-y: auto;
+    }
+
+    .promo-popup__card {
+      margin: auto 0;
     }
 
     .promo-popup__body {
-      padding: 20px;
+      padding: 20px 16px;
     }
 
     .promo-popup__title {
       font-size: 1.25rem;
+    }
+
+    .promo-popup__desc {
+      font-size: 0.88rem;
+      margin-bottom: 14px;
+    }
+
+    .promo-popup__count {
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .promo-popup__count-item {
+      padding: 10px 4px;
+    }
+
+    .promo-popup__count-item strong {
+      font-size: 1.2rem;
+    }
+
+    .promo-popup__count-item span {
+      font-size: 0.6rem;
+      letter-spacing: 0.5px;
+    }
+
+    .promo-popup__cta {
+      width: 100%;
+      padding: 12px 16px;
+      text-align: center;
     }
   }
 </style>

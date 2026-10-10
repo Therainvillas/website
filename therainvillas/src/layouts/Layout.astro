@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import PromoPopup from '../components/PromoPopup.astro';
 
 export interface Props {
   title?: string;
@@ -9,7 +8,6 @@ export interface Props {
   ogType?: string;
   noindex?: boolean;
   jsonLd?: object[];
-  showPromo?: boolean;
 }
 
 const {
@@ -19,7 +17,6 @@ const {
   ogType = 'website',
   noindex = false,
   jsonLd = [],
-  showPromo = true,
 } = Astro.props;
 
 const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
@@ -142,6 +139,5 @@ const gaBootstrap = `
     <script>
       import '../scripts/analytics.js';
     </script>
-    {showPromo && <PromoPopup />}
   </body>
 </html>

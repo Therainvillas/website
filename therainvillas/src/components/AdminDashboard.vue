@@ -49,6 +49,21 @@
       </div>
 
       <!-- ===== KALENDER BLOKIR ===== -->
+      <div class="dashboard__schedule-bar">
+        <div>
+          <h2>Blokir Jadwal</h2>
+          <p class="dashboard__schedule-sub">Tanggal dari sheet terisi otomatis. Klik tanggal untuk memblokir / membuka secara manual.</p>
+          <p class="dashboard__schedule-legend">
+            <span><i class="dashboard__legend-dot dashboard__legend-dot--sheet"></i> Dari sheet (otomatis)</span>
+            <span><i class="dashboard__legend-dot dashboard__legend-dot--admin"></i> Manual admin</span>
+          </p>
+        </div>
+        <button @click="fetchAllSchedules" class="dashboard__proof-refresh" :disabled="sheetLoading">
+          {{ sheetLoading ? 'Memuat…' : 'Refresh Jadwal' }}
+        </button>
+      </div>
+      <p v-if="sheetNotice" class="dashboard__schedule-notice" :class="{ 'dashboard__schedule-notice--warn': sheetFailed.length }">{{ sheetNotice }}</p>
+
       <div class="dashboard__calendar-wrap">
         <div v-for="villa in villas" :key="villa.id" class="dashboard__villa">
           <div class="dashboard__villa-header">
@@ -109,6 +124,11 @@
 import { PROOF_API } from "../data/promos.js";
 
 const STORAGE_KEY = "therainvillas_blocked";
+// Simpan tanggal hasil tarikan sheet agar tetap terblok saat koneksi/API gagal.
+const SHEET_BLOCKED_KEY = "therainvillas_sheet_blocked";
+// Endpoint Web App Google Apps Script (sumber jadwal terbooking).
+const SPREADSHEET_API_URL =
+  "https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec";
 
 function loadBlocked() {
   try {
@@ -120,6 +140,18 @@ function loadBlocked() {
 
 function saveBlocked(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadSheetBlocked() {
+  try {
+    return JSON.parse(localStorage.getItem(SHEET_BLOCKED_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function saveSheetBlocked(data) {
+  localStorage.setItem(SHEET_BLOCKED_KEY, JSON.stringify(data));
 }
 
 function dateStr(year, month, day) {
@@ -138,6 +170,11 @@ export default {
       sheetUrl: "",
       folderUrl: "",
       proofLightbox: "",
+      sheetSchedules: {},
+      sheetLoading: false,
+      sheetFailed: [],
+      sheetNotice: "",
+      sheetRetryTimer: null,
     };
   },
   async mounted() {
@@ -146,9 +183,20 @@ export default {
     this.villas = mod.villas;
     this.villas.forEach((v) => {
       this.calendarDates[v.id] = { month: new Date().getMonth(), year: new Date().getFullYear() };
+      // Tampilkan dulu data terakhir yang tersimpan supaya tanggal tetap terblok
+      // walau koneksi belum/sedang tidak tersambung.
+      const cached = this.loadSheetCache(v.id);
+      if (cached.length) this.sheetSchedules[v.id] = cached;
     });
     if (this.authenticated) {
       this.loadProofs();
+      this.fetchAllSchedules();
+    }
+  },
+  beforeUnmount() {
+    if (this.sheetRetryTimer) {
+      clearTimeout(this.sheetRetryTimer);
+      this.sheetRetryTimer = null;
     }
   },
   methods: {
@@ -159,18 +207,28 @@ export default {
       const all = this.getBlocked();
       return all[String(villaId)] || [];
     },
+    getSheetBlockedForVilla(villaId) {
+      const list = this.sheetSchedules[villaId];
+      return Array.isArray(list) ? list : [];
+    },
     blockedCount(villaId) {
-      return this.getBlockedForVilla(villaId).length;
+      const set = new Set([
+        ...this.getBlockedForVilla(villaId),
+        ...this.getDefaultBlocked(villaId),
+        ...this.getSheetBlockedForVilla(villaId),
+      ]);
+      return set.size;
     },
     getDefaultBlocked(villaId) {
       const v = this.villas.find((x) => x.id === villaId);
-      return v ? v.unavailable : [];
+      return v && Array.isArray(v.unavailable) ? v.unavailable : [];
     },
     isBlocked(villaId, cell) {
       const ds = dateStr(cell.year, cell.month, cell.day);
       const fromAdmin = this.getBlockedForVilla(villaId).includes(ds);
       const fromDefault = this.getDefaultBlocked(villaId).includes(ds);
-      return fromAdmin || fromDefault;
+      const fromSheet = this.getSheetBlockedForVilla(villaId).includes(ds);
+      return fromAdmin || fromDefault || fromSheet;
     },
     getCalendar(villaId) {
       const d = this.calendarDates[villaId] || { month: new Date().getMonth(), year: new Date().getFullYear() };
@@ -222,6 +280,9 @@ export default {
       const fromAdmin = this.getBlockedForVilla(villaId).includes(ds);
       if (fromAdmin) classes["dashboard__cell--admin-blocked"] = true;
 
+      const fromSheet = this.getSheetBlockedForVilla(villaId).includes(ds);
+      if (fromSheet) classes["dashboard__cell--sheet-blocked"] = true;
+
       return classes;
     },
     toggleDate(villaId, cell) {
@@ -245,6 +306,114 @@ export default {
 
       saveBlocked(all);
       this.$forceUpdate();
+    },
+    fetchAllSchedules() {
+      if (!this.villas.length) return;
+      this.sheetLoading = true;
+      this.sheetNotice = "";
+      this.sheetFailed = [];
+      this._sheetPending = this.villas.length;
+      this.villas.forEach((v) => this.fetchSchedule(v));
+    },
+    fetchSchedule(villa) {
+      const url =
+        SPREADSHEET_API_URL +
+        "?villa=" + encodeURIComponent(villa.scheduleName || villa.name) +
+        "&_=" + Date.now();
+      const self = this;
+      fetch(url, { redirect: "follow", cache: "no-store" })
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            self.applySchedule(villa, data);
+          } else if (data && data.error) {
+            console.warn("API jadwal error:", data.error);
+            self.markScheduleFail(villa.id);
+          } else {
+            self.markScheduleFail(villa.id);
+          }
+        })
+        .catch(() => self.fetchScheduleJSONP(villa));
+    },
+    fetchScheduleJSONP(villa) {
+      const self = this;
+      const url =
+        SPREADSHEET_API_URL +
+        "?villa=" + encodeURIComponent(villa.scheduleName || villa.name) +
+        "&_=" + Date.now();
+      const cb = "trvAdminSched_" + villa.id + "_" + Date.now();
+      window[cb] = (data) => {
+        delete window[cb];
+        if (Array.isArray(data)) self.applySchedule(villa, data);
+        else self.markScheduleFail(villa.id);
+      };
+      const script = document.createElement("script");
+      script.src = url + "&callback=" + cb;
+      script.onerror = () => {
+        delete window[cb];
+        self.markScheduleFail(villa.id);
+      };
+      setTimeout(() => {
+        if (window[cb]) {
+          delete window[cb];
+          self.markScheduleFail(villa.id);
+        }
+      }, 8000);
+      document.head.appendChild(script);
+    },
+    applySchedule(villa, dates) {
+      const clean = Array.isArray(dates) ? dates.filter(Boolean).map(String) : [];
+      this.sheetSchedules = { ...this.sheetSchedules, [villa.id]: clean };
+      this.saveSheetCache(villa.id, clean);
+      const i = this.sheetFailed.indexOf(villa.id);
+      if (i > -1) this.sheetFailed.splice(i, 1);
+      this.settleSchedule();
+    },
+    markScheduleFail(villaId) {
+      // Koneksi/API gagal: JANGAN hapus blok yang sudah tersimpan —
+      // tanggal tetap terblok memakai cache terakhir.
+      if (this.sheetFailed.indexOf(villaId) === -1) this.sheetFailed.push(villaId);
+      this.settleSchedule();
+      this.scheduleRetry();
+    },
+    settleSchedule() {
+      if (typeof this._sheetPending === "number" && this._sheetPending > 0) {
+        this._sheetPending -= 1;
+      }
+      if (!this._sheetPending) {
+        this.sheetLoading = false;
+        this.sheetNotice = this.sheetFailed.length
+          ? "Sebagian jadwal gagal diperbarui — tanggal tetap terblok memakai data terakhir. Akan dicoba lagi otomatis."
+          : "";
+      }
+    },
+    scheduleRetry() {
+      if (this.sheetRetryTimer) return;
+      const ids = this.sheetFailed.slice();
+      this.sheetRetryTimer = setTimeout(() => {
+        this.sheetRetryTimer = null;
+        this.villas.forEach((v) => {
+          if (ids.indexOf(v.id) > -1) this.fetchSchedule(v);
+        });
+      }, 20000);
+    },
+    loadSheetCache(villaId) {
+      try {
+        const raw = loadSheetBlocked();
+        const entry = raw[String(villaId)];
+        if (entry && Array.isArray(entry.dates)) return entry.dates;
+      } catch (e) {}
+      return [];
+    },
+    saveSheetCache(villaId, dates) {
+      try {
+        const raw = loadSheetBlocked();
+        raw[String(villaId)] = {
+          dates: Array.isArray(dates) ? dates : [],
+          savedAt: new Date().toISOString(),
+        };
+        saveSheetBlocked(raw);
+      } catch (e) {}
     },
     handleLogout() {
       localStorage.removeItem("therainvillas_admin");
@@ -1035,6 +1204,71 @@ export default {
   background: #fef2f2;
 }
 
+/* ===== SCHEDULE (AUTO DARI SHEET) ===== */
+.dashboard__schedule-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.dashboard__schedule-bar h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.dashboard__schedule-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.dashboard__schedule-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+  font-size: 0.76rem;
+  color: #94a3b8;
+}
+
+.dashboard__schedule-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dashboard__legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dashboard__legend-dot--sheet {
+  background: #5b8def;
+}
+
+.dashboard__legend-dot--admin {
+  background: #dc2626;
+}
+
+.dashboard__schedule-notice {
+  margin: -12px 0 0;
+  font-size: 0.82rem;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
 /* ===== CALENDAR (same as before) ===== */
 .dashboard__villa {
   background: white;
@@ -1160,6 +1394,17 @@ export default {
   right: 4px;
   font-size: 0.6rem;
   color: #dc2626;
+}
+
+.dashboard__cell--sheet-blocked::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #5b8def;
 }
 
 .dashboard__calendar-wrap {

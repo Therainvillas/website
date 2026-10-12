@@ -1,9 +1,11 @@
 ---
 const whatsappNumber = '6282125492037';
+const whatsappMessage = 'Halo Admin Therainvillas, Saya ingin bertanya villa dan ketersediaan villa. Terima kasih.';
+const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 ---
 
 <a
-  href={`https://wa.me/${whatsappNumber}`}
+  href={whatsappHref}
   target="_blank"
   rel="noopener"
   class="whatsapp-bubble"

@@ -30,15 +30,6 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   <div class="reviews-marquee__viewport">
     <div class="reviews-marquee__track" id="reviewsTrack" set:html={reviewsTrackHTML}></div>
   </div>
-
-  <div class="container">
-    <div class="reviews-marquee__footer reveal">
-      <a href="/ulasan" class="reviews-marquee__link">
-        Lihat Semua Ulasan
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
-  </div>
 </section>
 
 <script>
@@ -392,34 +383,6 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-  }
-
-  /* ===== footer link ===== */
-  .reviews-marquee__footer {
-    text-align: center;
-    margin-top: 40px;
-  }
-
-  .reviews-marquee__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #7c9bf7;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    padding: 12px 26px;
-    border-radius: 999px;
-    border: 1px solid rgba(91, 141, 239, 0.4);
-    background: rgba(91, 141, 239, 0.08);
-    transition: all 0.25s ease;
-  }
-
-  .reviews-marquee__link:hover {
-    background: linear-gradient(135deg, #5b8def, #7a5ce0);
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(91, 141, 239, 0.35);
   }
 
   @media (max-width: 768px) {

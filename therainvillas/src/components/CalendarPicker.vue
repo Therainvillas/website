@@ -99,6 +99,10 @@
           🎁 Paket 2 malam 30–31 Desember{{ packageTbc ? ' — harga menyusul (TBC)' : '' }}
         </p>
 
+        <p v-if="showTbcNote" class="booking__package-note">
+          Harga tanggal ini belum pasti (TBC) — akan dikonfirmasi admin via WhatsApp.
+        </p>
+
         <a
           v-if="checkIn && checkOut"
           :href="bookingLink"
@@ -229,13 +233,25 @@ export default {
       return s;
     },
     selectedHasPackage() {
-      if (!this.checkIn || !this.checkOut) return false;
+      if (!this.checkIn || !this.checkOut || !hasDecPackage(this.selectedVilla)) return false;
       const ci = this.localDate(this.checkIn);
       const co = this.localDate(this.checkOut);
       return ci <= DEC_PACKAGE_CHECKIN && co >= DEC_PACKAGE_CHECKOUT;
     },
     packageTbc() {
-      return this.selectedHasPackage && this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
+      return this.selectedHasPackage && !!this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
+    },
+    hasTbcNight() {
+      if (!this.nightCount || !this.selectedVilla) return false;
+      for (let i = 0; i < this.nightCount; i++) {
+        const d = new Date(this.checkIn);
+        d.setDate(d.getDate() + i);
+        if (this.dayPrice(d) == null) return true;
+      }
+      return false;
+    },
+    showTbcNote() {
+      return this.hasTbcNight && !this.selectedHasPackage;
     },
     waLink() {
       if (!this.selectedVilla || !this.checkIn || !this.checkOut) return "#";
@@ -517,7 +533,7 @@ export default {
             this.error = "Tanggal tersebut sudah terbooking di antara tanggal check-in. Silakan pilih check-out lain.";
             return;
           }
-          const rangeErr = decPackageRangeError(this.localDate(this.checkIn), this.localDate(selected));
+          const rangeErr = decPackageRangeError(this.selectedVilla, this.localDate(this.checkIn), this.localDate(selected));
           if (rangeErr) {
             this.error = rangeErr;
             return;

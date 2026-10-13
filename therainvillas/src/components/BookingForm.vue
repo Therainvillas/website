@@ -180,6 +180,9 @@
               <div v-if="selectedHasPackage" class="bf__package-note">
                 🎁 Paket 2 malam 30–31 Desember{{ packageTbc ? ' — harga menyusul (TBC)' : '' }}
               </div>
+              <div v-if="showTbcNote" class="bf__package-note">
+                Harga tanggal ini belum pasti (TBC) — akan dikonfirmasi admin via WhatsApp.
+              </div>
 
               <div class="bf__promo">
                 <div class="bf__promo-head">
@@ -557,9 +560,23 @@ export default {
     packageTbc() {
       return this.selectedHasPackage && !!this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
     },
+    hasTbcNight() {
+      if (!this.nightCount || !this.selectedVilla) return false;
+      const start = new Date(this.form.checkIn + 'T00:00:00');
+      for (let i = 0; i < this.nightCount; i++) {
+        const d = new Date(start);
+        d.setDate(d.getDate() + i);
+        if (getNightPrice(this.selectedVilla, d) == null) return true;
+      }
+      return false;
+    },
+    showTbcNote() {
+      return this.hasTbcNight && !this.selectedHasPackage;
+    },
     totalPrice() {
-      if (this.packageTbc) return 'TBC';
-      return this.totalPriceRaw.toLocaleString('id-ID').replace(/,/g, '.');
+      const s = this.totalPriceRaw.toLocaleString('id-ID').replace(/,/g, '.');
+      if (this.hasTbcNight) return this.totalPriceRaw > 0 ? `${s} + TBC` : 'TBC';
+      return s;
     },
     discountRaw() {
       if (!this.promoApplied || !this.totalPriceRaw || this.promoBlockedVilla) return 0;
@@ -658,7 +675,7 @@ export default {
     if (qCheckIn) this.form.checkIn = qCheckIn;
     if (qCheckOut) this.form.checkOut = qCheckOut;
     // Perbaiki rentang paket 30–31 Des yang tidak lengkap (dari link lama).
-    if (this.form.checkIn && this.form.checkOut && decPackageRangeError(this.form.checkIn, this.form.checkOut)) {
+    if (this.form.checkIn && this.form.checkOut && decPackageRangeError(this.selectedVilla, this.form.checkIn, this.form.checkOut)) {
       this.form.checkIn = DEC_PACKAGE_CHECKIN;
       this.form.checkOut = DEC_PACKAGE_CHECKOUT;
     }
@@ -793,7 +810,7 @@ export default {
             this.error = `Villa ${this.form.villa} sudah terbooking pada salah satu tanggal antara check-in dan check-out tersebut. Silakan pilih check-out sebelum tanggal terbooking.`;
             return;
           }
-          const rangeErr = decPackageRangeError(this.form.checkIn, s);
+          const rangeErr = decPackageRangeError(this.selectedVilla, this.form.checkIn, s);
           if (rangeErr) {
             this.error = rangeErr;
             return;

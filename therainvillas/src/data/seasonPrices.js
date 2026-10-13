@@ -87,6 +87,28 @@ const DEC_PACKAGE = {
   "Villa Agave": 9000000,
 };
 
+// ── Tanggal berharga TBC (belum pasti) ─────────────────────────────────
+// Format: "Nama Villa": [[tanggalAwal, tanggalAkhir], ...] (Desember 2026).
+// Rjs Cottage: harga 20–31 Des belum pasti.
+const DEC_TBC_SPEC = {
+  "Rjs Cottage 1": [[20, 31]],
+  "Rjs Cottage 2": [[20, 31]],
+  "Rjs Cottage 3": [[20, 31]],
+};
+
+function buildTbc(spec) {
+  const set = new Set();
+  for (const [a, b] of spec) {
+    for (let d = a; d <= b; d++) set.add(`2026-12-${String(d).padStart(2, "0")}`);
+  }
+  return set;
+}
+
+export const DECEMBER_2026_TBC = {};
+for (const [name, spec] of Object.entries(DEC_TBC_SPEC)) {
+  DECEMBER_2026_TBC[name] = buildTbc(spec);
+}
+
 // Bangun peta tanggal → harga per malam.
 function buildMap(spec) {
   const map = {};
@@ -139,6 +161,11 @@ export function decPackageIsTbc(villa) {
 export function getNightPrice(villa, date) {
   if (!villa) return 0;
   const key = toDateStr(date);
+
+  // Harga TBC (belum pasti) → tidak ada angka.
+  const tbc = DECEMBER_2026_TBC[villa.name];
+  if (tbc && tbc.has(key)) return null;
+
   const map = DECEMBER_2026[villa.name];
   if (map && map[key] != null) return map[key];
 
@@ -152,6 +179,11 @@ export function getNightPrice(villa, date) {
   return (villa.dayPrices && villa.dayPrices[day]) || villa.price;
 }
 
+/** True jika harga satu malam villa pada tanggal tsb belum pasti (TBC). */
+export function isTbcNight(villa, date) {
+  return getNightPrice(villa, date) == null;
+}
+
 /** Harga satu malam dari string tanggal (YYYY-MM-DD). */
 export function getNightPriceByStr(villa, dateStr) {
   return getNightPrice(villa, new Date(dateStr + "T00:00:00"));
@@ -159,11 +191,13 @@ export function getNightPriceByStr(villa, dateStr) {
 
 /**
  * Validasi rentang menginap terhadap paket 2 malam.
+ * Hanya berlaku untuk villa yang punya paket 2 malam Desember.
  * Malam = [checkIn, checkOut). Paket 30 & 31 Des harus diambil bersamaan:
  * rentang tidak boleh memuat salah satu saja.
  * Mengembalikan pesan error, atau "" kalau valid.
  */
-export function decPackageRangeError(checkInStr, checkOutStr) {
+export function decPackageRangeError(villa, checkInStr, checkOutStr) {
+  if (!hasDecPackage(villa)) return "";
   if (!checkInStr || !checkOutStr) return "";
   const inRange = (d) => d >= checkInStr && d < checkOutStr;
   const has30 = inRange(DEC_PACKAGE_DATES[0]);

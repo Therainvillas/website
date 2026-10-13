@@ -174,9 +174,12 @@
             <div v-if="nightCount > 0" class="bf__price-card">
               <div class="bf__price-row">
                 <span>{{ nightCount }} malam</span>
-                <strong>Rp {{ totalPrice }}</strong>
+                <strong>{{ totalPrice === 'TBC' ? 'TBC' : 'Rp ' + totalPrice }}</strong>
               </div>
               <div class="bf__price-note">Harga dihitung otomatis berdasarkan hari menginap</div>
+              <div v-if="selectedHasPackage" class="bf__package-note">
+                🎁 Paket 2 malam 30–31 Desember{{ packageTbc ? ' — harga menyusul (TBC)' : '' }}
+              </div>
 
               <div class="bf__promo">
                 <div class="bf__promo-head">
@@ -200,7 +203,7 @@
                 <div v-if="promoApplied && discountRaw > 0" class="bf__price-detail">
                   <div class="bf__price-detail-row">
                     <span>Subtotal ({{ nightCount }} malam)</span>
-                    <strong>Rp {{ totalPrice }}</strong>
+                    <strong>{{ totalPrice === 'TBC' ? 'TBC' : 'Rp ' + totalPrice }}</strong>
                   </div>
                   <div class="bf__price-detail-row bf__price-detail-row--discount">
                     <span>{{ promoApplied.label }} ({{ promoApplied.code }})</span>
@@ -393,6 +396,16 @@
 
 <script>
 import { getPromo, isPromoActive, isPromoExcluded } from '../data/promos.js';
+import {
+  getNightPrice,
+  decPackageRangeError,
+  decPackageTotal,
+  hasDecPackage,
+  isDecPackageNight,
+  DEC_PACKAGE_CHECKIN,
+  DEC_PACKAGE_CHECKOUT,
+  DEC_PACKAGE_DATES,
+} from '../data/seasonPrices.js';
 
 const BOOKING_API = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 const WHATSAPP = '6282125492037';
@@ -526,18 +539,26 @@ export default {
     totalPriceRaw() {
       if (!this.nightCount) return 0;
       const villa = this.selectedVilla;
-      if (!villa || !villa.dayPrices) return 0;
+      if (!villa) return 0;
       let total = 0;
-      const start = new Date(this.form.checkIn);
+      const start = new Date(this.form.checkIn + 'T00:00:00');
       for (let i = 0; i < this.nightCount; i++) {
         const d = new Date(start);
         d.setDate(d.getDate() + i);
-        const day = d.getDay();
-        total += villa.dayPrices[day] || villa.price;
+        const p = getNightPrice(villa, d);
+        total += p == null ? 0 : p;
       }
       return total;
     },
+    selectedHasPackage() {
+      if (!this.form.checkIn || !this.form.checkOut) return false;
+      return this.form.checkIn <= DEC_PACKAGE_CHECKIN && this.form.checkOut >= DEC_PACKAGE_CHECKOUT;
+    },
+    packageTbc() {
+      return this.selectedHasPackage && !!this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
+    },
     totalPrice() {
+      if (this.packageTbc) return 'TBC';
       return this.totalPriceRaw.toLocaleString('id-ID').replace(/,/g, '.');
     },
     discountRaw() {
@@ -596,6 +617,12 @@ export default {
             '',
           ]
           : []),
+        ...(this.selectedHasPackage
+          ? [
+            l('Paket', this.packageTbc ? 'Paket 2 malam 30–31 Des (harga TBC, menyusul)' : 'Paket 2 malam 30–31 Des'),
+            '',
+          ]
+          : []),
         'Penyediaan lainya',
         l('Sewa ps', this.form.rentPs),
         '',
@@ -630,6 +657,11 @@ export default {
     }
     if (qCheckIn) this.form.checkIn = qCheckIn;
     if (qCheckOut) this.form.checkOut = qCheckOut;
+    // Perbaiki rentang paket 30–31 Des yang tidak lengkap (dari link lama).
+    if (this.form.checkIn && this.form.checkOut && decPackageRangeError(this.form.checkIn, this.form.checkOut)) {
+      this.form.checkIn = DEC_PACKAGE_CHECKIN;
+      this.form.checkOut = DEC_PACKAGE_CHECKOUT;
+    }
     if (qPromo) {
       this._promoInit = true;
       this.form.promo = qPromo;
@@ -736,6 +768,7 @@ export default {
         'bf__cal-cell--checkout-only': this.calCheckoutOnly(cell),
         'bf__cal-cell--selected': this.calSelected(cell),
         'bf__cal-cell--in-range': this.calInRange(cell),
+        'bf__cal-cell--package': this.isPackageCell(cell),
       };
     },
     calSelect(cell) {
@@ -745,20 +778,42 @@ export default {
 
       if (!this.form.checkIn || (this.form.checkIn && this.form.checkOut)) {
         if (this.calUnavailable(cell)) return;
+        if (this.isPackageCell(cell)) { this.applyPackageRange(); return; }
         this.form.checkIn = s;
         this.form.checkOut = '';
+        this.error = '';
       } else {
         if (d.getTime() <= this.calCheckInDate.getTime()) {
           if (this.calUnavailable(cell)) return;
+          if (this.isPackageCell(cell)) { this.applyPackageRange(); return; }
           this.form.checkIn = s;
+          this.error = '';
         } else {
           if (this.hasBlockedNight(this.form.checkIn, s)) {
             this.error = `Villa ${this.form.villa} sudah terbooking pada salah satu tanggal antara check-in dan check-out tersebut. Silakan pilih check-out sebelum tanggal terbooking.`;
             return;
           }
+          const rangeErr = decPackageRangeError(this.form.checkIn, s);
+          if (rangeErr) {
+            this.error = rangeErr;
+            return;
+          }
           this.form.checkOut = s;
+          this.error = '';
         }
       }
+    },
+    isPackageCell(cell) {
+      return isDecPackageNight(this.calStr(cell)) && hasDecPackage(this.selectedVilla);
+    },
+    applyPackageRange() {
+      if (this.blockedSet.has(DEC_PACKAGE_CHECKIN) || this.blockedSet.has(DEC_PACKAGE_DATES[1])) {
+        this.error = 'Paket 30–31 Des tidak tersedia karena salah satu tanggal sudah terbooking.';
+        return;
+      }
+      this.form.checkIn = DEC_PACKAGE_CHECKIN;
+      this.form.checkOut = DEC_PACKAGE_CHECKOUT;
+      this.error = '';
     },
     fetchBlockedDates() {
       if (!this.form.villa) return;
@@ -1588,6 +1643,15 @@ export default {
 .bf__cal-cell--in-range {
   background: rgba(91, 141, 239, 0.18);
 }
+.bf__cal-cell--package {
+  color: #92400e;
+  font-weight: 700;
+  background: #fff7ed;
+  box-shadow: inset 0 0 0 1px #fed7aa;
+}
+.bf__cal-cell--package.bf__cal-cell--selected {
+  color: #fff;
+}
 .bf__cal-selection {
   display: flex;
   flex-wrap: wrap;
@@ -1643,6 +1707,17 @@ export default {
   font-size: 0.75rem;
   color: #94a3b8;
   margin-top: 6px;
+}
+
+.bf__package-note {
+  margin-top: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #92400e;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 9px 13px;
 }
 
 /* ===== PROMO ===== */

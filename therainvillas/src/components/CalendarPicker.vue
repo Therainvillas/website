@@ -91,9 +91,13 @@
           </div>
           <div v-if="nightCount > 0" class="booking__total">
             <span>{{ nightCount }} malam</span>
-            <span class="booking__total-price">Rp {{ totalPrice }}</span>
+            <span class="booking__total-price">{{ totalPrice === 'TBC' ? 'TBC' : 'Rp ' + totalPrice }}</span>
           </div>
         </div>
+
+        <p v-if="selectedHasPackage" class="booking__package-note">
+          🎁 Paket 2 malam 30–31 Desember{{ packageTbc ? ' — harga menyusul (TBC)' : '' }}
+        </p>
 
         <a
           v-if="checkIn && checkOut"
@@ -112,6 +116,16 @@
 </template>
 
 <script>
+import {
+  getNightPrice,
+  decPackageRangeError,
+  decPackageTotal,
+  hasDecPackage,
+  isDecPackageNight,
+  DEC_PACKAGE_CHECKIN,
+  DEC_PACKAGE_CHECKOUT,
+} from '../data/seasonPrices.js';
+
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 
@@ -200,14 +214,28 @@ export default {
       return Math.round(diff / (1000 * 60 * 60 * 24));
     },
     totalPrice() {
-      if (!this.nightCount || !this.selectedVilla || !this.selectedVilla.dayPrices) return "0";
+      if (!this.nightCount || !this.selectedVilla) return "0";
       let total = 0;
+      let tbc = false;
       for (let i = 0; i < this.nightCount; i++) {
         const d = new Date(this.checkIn);
         d.setDate(d.getDate() + i);
-        total += this.dayPrice(d);
+        const p = this.dayPrice(d);
+        if (p == null) { tbc = true; continue; }
+        total += p;
       }
-      return total.toLocaleString("id-ID").replace(/,/g, ".");
+      const s = total.toLocaleString("id-ID").replace(/,/g, ".");
+      if (tbc) return total > 0 ? `${s} + TBC` : "TBC";
+      return s;
+    },
+    selectedHasPackage() {
+      if (!this.checkIn || !this.checkOut) return false;
+      const ci = this.localDate(this.checkIn);
+      const co = this.localDate(this.checkOut);
+      return ci <= DEC_PACKAGE_CHECKIN && co >= DEC_PACKAGE_CHECKOUT;
+    },
+    packageTbc() {
+      return this.selectedHasPackage && this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
     },
     waLink() {
       if (!this.selectedVilla || !this.checkIn || !this.checkOut) return "#";
@@ -227,12 +255,11 @@ export default {
   },
   methods: {
     dayPrice(date) {
-      const day = date.getDay();
-      const prices = this.selectedVilla.dayPrices;
-      return prices && prices[day] ? prices[day] : this.selectedVilla.price;
+      return getNightPrice(this.selectedVilla, date);
     },
     cellPrice(cell) {
       const p = this.dayPrice(new Date(cell.year, cell.month, cell.day));
+      if (p == null) return "TBC";
       if (!p) return "";
       if (p >= 1000000) {
         const n = p / 1000000;
@@ -240,6 +267,9 @@ export default {
       }
       if (p >= 1000) return Math.round(p / 1000) + "rb";
       return String(p);
+    },
+    isPackageCell(cell) {
+      return isDecPackageNight(this.dateStr(cell)) && hasDecPackage(this.selectedVilla);
     },
     dateStr(cell) {
       return `${cell.year}-${String(cell.month + 1).padStart(2, "0")}-${String(cell.day).padStart(2, "0")}`;
@@ -462,7 +492,8 @@ export default {
         "calendar__cell--checkout-only": this.isCheckoutOnly(cell),
         "calendar__cell--selected": this.isSelected(cell),
         "calendar__cell--in-range": this.isInRange(cell),
-        "calendar__cell--holiday": HOLIDAYS[this.dateStr(cell)],
+        "calendar__cell--holiday": HOLIDAYS[this.dateStr(cell)] || this.isPackageCell(cell),
+        "calendar__cell--package": this.isPackageCell(cell),
       };
     },
     selectDate(cell) {
@@ -471,23 +502,49 @@ export default {
 
       if (!this.checkIn || (this.checkIn && this.checkOut)) {
         if (this.isUnavailable(cell)) return;
+        if (this.isPackageCell(cell)) { this.applyPackageRange(); return; }
         this.checkIn = selected;
         this.checkOut = null;
+        this.error = "";
       } else {
         if (selected <= this.checkIn) {
           if (this.isUnavailable(cell)) return;
+          if (this.isPackageCell(cell)) { this.applyPackageRange(); return; }
           this.checkIn = selected;
+          this.error = "";
         } else {
           if (this.hasBlockedNight(this.checkIn, selected)) {
             this.error = "Tanggal tersebut sudah terbooking di antara tanggal check-in. Silakan pilih check-out lain.";
             return;
           }
+          const rangeErr = decPackageRangeError(this.localDate(this.checkIn), this.localDate(selected));
+          if (rangeErr) {
+            this.error = rangeErr;
+            return;
+          }
           this.checkOut = selected;
+          this.error = "";
         }
+      }
+    },
+    applyPackageRange() {
+      this.checkIn = new Date(DEC_PACKAGE_CHECKIN + "T00:00:00");
+      this.checkOut = new Date(DEC_PACKAGE_CHECKOUT + "T00:00:00");
+      this.error = "";
+      if (this.hasBlockedNight(this.checkIn, this.checkOut)) {
+        this.checkIn = null;
+        this.checkOut = null;
+        this.error = "Paket 30–31 Des tidak tersedia karena salah satu tanggal sudah terbooking.";
       }
     },
     holidayName(cell) {
       if (!cell) return "";
+      if (this.isPackageCell(cell)) {
+        const total = decPackageTotal(this.selectedVilla);
+        return total == null
+          ? "Paket 2 malam 30–31 Des (harga TBC)"
+          : `Paket 2 malam 30–31 Des — Rp ${total.toLocaleString("id-ID").replace(/,/g, ".")}`;
+      }
       return HOLIDAYS[this.dateStr(cell)] || "";
     },
 formatDateDisplay(d) {
@@ -789,6 +846,21 @@ formatDateDisplay(d) {
   background: #ef4444;
 }
 
+.calendar__cell--package {
+  color: #fcd34d !important;
+  font-weight: 700;
+  background: rgba(252, 211, 77, 0.14);
+  border-color: rgba(252, 211, 77, 0.5) !important;
+}
+
+.calendar__cell--package.calendar__cell--selected {
+  color: white !important;
+}
+
+.calendar__cell--package .calendar__holiday-dot {
+  background: #f59e0b;
+}
+
 .calendar__cell--unavailable {
   color: rgba(255,255,255,0.35);
   cursor: not-allowed;
@@ -866,6 +938,19 @@ formatDateDisplay(d) {
   display: block;
   font-size: 1.1rem;
   font-weight: 700;
+}
+
+.booking__package-note {
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #92400e;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 10px 14px;
 }
 
 .booking__wa {

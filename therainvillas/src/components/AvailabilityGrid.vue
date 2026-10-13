@@ -39,7 +39,7 @@
                   v-else-if="isAvailable(v, cell)"
                   :href="dateHref(v, cell)"
                   class="avail-cell avail-cell--ready"
-                  :title="'Booking ' + v.name + ' mulai ' + dateStr(cell)"
+                  :title="cellTitle(v, cell)"
                   data-track="booking_click"
                   :data-villa="v.name"
                 >
@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { getNightPrice, isDecPackageNight, toDateStr, hasDecPackage } from '../data/seasonPrices.js';
+
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 
@@ -131,12 +133,11 @@ export default {
   },
   methods: {
     dayPrice(v, date) {
-      const day = date.getDay();
-      const prices = v.dayPrices;
-      return prices && prices[day] ? prices[day] : v.price;
+      return getNightPrice(v, date);
     },
     cellPrice(v, cell) {
       const p = this.dayPrice(v, new Date(cell.year, cell.month, cell.day));
+      if (p == null) return "TBC";
       if (!p) return "";
       if (p >= 1000000) {
         const n = p / 1000000;
@@ -145,16 +146,29 @@ export default {
       if (p >= 1000) return Math.round(p / 1000) + "rb";
       return String(p);
     },
+    isPackageCell(v, cell) {
+      return hasDecPackage(v) && isDecPackageNight(toDateStr(new Date(cell.year, cell.month, cell.day)));
+    },
+    cellTitle(v, cell) {
+      const base = 'Booking ' + v.name + ' mulai ' + this.dateStr(cell);
+      if (this.isPackageCell(v, cell)) {
+        return base + ' (masuk paket 2 malam 30–31 Des)';
+      }
+      return base;
+    },
     dateStr(cell) {
       return `${cell.year}-${String(cell.month + 1).padStart(2, "0")}-${String(cell.day).padStart(2, "0")}`;
     },
     dateHref(v, cell) {
+      const p2 = (n) => String(n).padStart(2, "0");
+      const fmt = (d) => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
+      // Tanggal paket 30–31 Des: arahkan ke rentang 2 malam penuh.
+      if (this.isPackageCell(v, cell)) {
+        return `/booking?villa=${encodeURIComponent(v.name)}&checkIn=2026-12-30&checkOut=2027-01-01`;
+      }
       const ci = new Date(cell.year, cell.month, cell.day);
       const co = new Date(cell.year, cell.month, cell.day + 1);
-      const p2 = (n) => String(n).padStart(2, "0");
-      const ciStr = `${ci.getFullYear()}-${p2(ci.getMonth() + 1)}-${p2(ci.getDate())}`;
-      const coStr = `${co.getFullYear()}-${p2(co.getMonth() + 1)}-${p2(co.getDate())}`;
-      return `/booking?villa=${encodeURIComponent(v.name)}&checkIn=${ciStr}&checkOut=${coStr}`;
+      return `/booking?villa=${encodeURIComponent(v.name)}&checkIn=${fmt(ci)}&checkOut=${fmt(co)}`;
     },
     isUnavailable(v, cell) {
       if (!v) return true;

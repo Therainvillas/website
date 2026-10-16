@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import PromoPopup from '../components/PromoPopup.vue';
 
 export interface Props {
   title?: string;
@@ -139,5 +140,6 @@ const gaBootstrap = `
     <script>
       import '../scripts/analytics.js';
     </script>
+    <PromoPopup client:load />
   </body>
 </html>

@@ -21,9 +21,18 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
       <div class="promo-empty">
         <img src="/promo/promo oktober.PNG" alt="Promo Oktober 10% - Kode OKTOBER10" class="promo-page__img" />
         <h2>Promo Oktober Spesial</h2>
-        <p>Diskon hingga 10% untuk pemesanan Oktober 2026. Gunakan kode <strong>OKTOBER10</strong> saat booking.</p>
+        <div class="promo-page__terms">
+          <ul>
+            <li>Wajib memberikan <strong>rating Google Maps</strong> dan mengirim <strong>bukti rating</strong>.</li>
+            <li>Setelah mengirim bukti rating, <strong>kode promo akan muncul secara acak dan hanya berlaku selama 2 menit</strong>.</li>
+            <li>Berlaku untuk pemesanan Oktober 2026.</li>
+            <li><strong>Tidak berlaku</strong> untuk Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2.</li>
+            <li>Potongan dihitung otomatis di formulir booking.</li>
+            <li>Tidak dapat digabungkan dengan promo atau voucher lain.</li>
+          </ul>
+        </div>
         <div class="promo-page__actions">
-          <a href="/booking?promo=OKTOBER10" class="promo-page__btn promo-page__btn--primary">Gunakan Kode OKTOBER10</a>
+          <a href="/promo-claim" class="promo-page__btn promo-page__btn--primary">Klaim Kode Promo</a>
           <a href="/" class="promo-page__btn">Kembali ke Beranda</a>
         </div>
       </div>
@@ -141,6 +150,25 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
   .promo-page__btn--primary {
     background: linear-gradient(135deg, #5b8def, #7a5ce0);
     color: #fff;
+  }
+  .promo-page__terms {
+    max-width: 560px;
+    margin: 16px auto 8px;
+    text-align: left;
+    background: rgba(var(--color-accent-rgb), 0.05);
+    border: 1px solid rgba(var(--color-accent-rgb), 0.15);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .promo-page__terms ul {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--color-gray);
+    font-size: 0.95rem;
+    line-height: 1.7;
   }
 
   @media (max-width: 768px) {

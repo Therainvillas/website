@@ -3,9 +3,11 @@ export const promos = [
     code: 'OKTOBER10',
     kind: 'voucher',
     headline: 'Promo Spesial Oktober — Diskon hingga 10%',
-    description: 'Diskon khusus Oktober untuk pemesanan villa The Rain Villas. Potongan dihitung otomatis di formulir booking.',
+    description: 'Diskon khusus Oktober untuk pemesanan villa The Rain Villas. Wajib memberikan rating Google dan upload bukti rating untuk mendapatkan kode promo.',
     excluded: ['Rjs Cottage 1', 'Rjs Cottage 2', 'Rjs Cottage 3', 'Villa Kaca 1', 'Villa Kaca 2'],
     terms: [
+      'Wajib memberikan rating Google Maps dan mengirim bukti rating',
+      'Setelah mengirim bukti rating, kode promo akan muncul secara acak dan hanya berlaku selama 2 menit',
       'Berlaku untuk pemesanan Oktober 2026',
       'Tidak berlaku untuk Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2',
       'Potongan dihitung otomatis dari subtotal menginap di formulir booking',

@@ -3,11 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import PromoClaim from '../components/PromoClaim.vue';
 ---
 
 <Layout
   title="Promo & Voucher Villa | The Rain Villas"
-  description="Info promo dan voucher The Rain Villas. Saat ini belum ada promo aktif — nantikan penawaran menarik berikutnya."
+  description="Klaim promo Oktober 2026 di The Rain Villas — diskon hingga 10% dengan kode hasil klaim setelah memberi rating Google Maps."
 >
   <Header />
   <main class="promo-page">
@@ -15,7 +16,7 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
       <header class="promo-page__head">
         <span class="promo-page__badge">Promo &amp; Voucher</span>
         <h1>Promo &amp; Voucher</h1>
-        <p>Saat ini belum ada promo atau voucher yang aktif. Nantikan penawaran menarik dari The Rain Villas.</p>
+        <p>Sedang berlangsung: <strong>Promo Oktober 10%</strong> — klaim kode di halaman ini (wajib rating Google Maps).</p>
       </header>
 
       <div class="promo-empty">
@@ -32,10 +33,12 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
           </ul>
         </div>
         <div class="promo-page__actions">
-          <a href="/promo-claim" class="promo-page__btn promo-page__btn--primary">Klaim Kode Promo</a>
+          <a href="#klaim" class="promo-page__btn promo-page__btn--primary">Klaim Kode Promo</a>
           <a href="/" class="promo-page__btn">Kembali ke Beranda</a>
         </div>
       </div>
+
+      <PromoClaim client:load />
     </div>
   </main>
   <Footer />

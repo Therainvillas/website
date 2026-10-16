@@ -7,8 +7,8 @@
           <img src="/promo/promo oktober.PNG" alt="Promo Oktober 10% - Kode OKTOBER10" class="promo-popup__img" />
         </a>
         <div class="promo-popup__footer">
-          <a href="/booking?promo=OKTOBER10" class="promo-popup__btn promo-popup__btn--primary" @click="close">
-            Gunakan Kode OKTOBER10
+          <a href="/promo#klaim" class="promo-popup__btn promo-popup__btn--primary" @click="close">
+            Klaim Kode OKTOBER10
           </a>
           <a href="/promo" class="promo-popup__btn" @click="close">Lihat Detail Promo</a>
         </div>

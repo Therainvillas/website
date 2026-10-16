@@ -15,7 +15,7 @@
       <div class="avail__dec-notice-title">📢 Pemberitahuan Desember 2026</div>
       <ul class="avail__dec-notice-list">
         <li>Harga sewa villa <strong>naik (high season)</strong> sepanjang libur Desember 2026 — lihat harga per tanggal di setiap villa.</li>
-        <li>Tanggal <strong>30 &amp; 31 Desember 2026</strong> hanya bisa dipesan sebagai <strong>Paket 2 Malam</strong> (wajib check-in 30 Des &amp; check-out 1 Jan).</li>
+        <li>Tanggal <strong>30–31 Desember 2026</strong> wajib <strong>Paket 2 Malam</strong> (opsi: check-in 30 Des &amp; check-out 1 Jan, atau check-in 31 Des &amp; check-out 2 Jan).</li>
         <li>Harga villa tertentu bisa berstatus <strong>TBA</strong> (menyusul) dan dikonfirmasi admin via WhatsApp.</li>
       </ul>
     </div>

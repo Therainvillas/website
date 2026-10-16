@@ -4,7 +4,7 @@
       <div class="promo-popup__modal" role="dialog" aria-modal="true">
         <button class="promo-popup__close" @click="close" aria-label="Tutup">×</button>
         <a href="/promo" @click="close">
-          <img src="/promo/promo oktober.PNG" alt="Promo Oktober 10% - Kode OKTOBER10" class="promo-popup__img" />
+          <img src="/promo/promo oktober.webp" alt="Promo Oktober 10% - Kode OKTOBER10" class="promo-popup__img" />
         </a>
         <div class="promo-popup__footer">
           <a href="/promo#klaim" class="promo-popup__btn promo-popup__btn--primary" @click="close">

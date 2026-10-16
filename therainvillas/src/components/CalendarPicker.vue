@@ -91,16 +91,16 @@
           </div>
           <div v-if="nightCount > 0" class="booking__total">
             <span>{{ nightCount }} malam</span>
-            <span class="booking__total-price">{{ totalPrice === 'TBC' ? 'TBC' : 'Rp ' + totalPrice }}</span>
+            <span class="booking__total-price">{{ totalPrice === 'TBA' ? 'TBA' : 'Rp ' + totalPrice }}</span>
           </div>
         </div>
 
         <p v-if="selectedHasPackage" class="booking__package-note">
-          🎁 Paket 2 malam 30–31 Desember{{ packageTbc ? ' — harga menyusul (TBC)' : '' }}
+          🎁 Paket 2 malam 30–31 Desember{{ packageTba ? ' — harga menyusul (TBA)' : '' }}
         </p>
 
-        <p v-if="showTbcNote" class="booking__package-note">
-          Harga tanggal ini belum pasti (TBC) — akan dikonfirmasi admin via WhatsApp.
+        <p v-if="showTbaNote" class="booking__package-note">
+          Harga tanggal ini belum pasti (TBA) — akan dikonfirmasi admin via WhatsApp.
         </p>
 
         <a
@@ -220,16 +220,16 @@ export default {
     totalPrice() {
       if (!this.nightCount || !this.selectedVilla) return "0";
       let total = 0;
-      let tbc = false;
+      let tba = false;
       for (let i = 0; i < this.nightCount; i++) {
         const d = new Date(this.checkIn);
         d.setDate(d.getDate() + i);
         const p = this.dayPrice(d);
-        if (p == null) { tbc = true; continue; }
+        if (p == null) { tba = true; continue; }
         total += p;
       }
       const s = total.toLocaleString("id-ID").replace(/,/g, ".");
-      if (tbc) return total > 0 ? `${s} + TBC` : "TBC";
+      if (tba) return total > 0 ? `${s} + TBA` : "TBA";
       return s;
     },
     selectedHasPackage() {
@@ -238,10 +238,10 @@ export default {
       const co = this.localDate(this.checkOut);
       return ci <= DEC_PACKAGE_CHECKIN && co >= DEC_PACKAGE_CHECKOUT;
     },
-    packageTbc() {
+    packageTba() {
       return this.selectedHasPackage && !!this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
     },
-    hasTbcNight() {
+    hasTbaNight() {
       if (!this.nightCount || !this.selectedVilla) return false;
       for (let i = 0; i < this.nightCount; i++) {
         const d = new Date(this.checkIn);
@@ -250,8 +250,8 @@ export default {
       }
       return false;
     },
-    showTbcNote() {
-      return this.hasTbcNight && !this.selectedHasPackage;
+    showTbaNote() {
+      return this.hasTbaNight && !this.selectedHasPackage;
     },
     waLink() {
       if (!this.selectedVilla || !this.checkIn || !this.checkOut) return "#";
@@ -275,7 +275,7 @@ export default {
     },
     cellPrice(cell) {
       const p = this.dayPrice(new Date(cell.year, cell.month, cell.day));
-      if (p == null) return "TBC";
+      if (p == null) return "TBA";
       if (!p) return "";
       if (p >= 1000000) {
         const n = p / 1000000;
@@ -558,7 +558,7 @@ export default {
       if (this.isPackageCell(cell)) {
         const total = decPackageTotal(this.selectedVilla);
         return total == null
-          ? "Paket 2 malam 30–31 Des (harga TBC)"
+          ? "Paket 2 malam 30–31 Des (harga TBA)"
           : `Paket 2 malam 30–31 Des — Rp ${total.toLocaleString("id-ID").replace(/,/g, ".")}`;
       }
       return HOLIDAYS[this.dateStr(cell)] || "";

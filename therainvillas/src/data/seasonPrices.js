@@ -10,7 +10,7 @@
  *  - `DECEMBER_2026_PACKAGE` = harga TOTAL paket 2 malam untuk tanggal
  *    `DEC_PACKAGE_DATES` (30 & 31 Des). Customer yang mengambil salah satu
  *    tanggal WAJIB mengambil keduanya (check-in 30 Des, check-out 1 Jan).
- *    Nilai `null` = harga belum ditentukan (TBC) — tetap wajib 2 malam.
+ *    Nilai `null` = harga belum ditentukan (TBA) — tetap wajib 2 malam.
  *
  * Harga per malam untuk 30 & 31 Des otomatis = total paket / 2, sehingga
  * 2 malam = harga paket.
@@ -55,7 +55,7 @@ const DEC_SPEC = {
 };
 
 // ── Harga total Paket 2 malam (30–31 Des) ──────────────────────────────
-// null = TBC (harga menyusul), namun paket tetap wajib 2 malam.
+// null = TBA (harga menyusul), namun paket tetap wajib 2 malam.
 const DEC_PACKAGE = {
   "Villa Valora": 6000000,
   "Villa Wanela": 6000000,
@@ -76,7 +76,7 @@ const DEC_PACKAGE = {
   "Villa Opung": 7500000,
   "Villa Calmora": 9000000,
   "Villa Aleia": 7000000,
-  "Villa Hala": null, // TBC
+  "Villa Hala": null, // TBA
   "Villa Thymi": 8500000,
   "Villa Rayya": 8300000,
   "Villa Arsy": 8500000,
@@ -87,16 +87,16 @@ const DEC_PACKAGE = {
   "Villa Agave": 9000000,
 };
 
-// ── Tanggal berharga TBC (belum pasti) ─────────────────────────────────
+// ── Tanggal berharga TBA (belum pasti) ─────────────────────────────────
 // Format: "Nama Villa": [[tanggalAwal, tanggalAkhir], ...] (Desember 2026).
 // Rjs Cottage: harga 20–31 Des belum pasti.
-const DEC_TBC_SPEC = {
+const DEC_TBA_SPEC = {
   "Rjs Cottage 1": [[20, 31]],
   "Rjs Cottage 2": [[20, 31]],
   "Rjs Cottage 3": [[20, 31]],
 };
 
-function buildTbc(spec) {
+function buildTba(spec) {
   const set = new Set();
   for (const [a, b] of spec) {
     for (let d = a; d <= b; d++) set.add(`2026-12-${String(d).padStart(2, "0")}`);
@@ -104,9 +104,9 @@ function buildTbc(spec) {
   return set;
 }
 
-export const DECEMBER_2026_TBC = {};
-for (const [name, spec] of Object.entries(DEC_TBC_SPEC)) {
-  DECEMBER_2026_TBC[name] = buildTbc(spec);
+export const DECEMBER_2026_TBA = {};
+for (const [name, spec] of Object.entries(DEC_TBA_SPEC)) {
+  DECEMBER_2026_TBA[name] = buildTba(spec);
 }
 
 // Bangun peta tanggal → harga per malam.
@@ -142,29 +142,29 @@ export function hasDecPackage(villa) {
   return !!villa && Object.prototype.hasOwnProperty.call(DEC_PACKAGE, villa.name);
 }
 
-/** Harga total paket 2 malam (angka), atau null jika TBC / tidak ada paket. */
+/** Harga total paket 2 malam (angka), atau null jika TBA / tidak ada paket. */
 export function decPackageTotal(villa) {
   if (!hasDecPackage(villa)) return null;
   return DEC_PACKAGE[villa.name];
 }
 
-/** True jika villa punya paket tapi harganya belum ditentukan (TBC). */
-export function decPackageIsTbc(villa) {
+/** True jika villa punya paket tapi harganya belum ditentukan (TBA). */
+export function decPackageIsTba(villa) {
   return hasDecPackage(villa) && DEC_PACKAGE[villa.name] == null;
 }
 
 /**
  * Harga satu malam untuk villa pada tanggal tertentu (objek Date).
  * Urutan: override Desember → setengah harga paket (30/31 Des) → harga normal.
- * Mengembalikan number, atau null bila malam paket berharga TBC.
+ * Mengembalikan number, atau null bila malam paket berharga TBA.
  */
 export function getNightPrice(villa, date) {
   if (!villa) return 0;
   const key = toDateStr(date);
 
-  // Harga TBC (belum pasti) → tidak ada angka.
-  const tbc = DECEMBER_2026_TBC[villa.name];
-  if (tbc && tbc.has(key)) return null;
+  // Harga TBA (belum pasti) → tidak ada angka.
+  const tba = DECEMBER_2026_TBA[villa.name];
+  if (tba && tba.has(key)) return null;
 
   const map = DECEMBER_2026[villa.name];
   if (map && map[key] != null) return map[key];
@@ -172,15 +172,15 @@ export function getNightPrice(villa, date) {
   if (isDecPackageNight(key) && hasDecPackage(villa)) {
     const total = DEC_PACKAGE[villa.name];
     if (typeof total === "number") return Math.round(total / 2);
-    return null; // TBC
+    return null; // TBA
   }
 
   const day = date.getDay();
   return (villa.dayPrices && villa.dayPrices[day]) || villa.price;
 }
 
-/** True jika harga satu malam villa pada tanggal tsb belum pasti (TBC). */
-export function isTbcNight(villa, date) {
+/** True jika harga satu malam villa pada tanggal tsb belum pasti (TBA). */
+export function isTbaNight(villa, date) {
   return getNightPrice(villa, date) == null;
 }
 

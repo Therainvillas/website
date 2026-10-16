@@ -16,7 +16,7 @@
       <ul class="avail__dec-notice-list">
         <li>Harga sewa villa <strong>naik (high season)</strong> sepanjang libur Desember 2026 — lihat harga per tanggal di setiap villa.</li>
         <li>Tanggal <strong>30 &amp; 31 Desember 2026</strong> hanya bisa dipesan sebagai <strong>Paket 2 Malam</strong> (wajib check-in 30 Des &amp; check-out 1 Jan).</li>
-        <li>Harga villa tertentu bisa berstatus <strong>TBC</strong> (menyusul) dan dikonfirmasi admin via WhatsApp.</li>
+        <li>Harga villa tertentu bisa berstatus <strong>TBA</strong> (menyusul) dan dikonfirmasi admin via WhatsApp.</li>
       </ul>
     </div>
 
@@ -154,7 +154,7 @@ export default {
     },
     cellPrice(v, cell) {
       const p = this.dayPrice(v, new Date(cell.year, cell.month, cell.day));
-      if (p == null) return "TBC";
+      if (p == null) return "TBA";
       if (!p) return "";
       if (p >= 1000000) {
         const n = p / 1000000;

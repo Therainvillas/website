@@ -174,14 +174,14 @@
             <div v-if="nightCount > 0" class="bf__price-card">
               <div class="bf__price-row">
                 <span>{{ nightCount }} malam</span>
-                <strong>{{ totalPrice === 'TBC' ? 'TBC' : 'Rp ' + totalPrice }}</strong>
+                <strong>{{ totalPrice === 'TBA' ? 'TBA' : 'Rp ' + totalPrice }}</strong>
               </div>
               <div class="bf__price-note">Harga dihitung otomatis berdasarkan hari menginap</div>
               <div v-if="selectedHasPackage" class="bf__package-note">
-                🎁 Paket 2 malam 30–31 Desember{{ packageTbc ? ' — harga menyusul (TBC)' : '' }}
+                🎁 Paket 2 malam 30–31 Desember{{ packageTba ? ' — harga menyusul (TBA)' : '' }}
               </div>
-              <div v-if="showTbcNote" class="bf__package-note">
-                Harga tanggal ini belum pasti (TBC) — akan dikonfirmasi admin via WhatsApp.
+              <div v-if="showTbaNote" class="bf__package-note">
+                Harga tanggal ini belum pasti (TBA) — akan dikonfirmasi admin via WhatsApp.
               </div>
 
               <div class="bf__promo">
@@ -206,7 +206,7 @@
                 <div v-if="promoApplied && discountRaw > 0" class="bf__price-detail">
                   <div class="bf__price-detail-row">
                     <span>Subtotal ({{ nightCount }} malam)</span>
-                    <strong>{{ totalPrice === 'TBC' ? 'TBC' : 'Rp ' + totalPrice }}</strong>
+                    <strong>{{ totalPrice === 'TBA' ? 'TBA' : 'Rp ' + totalPrice }}</strong>
                   </div>
                   <div class="bf__price-detail-row bf__price-detail-row--discount">
                     <span>{{ promoApplied.label }} ({{ promoApplied.code }})</span>
@@ -557,10 +557,10 @@ export default {
       if (!this.form.checkIn || !this.form.checkOut) return false;
       return this.form.checkIn <= DEC_PACKAGE_CHECKIN && this.form.checkOut >= DEC_PACKAGE_CHECKOUT;
     },
-    packageTbc() {
+    packageTba() {
       return this.selectedHasPackage && !!this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
     },
-    hasTbcNight() {
+    hasTbaNight() {
       if (!this.nightCount || !this.selectedVilla) return false;
       const start = new Date(this.form.checkIn + 'T00:00:00');
       for (let i = 0; i < this.nightCount; i++) {
@@ -570,12 +570,12 @@ export default {
       }
       return false;
     },
-    showTbcNote() {
-      return this.hasTbcNight && !this.selectedHasPackage;
+    showTbaNote() {
+      return this.hasTbaNight && !this.selectedHasPackage;
     },
     totalPrice() {
       const s = this.totalPriceRaw.toLocaleString('id-ID').replace(/,/g, '.');
-      if (this.hasTbcNight) return this.totalPriceRaw > 0 ? `${s} + TBC` : 'TBC';
+      if (this.hasTbaNight) return this.totalPriceRaw > 0 ? `${s} + TBA` : 'TBA';
       return s;
     },
     discountRaw() {
@@ -636,7 +636,7 @@ export default {
           : []),
         ...(this.selectedHasPackage
           ? [
-            l('Paket', this.packageTbc ? 'Paket 2 malam 30–31 Des (harga TBC, menyusul)' : 'Paket 2 malam 30–31 Des'),
+            l('Paket', this.packageTba ? 'Paket 2 malam 30–31 Des (harga TBA, menyusul)' : 'Paket 2 malam 30–31 Des'),
             '',
           ]
           : []),

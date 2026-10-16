@@ -11,6 +11,15 @@
       <span>Memuat jadwal semua villa...</span>
     </div>
 
+    <div v-if="isDecember2026" class="avail__dec-notice">
+      <div class="avail__dec-notice-title">📢 Pemberitahuan Desember 2026</div>
+      <ul class="avail__dec-notice-list">
+        <li>Harga sewa villa <strong>naik (high season)</strong> sepanjang libur Desember 2026 — lihat harga per tanggal di setiap villa.</li>
+        <li>Tanggal <strong>30 &amp; 31 Desember 2026</strong> hanya bisa dipesan sebagai <strong>Paket 2 Malam</strong> (wajib check-in 30 Des &amp; check-out 1 Jan).</li>
+        <li>Harga villa tertentu bisa berstatus <strong>TBC</strong> (menyusul) dan dikonfirmasi admin via WhatsApp.</li>
+      </ul>
+    </div>
+
     <div v-if="notice" class="avail__notice">{{ notice }}</div>
     <div v-if="error" class="avail__error">{{ error }}</div>
 
@@ -39,12 +48,14 @@
                   v-else-if="isAvailable(v, cell)"
                   :href="dateHref(v, cell)"
                   class="avail-cell avail-cell--ready"
+                  :class="{ 'avail-cell--package': isPackageCell(v, cell) }"
                   :title="cellTitle(v, cell)"
                   data-track="booking_click"
                   :data-villa="v.name"
                 >
                   <span class="avail-cell__num">{{ cell.day }}</span>
                   <span class="avail-cell__price">{{ cellPrice(v, cell) }}</span>
+                  <span v-if="isPackageCell(v, cell)" class="avail-cell__pkg">Paket</span>
                 </a>
                 <span
                   v-else
@@ -67,6 +78,9 @@
       </span>
       <span class="avail__legend-item">
         <i class="avail__swatch avail__swatch--off"></i> Terbooking / tidak tersedia
+      </span>
+      <span class="avail__legend-item">
+        <i class="avail__swatch avail__swatch--package"></i> Tanggal paket 2 malam (30–31 Des)
       </span>
     </div>
   </div>
@@ -119,6 +133,9 @@ export default {
   computed: {
     monthLabel() {
       return `${MONTHS[this.month]} ${this.year}`;
+    },
+    isDecember2026() {
+      return this.year === 2026 && this.month === 11;
     },
     calendarCells() {
       const firstDay = new Date(this.year, this.month, 1).getDay();
@@ -405,6 +422,37 @@ export default {
   text-align: center;
 }
 
+.avail__dec-notice {
+  margin-bottom: 22px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 1px solid #fdba74;
+  color: #7c2d12;
+  box-shadow: 0 6px 18px rgba(124, 45, 18, 0.1);
+}
+
+.avail__dec-notice-title {
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
+.avail__dec-notice-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.avail__dec-notice-list strong {
+  color: #9a3412;
+}
+
 .avail__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -511,6 +559,28 @@ a.avail-cell.avail-cell--ready:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
 }
 
+a.avail-cell.avail-cell--package {
+  background: rgba(252, 211, 77, 0.22);
+  border-color: rgba(252, 211, 77, 0.7);
+}
+
+a.avail-cell.avail-cell--package:hover {
+  background: rgba(252, 211, 77, 0.4);
+  border-color: rgba(252, 211, 77, 0.95);
+}
+
+.avail-cell__pkg {
+  font-size: 0.5rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #7c2d12;
+  background: #fcd34d;
+  padding: 0 4px;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+
 .avail-cell__num {
   font-size: 0.8rem;
   line-height: 1.1;
@@ -586,6 +656,11 @@ a.avail-cell.avail-cell--ready:hover {
 .avail__swatch--off {
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.avail__swatch--package {
+  background: rgba(252, 211, 77, 0.5);
+  border: 1px solid rgba(252, 211, 77, 0.95);
 }
 
 @media (max-width: 768px) {

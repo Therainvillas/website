@@ -1,10 +1,16 @@
 <template>
   <transition name="fade">
     <div v-if="visible" class="promo-popup" @click.self="close">
-      <div class="promo-popup__modal" role="dialog" aria-modal="true">
+      <div class="promo-popup__modal" role="dialog" aria-modal="true" aria-label="Promo Oktober 10%">
         <button class="promo-popup__close" @click="close" aria-label="Tutup">×</button>
         <a href="/promo" @click="close">
-          <img src="/promo/promo oktober.webp" alt="Promo Oktober 10% - Kode OKTOBER10" class="promo-popup__img" />
+          <img
+            src="/promo/promo oktober.webp"
+            alt="Promo Oktober 10% - Kode OKTOBER10"
+            class="promo-popup__img"
+            width="1400"
+            height="990"
+          />
         </a>
         <div class="promo-popup__footer">
           <a href="/promo#klaim" class="promo-popup__btn promo-popup__btn--primary" @click="close">
@@ -18,42 +24,85 @@
 </template>
 
 <script>
-const STORAGE_KEY = "trv_promo_oktober10_hidden_until";
+import { promos, isPromoActive } from '../data/promos.js';
+
+// Disembunyikan hanya untuk sesi browser ini (bukan 24 jam),
+// supaya popup muncul lagi di kunjungan berikutnya.
+const DISMISS_KEY = 'trv_promo_oktober10_dismissed';
+// Kunci lama (menyembunyikan 24 jam) dibersihkan agar tidak nyangkut.
+const LEGACY_KEY = 'trv_promo_oktober10_hidden_until';
+const SHOW_DELAY_MS = 700;
 
 export default {
-  name: "PromoPopup",
+  name: 'PromoPopup',
   data() {
     return {
       visible: false,
     };
   },
   mounted() {
-    try {
-      const until = localStorage.getItem(STORAGE_KEY);
-      if (until && Number(until) > Date.now()) {
-        return;
-      }
-    } catch (e) {
-      // ignore
-    }
-    setTimeout(() => {
+    // bersihkan kunci lama yang membuat popup hilang 24 jam
+    try { localStorage.removeItem(LEGACY_KEY); } catch (e) { /* ignore */ }
+
+    if (!this.canShow()) return;
+
+    const reveal = () => {
+      if (this._revealed) return;
+      this._revealed = true;
       this.visible = true;
-      document.body.style.overflow = "hidden";
-    }, 800);
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', this.onKeydown);
+    };
+
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+      // tunda sampai tab benar-benar dilihat, agar tidak "muncul tapi tak terlihat"
+      this._onVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          document.removeEventListener('visibilitychange', this._onVisibility);
+          this._onVisibility = null;
+          this._timer = setTimeout(reveal, SHOW_DELAY_MS);
+        }
+      };
+      document.addEventListener('visibilitychange', this._onVisibility);
+    } else {
+      this._timer = setTimeout(reveal, SHOW_DELAY_MS);
+    }
   },
   beforeUnmount() {
-    document.body.style.overflow = "";
+    this.teardown();
   },
   methods: {
+    canShow() {
+      // jangan tampil di area admin
+      if (typeof location !== 'undefined' && /^\/admin(\/|$)/.test(location.pathname)) return false;
+      // hanya tampil selama promo Oktober aktif
+      const promo = Array.isArray(promos) ? promos[0] : null;
+      if (!promo || !isPromoActive(promo)) return false;
+      // sudah ditutup di sesi ini?
+      try {
+        if (sessionStorage.getItem(DISMISS_KEY) === '1') return false;
+      } catch (e) { /* ignore */ }
+      return true;
+    },
     close() {
       this.visible = false;
-      document.body.style.overflow = "";
-      try {
-        // Sembunyikan 24 jam
-        localStorage.setItem(STORAGE_KEY, String(Date.now() + 24 * 60 * 60 * 1000));
-      } catch (e) {
-        // ignore
+      this.teardown();
+      try { sessionStorage.setItem(DISMISS_KEY, '1'); } catch (e) { /* ignore */ }
+    },
+    onKeydown(e) {
+      if (e.key === 'Escape') this.close();
+    },
+    teardown() {
+      if (this._timer) {
+        clearTimeout(this._timer);
+        this._timer = null;
       }
+      if (this._onVisibility) {
+        document.removeEventListener('visibilitychange', this._onVisibility);
+        this._onVisibility = null;
+      }
+      document.removeEventListener('keydown', this.onKeydown);
+      document.body.style.overflow = '';
     },
   },
 };
@@ -109,8 +158,11 @@ export default {
 .promo-popup__img {
   width: 100%;
   height: auto;
+  aspect-ratio: 1400 / 990;
+  max-height: 82vh;
   display: block;
   object-fit: contain;
+  background: #000;
 }
 .promo-popup__footer {
   display: flex;
@@ -138,6 +190,9 @@ export default {
   color: #fff;
 }
 @media (max-width: 480px) {
+  .promo-popup__img {
+    max-height: 64vh;
+  }
   .promo-popup__footer {
     position: static;
     background: #000;

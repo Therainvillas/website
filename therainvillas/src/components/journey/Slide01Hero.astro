@@ -1,9 +1,32 @@
+---
+import { Image } from 'astro:assets';
+import heroPoster from '../../assets/display-poster.jpg';
+---
 <section class="journey-hero">
   <div class="journey-hero__bg">
-    <video autoplay muted loop playsinline preload="auto" poster="/display-poster.webp" class="journey-hero__video">
-      <source src="/hero-mobile.mp4" type="video/mp4" media="(max-width: 900px)" />
-      <source src="/DISPLAY%20TV%202.mp4" type="video/mp4" />
-    </video>
+    <Image
+      src={heroPoster}
+      alt=""
+      class="journey-hero__poster"
+      widths={[480, 768, 1280]}
+      sizes="100vw"
+      format="webp"
+      quality={72}
+      priority
+      decoding="async"
+    />
+    <video
+      class="journey-hero__video"
+      muted
+      loop
+      playsinline
+      preload="none"
+      poster={heroPoster.src}
+      width="854"
+      height="480"
+      data-src="/hero-loop.mp4"
+      aria-hidden="true"
+    ></video>
     <div class="journey-hero__overlay"></div>
   </div>
 
@@ -51,6 +74,53 @@
   </div>
 </section>
 
+<script>
+  // Poster gambar jadi elemen LCP (bukan video). Sumber video hanya dimuat
+  // SETELAH window "load", dan pemutaran dimulai pada interaksi pertama
+  // pengguna — jadi frame video tidak pernah "menyalip" LCP, dan pengunjung
+  // yang tidak berinteraksi tetap hemat data. Dilewati pada hemat data/2G.
+  (() => {
+    const video = document.querySelector('.journey-hero__video') as HTMLVideoElement | null;
+    if (!video) return;
+
+    const nav = navigator as any;
+    const conn = nav.connection || nav.mozConnection || nav.webkitConnection || {};
+    const slowNet = /(^|-)2g$/.test(conn.effectiveType || '');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (conn.saveData || slowNet || reduceMotion) return;
+
+    video.addEventListener('playing', () => video.classList.add('journey-hero__video--ready'), {
+      once: true,
+    });
+
+    const loadSource = () => {
+      if (video.dataset.loaded || !video.dataset.src) return;
+      video.dataset.loaded = '1';
+      // Hanya metadata (durasi/dimensi) — tidak mendekode frame, jadi poster
+      // tetap jadi elemen LCP sampai pengguna berinteraksi.
+      video.preload = 'metadata';
+      video.src = video.dataset.src;
+    };
+
+    const play = () => {
+      loadSource();
+      video.preload = 'auto';
+      const playing = video.play();
+      if (playing && typeof playing.catch === 'function') playing.catch(() => {});
+    };
+
+    const events = ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'];
+    const onInteract = () => {
+      play();
+      events.forEach((ev) => window.removeEventListener(ev, onInteract));
+    };
+    events.forEach((ev) => window.addEventListener(ev, onInteract, { passive: true }));
+
+    if (document.readyState === 'complete') loadSource();
+    else window.addEventListener('load', loadSource, { once: true });
+  })();
+</script>
+
 <style>
   .journey-hero {
     position: relative;
@@ -71,11 +141,28 @@
     z-index: 0;
   }
 
-.journey-hero__video {
+.journey-hero__poster {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: saturate(0.92) contrast(1.04);
+}
+
+.journey-hero__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.04);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.journey-hero__video--ready {
+  opacity: 1;
 }
 
   .journey-hero__overlay {

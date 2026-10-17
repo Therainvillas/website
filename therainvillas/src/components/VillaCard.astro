@@ -35,7 +35,7 @@ const link = `/${slugify(name)}`;
 
 <article class="villa-card">
   <a href={link} class="villa-card__media" aria-hidden="true" tabindex="-1">
-    <img src={image} alt={name} loading="lazy" />
+    <img src={image} alt={name} width="1200" height="675" loading="lazy" decoding="async" />
     {badge && <span class="villa-card__badge">{badge}</span>}
     <span class="villa-card__price">{priceText}</span>
   </a>
@@ -48,19 +48,19 @@ const link = `/${slugify(name)}`;
 
     <ul class="villa-card__stats">
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" /></span>
+        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
         <strong>{bedrooms}</strong> kamar
       </li>
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bathroom.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/bathroom.png" alt="" /></span>
+        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bathroom.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/bathroom.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
         <strong>{bathrooms}</strong> kamar mandi
       </li>
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/groupp.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" /></span>
+        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/groupp.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
         <strong>{capacity}</strong> tamu
       </li>
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/parking.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" /></span>
+        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/parking.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
         <strong>{parking}</strong> parkir
       </li>
     </ul>

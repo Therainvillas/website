@@ -18,6 +18,8 @@ import { villas } from '../data/villas';
 import { promoOfferJsonLd } from '../data/promos';
 
 const allVillas = villas;
+// Hanya tampilkan 6 villa pertama di halaman utama (sisanya lewat "Lihat Semua Villa").
+const featuredVillas = allVillas.slice(0, 6);
 
 const homeFaq = [
   {
@@ -71,8 +73,8 @@ const homeFaq = [
         <p class="section__subtitle reveal reveal--delay-1">Setiap villa punya ceritanya sendiri</p>
       </div>
       <div class="villa-grid" id="featured-villa-grid">
-        {allVillas.map((villa, i) => (
-          <div class="featured-villa-item reveal" data-villa-id={villa.id} style="display: none;">
+        {featuredVillas.map((villa) => (
+          <div class="featured-villa-item reveal" data-villa-id={villa.id}>
             <VillaCard {...villa} />
           </div>
         ))}
@@ -104,37 +106,15 @@ const homeFaq = [
   <WhatsAppBubble />
 </Layout>
 
-<script>
-  // Shuffle and display 3 random villas on each page load
-  function showRandomVillas() {
-    const grid = document.getElementById('featured-villa-grid');
-    if (!grid) return;
-
-    const items = Array.from(grid.querySelectorAll('.featured-villa-item'));
-
-    // Fisher-Yates shuffle
-    for (let i = items.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [items[i], items[j]] = [items[j], items[i]];
-    }
-
-    // Show only the first 3 shuffled items with staggered reveal animation
-    items.forEach((item, index) => {
-      if (index < 3) {
-        item.style.display = '';
-        item.classList.add(`reveal--delay-${Math.min(index + 1, 4)}`);
-      } else {
-        item.remove(); // Remove unused cards from the DOM to keep it clean
-      }
-    });
-  }
-
-  showRandomVillas();
-</script>
-
 <style>
   .featured-villas {
     background: var(--color-light);
+  }
+
+  .featured-villa-item {
+    /* Lewati rendering kartu saat masih jauh di bawah layar (hemat CPU/GPU). */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 420px;
   }
 
   .featured-villas__header {

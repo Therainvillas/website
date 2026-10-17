@@ -8,7 +8,7 @@ const villaList = villas.map(v => ({ id: v.id, name: v.name }));
   <div class="satisfaction__bg" id="satBg">
     {villas.filter(v => v.image).map((v, i) => {
       const cover = villaCovers[v.name] ?? v.image;
-      return <div class="satisfaction__slide" data-index={i} style={`background-image: url(${cover})`}></div>;
+      return <div class="satisfaction__slide" data-index={i} data-bg={cover}></div>;
     })}
   </div>
   <div class="satisfaction__overlay"></div>
@@ -185,19 +185,44 @@ const villaList = villas.map(v => ({ id: v.id, name: v.name }));
     }
   });
 
-  // Background slideshow fade
+  // Background slideshow fade (gambar dimuat bertahap & hanya saat terlihat)
   const satBg = document.getElementById("satBg");
   if (satBg) {
-    const slides = satBg.querySelectorAll(".satisfaction__slide");
-    let idx = 0;
+    const slides = satBg.querySelectorAll(".satisfaction__slide") as unknown as NodeListOf<HTMLElement>;
     const total = slides.length;
     if (total > 0) {
-      slides[0].classList.add("satisfaction__slide--active");
-      setInterval(() => {
+      const show = (index: number) => {
+        const slide = slides[index];
+        if (slide && slide.dataset.bg && !slide.dataset.loaded) {
+          slide.style.backgroundImage = `url(${slide.dataset.bg})`;
+          slide.dataset.loaded = "1";
+        }
         slides.forEach(s => s.classList.remove("satisfaction__slide--active"));
-        idx = (idx + 1) % total;
-        slides[idx].classList.add("satisfaction__slide--active");
-      }, 5000);
+        if (slide) slide.classList.add("satisfaction__slide--active");
+      };
+
+      let idx = 0;
+      let timer: any = null;
+      const start = () => {
+        if (timer) return;
+        show(0);
+        timer = setInterval(() => {
+          idx = (idx + 1) % total;
+          show(idx);
+        }, 5000);
+      };
+
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            start();
+            io.disconnect();
+          }
+        }, { rootMargin: "300px" });
+        io.observe(satBg);
+      } else {
+        start();
+      }
     }
   }
 </script>

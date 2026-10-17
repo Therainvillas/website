@@ -7,6 +7,8 @@ therainvillas/.astro/
 
 # Source/mentah images TIDAK dipakai website (duplikat besar)
 therainvillas/images/
+# Master video/audio untuk encode ulang (tidak dipakai langsung website)
+therainvillas/media-src/
 therainvillas/.bak_mojibake/
 therainvillas/mentah/
 therainvillas/contoh.jpeg

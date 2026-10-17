@@ -24,15 +24,15 @@ function getVillaImage(name, fallback) {
   <div class="evening__slider" id="eveningSlider">
     {villas.map((villa, i) => (
       <div class="evening__slide" data-index={i}>
-        <div class="evening__slide-bg" style={`background-image: url(${getVillaImage(villa.name, villa.image)})`}>
+        <div class="evening__slide-bg" data-bg={getVillaImage(villa.name, villa.image)}>
           <div class="evening__slide-overlay"></div>
         </div>
         <div class="evening__slide-content">
           <h3 class="evening__slide-name">{villa.name}</h3>
           <p class="evening__slide-desc">{villa.description}</p>
           <div class="evening__slide-meta">
-            <span><img src="/icon/icon%20light/bed.png" alt="" class="evening__slide-meta-icon ti ti--light" /><img src="/icon/icon%20dark/bedroom.png" alt="" class="evening__slide-meta-icon ti ti--dark" /> {villa.bedrooms} kamar</span>
-            <span><img src="/icon/icon%20light/groupp.png" alt="" class="evening__slide-meta-icon ti ti--light" /><img src="/icon/icon%20dark/grup.png" alt="" class="evening__slide-meta-icon ti ti--dark" /> {villa.capacity} tamu</span>
+            <span><img src="/icon/icon%20light/bed.png" alt="" class="evening__slide-meta-icon ti ti--light" loading="lazy" /><img src="/icon/icon%20dark/bedroom.png" alt="" class="evening__slide-meta-icon ti ti--dark" loading="lazy" /> {villa.bedrooms} kamar</span>
+            <span><img src="/icon/icon%20light/groupp.png" alt="" class="evening__slide-meta-icon ti ti--light" loading="lazy" /><img src="/icon/icon%20dark/grup.png" alt="" class="evening__slide-meta-icon ti ti--dark" loading="lazy" /> {villa.capacity} tamu</span>
             <span>{villa.priceLabel}</span>
           </div>
           <a href={`/${slugify(villa.name)}`} class="evening__slide-cta">Lihat Detail</a>
@@ -57,9 +57,21 @@ function getVillaImage(name, fallback) {
     const slides = slider.querySelectorAll('.evening__slide');
     let current = 0;
     const total = slides.length;
-    let interval;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    // Gambar slide dimuat saat slide itu tampil saja (bukan 31 sekaligus di awal).
+    function ensureBg(slide: Element | undefined) {
+      if (!slide) return;
+      const bg = slide.querySelector('.evening__slide-bg') as HTMLElement | null;
+      if (bg && bg.dataset.bg && !bg.dataset.loaded) {
+        bg.style.backgroundImage = `url(${bg.dataset.bg})`;
+        bg.dataset.loaded = '1';
+      }
+    }
 
     function goTo(index) {
+      ensureBg(slides[index]);
+      ensureBg(slides[(index + 1) % total]);
       slides.forEach((s, i) => {
         s.classList.toggle('evening__slide--active', i === index);
       });
@@ -79,8 +91,27 @@ function getVillaImage(name, fallback) {
       });
     });
 
-    goTo(0);
-    interval = setInterval(next, 4000);
+    // Mulai slideshow (dan muat gambar) hanya saat bagian ini mendekati layar.
+    const start = () => {
+      if (interval) return;
+      goTo(0);
+      interval = setInterval(next, 4000);
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            start();
+            io.disconnect();
+          }
+        },
+        { rootMargin: '400px' }
+      );
+      io.observe(slider);
+    } else {
+      start();
+    }
   });
 </script>
 

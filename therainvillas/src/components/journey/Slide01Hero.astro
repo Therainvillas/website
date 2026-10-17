@@ -1,8 +1,15 @@
 ---
 import { Image } from 'astro:assets';
 import heroPoster from '../../assets/display-poster.jpg';
+
+// Video profil memakai YouTube (bukan file mp4 yang di-hosting), supaya
+// bandwidth server & kuota pengunjung hemat. Iframe baru dimuat setelah
+// pengguna menekan tombol "Tonton Video".
+const YOUTUBE_ID = 'Q5n6ph6eFsU';
+const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
 ---
-<section class="journey-hero">
+
+<section class="journey-hero" id="hero">
   <div class="journey-hero__bg">
     <Image
       src={heroPoster}
@@ -15,22 +22,23 @@ import heroPoster from '../../assets/display-poster.jpg';
       priority
       decoding="async"
     />
-    <video
-      class="journey-hero__video"
-      muted
-      loop
-      playsinline
-      preload="none"
-      poster={heroPoster.src}
-      width="854"
-      height="480"
-      data-src="/hero-loop.mp4"
+    <div
+      class="journey-hero__embed"
+      id="heroVideo"
+      data-video-id={YOUTUBE_ID}
       aria-hidden="true"
-    ></video>
+    ></div>
     <div class="journey-hero__overlay"></div>
   </div>
 
-  <div class="container journey-hero__content">
+  <button class="journey-hero__close" id="heroVideoClose" type="button" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    </svg>
+    Tutup video
+  </button>
+
+  <div class="container journey-hero__content" id="heroContent">
     <div class="journey-hero__time reveal">The Rain Villas</div>
     <div class="journey-hero__tagline reveal reveal--delay-1">
       Villa Murah, View Mewah di Puncak
@@ -50,6 +58,18 @@ import heroPoster from '../../assets/display-poster.jpg';
       </a>
       <a href="/availability" class="journey-hero__btn journey-hero__btn--ghost">
         Cek Jadwal
+      </a>
+      <a
+        href={YOUTUBE_URL}
+        class="journey-hero__btn journey-hero__btn--ghost journey-hero__play"
+        id="heroVideoPlay"
+        target="_blank"
+        rel="noopener"
+      >
+        <svg class="journey-hero__play-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M8 5v14l11-7z" fill="currentColor" />
+        </svg>
+        Tonton Video
       </a>
     </div>
 
@@ -75,49 +95,80 @@ import heroPoster from '../../assets/display-poster.jpg';
 </section>
 
 <script>
-  // Poster gambar jadi elemen LCP (bukan video). Sumber video hanya dimuat
-  // SETELAH window "load", dan pemutaran dimulai pada interaksi pertama
-  // pengguna — jadi frame video tidak pernah "menyalip" LCP, dan pengunjung
-  // yang tidak berinteraksi tetap hemat data. Dilewati pada hemat data/2G.
+  // Facade YouTube: poster tetap elemen LCP, iframe player baru dibuat saat
+  // pengguna menekan "Tonton Video" — jadi tidak ada beban ekstra saat load,
+  // dan hemat kuota terutama di mobile.
   (() => {
-    const video = document.querySelector('.journey-hero__video') as HTMLVideoElement | null;
-    if (!video) return;
+    const hero = document.getElementById('hero') as HTMLElement | null;
+    const embed = document.getElementById('heroVideo') as HTMLElement | null;
+    const content = document.getElementById('heroContent') as HTMLElement | null;
+    const play = document.getElementById('heroVideoPlay') as HTMLAnchorElement | null;
+    const close = document.getElementById('heroVideoClose') as HTMLButtonElement | null;
+    if (!hero || !embed || !play) return;
 
-    const nav = navigator as any;
-    const conn = nav.connection || nav.mozConnection || nav.webkitConnection || {};
-    const slowNet = /(^|-)2g$/.test(conn.effectiveType || '');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (conn.saveData || slowNet || reduceMotion) return;
+    const videoId = embed.dataset.videoId;
+    if (!videoId) return;
 
-    video.addEventListener('playing', () => video.classList.add('journey-hero__video--ready'), {
-      once: true,
+    let iframe: HTMLIFrameElement | null = null;
+
+    // Isi area hero (cover) tanpa mengubah rasio 16:9 video.
+    const sizeIframe = () => {
+      if (!iframe) return;
+      const w = hero.clientWidth;
+      const h = hero.clientHeight;
+      if (!w || !h) return;
+      const ratio = 16 / 9;
+      let fw = w;
+      let fh = w / ratio;
+      if (fh < h) {
+        fh = h;
+        fw = h * ratio;
+      }
+      iframe.style.width = Math.round(fw) + 'px';
+      iframe.style.height = Math.round(fh) + 'px';
+    };
+
+    const start = () => {
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        // playsinline=1 penting untuk iOS: video main di tempat, bukan fullscreen.
+        iframe.src =
+          'https://www.youtube.com/embed/' +
+          videoId +
+          '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+        iframe.title = 'Video profil The Rain Villas';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.allowFullscreen = true;
+        iframe.setAttribute('frameborder', '0');
+        embed.appendChild(iframe);
+      }
+      sizeIframe();
+      embed.setAttribute('aria-hidden', 'false');
+      hero.classList.add('journey-hero--playing');
+      if (content) content.setAttribute('inert', '');
+      if (close) close.hidden = false;
+    };
+
+    const stop = () => {
+      hero.classList.remove('journey-hero--playing');
+      if (content) content.removeAttribute('inert');
+      if (close) close.hidden = true;
+      embed.setAttribute('aria-hidden', 'true');
+      // Hapus iframe agar pemutaran benar-benar berhenti (hemat memori/kuota).
+      if (iframe) {
+        iframe.remove();
+        iframe = null;
+      }
+    };
+
+    play.addEventListener('click', (event) => {
+      event.preventDefault();
+      start();
     });
-
-    const loadSource = () => {
-      if (video.dataset.loaded || !video.dataset.src) return;
-      video.dataset.loaded = '1';
-      // Hanya metadata (durasi/dimensi) — tidak mendekode frame, jadi poster
-      // tetap jadi elemen LCP sampai pengguna berinteraksi.
-      video.preload = 'metadata';
-      video.src = video.dataset.src;
-    };
-
-    const play = () => {
-      loadSource();
-      video.preload = 'auto';
-      const playing = video.play();
-      if (playing && typeof playing.catch === 'function') playing.catch(() => {});
-    };
-
-    const events = ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll'];
-    const onInteract = () => {
-      play();
-      events.forEach((ev) => window.removeEventListener(ev, onInteract));
-    };
-    events.forEach((ev) => window.addEventListener(ev, onInteract, { passive: true }));
-
-    if (document.readyState === 'complete') loadSource();
-    else window.addEventListener('load', loadSource, { once: true });
+    if (close) close.addEventListener('click', stop);
+    window.addEventListener('resize', sizeIframe);
+    window.addEventListener('orientationchange', sizeIframe);
   })();
 </script>
 
@@ -148,27 +199,32 @@ import heroPoster from '../../assets/display-poster.jpg';
   height: 100%;
   object-fit: cover;
   filter: saturate(0.92) contrast(1.04);
+  transition: opacity 0.45s ease;
 }
 
-.journey-hero__video {
+.journey-hero__embed {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: saturate(0.92) contrast(1.04);
+  overflow: hidden;
+  background: #000;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
 }
 
-.journey-hero__video--ready {
-  opacity: 1;
+.journey-hero__embed iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 0;
 }
 
   .journey-hero__overlay {
     background:
       linear-gradient(90deg, rgba(8, 18, 16, 0.82) 0%, rgba(8, 18, 16, 0.54) 46%, rgba(8, 18, 16, 0.18) 100%),
       linear-gradient(180deg, rgba(8, 18, 16, 0.18) 0%, rgba(8, 18, 16, 0.72) 100%);
+    transition: opacity 0.45s ease;
   }
 
   .journey-hero__content {
@@ -178,6 +234,68 @@ import heroPoster from '../../assets/display-poster.jpg';
     margin: 0;
     padding: 112px 24px 88px;
     color: #fff;
+    transition: opacity 0.45s ease;
+  }
+
+  /* Saat video diputar: poster + konten meredup supaya video terlihat jelas. */
+  .journey-hero--playing .journey-hero__poster,
+  .journey-hero--playing .journey-hero__overlay,
+  .journey-hero--playing .journey-hero__content {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .journey-hero--playing .journey-hero__embed {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Tombol tutup ikut menempel di layar selama video diputar, supaya selalu
+     bisa dijangkau walau halaman digulir sedikit (header tinggi ± 72px). */
+  .journey-hero--playing .journey-hero__close {
+    position: fixed;
+    top: 84px;
+    right: 18px;
+  }
+
+  .journey-hero__close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    border-radius: var(--radius-pill);
+    background: rgba(8, 18, 16, 0.62);
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .journey-hero__close[hidden] {
+    display: none;
+  }
+
+  .journey-hero__close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .journey-hero__close:hover {
+    border-color: rgba(255, 255, 255, 0.62);
+    background: rgba(8, 18, 16, 0.8);
+  }
+
+  .journey-hero__play-icon {
+    width: 16px;
+    height: 16px;
   }
 
   .journey-hero__time {
@@ -431,6 +549,11 @@ import heroPoster from '../../assets/display-poster.jpg';
 
     .journey-hero__stat-label {
       font-size: 0.76rem;
+    }
+
+    .journey-hero__close {
+      top: 14px;
+      right: 14px;
     }
   }
 </style>

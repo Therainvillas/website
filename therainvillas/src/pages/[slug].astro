@@ -9,7 +9,7 @@ import FaqSection from '../components/FaqSection.astro';
 import LocationMap from '../components/LocationMap.vue';
 import { villas } from '../data/villas';
 import { locations } from '../data/locations';
-import { villaCovers } from '../data/covers';
+import { villaCovers, villaHeroSm } from '../data/covers';
 
 export function getStaticPaths() {
   return villas.map((villa) => ({
@@ -160,11 +160,22 @@ const villaFaq = [
 ];
 ---
 
-<Layout title={`${villa.name} | The Rain Villas`} description={villa.description} image={heroImage} jsonLd={villaJsonLd}>
+<Layout
+  title={`${villa.name} | The Rain Villas`}
+  description={villa.description}
+  image={heroImage}
+  jsonLd={villaJsonLd}
+  preloadImage={{ sm: villaHeroSm[villa.name], lg: heroImage }}
+>
   <main class="villa-detail">
     <section class="vd-showcase" id="top">
       <div class="vd-showcase__media">
-        <img src={heroImage} alt={villa.name} class="vd-showcase__image" />
+        <picture>
+          {villaHeroSm[villa.name] && (
+            <source media="(max-width: 768px)" srcset={villaHeroSm[villa.name]} />
+          )}
+          <img src={heroImage} alt={villa.name} class="vd-showcase__image" fetchpriority="high" decoding="async" />
+        </picture>
       </div>
       <div class="vd-showcase__shade"></div>
 
@@ -430,7 +441,7 @@ const villaFaq = [
         <div class="vd-gallery">
           {galleryImages.map((image, index) => (
             <figure class={`vd-gallery__item ${index === 0 ? 'vd-gallery__item--featured' : ''}`}>
-              <img src={image} alt={`${villa.name} foto ${index + 1}`} loading={index === 0 ? 'eager' : 'lazy'} />
+              <img src={image} alt={`${villa.name} foto ${index + 1}`} loading="lazy" decoding="async" />
             </figure>
           ))}
         </div>
@@ -486,6 +497,12 @@ const villaFaq = [
   .vd-showcase__media {
     z-index: -2;
     background: #1b1d22;
+  }
+
+  .vd-showcase__media picture {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   .vd-showcase__image {

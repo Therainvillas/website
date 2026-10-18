@@ -77,7 +77,7 @@ const gaBootstrap = `
         }
         if (document.readyState === 'complete') schedule();
         else window.addEventListener('load', schedule, { once: true });
-        ['pointerdown', 'keydown', 'touchstart', 'scroll'].forEach(function (ev) {
+        ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function (ev) {
           window.addEventListener(ev, loadGtag, { once: true, passive: true });
         });
       })();

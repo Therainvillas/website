@@ -1,3 +1,4 @@
+/** @type {Record<string, string>} */
 export const villaCovers = {
   'Villa 4D': '/4D/cover.webp',
   'Villa Agave': '/Agave/Cover.webp',
@@ -30,4 +31,23 @@ export const villaCovers = {
   'Villa Twins': '/Twins/cover.webp',
   'Villa Valora': '/Valora/Cover.webp',
   'Villa Wanela': '/wanela/cover.webp',
+};
+
+// Varian hero (1000x563, crop tengah 16:9) untuk slideshow di /our-villas,
+// /availability, dan /tentang. Dipakai di layar kecil (<=768px) supaya hero
+// tidak mengunduh gambar besar (dulu ~390 KiB, sekarang ~60-100 KiB).
+/** @type {Record<string, string>} */
+export const villaHeroCovers = {
+  'Villa Agave': '/hero-sm/Agave.webp',
+  'Villa Wanela': '/hero-sm/wanela.webp',
+  'Villa Cemara': '/hero-sm/cemara.webp',
+  'Villa Aleia': '/hero-sm/Aleia.webp',
+  'Villa 4D': '/hero-sm/4D.webp',
+  'Villa Calmora': '/hero-sm/Calmora.webp',
+  'Villa Twins': '/hero-sm/Twins.webp',
+  'Villa Cyrena': '/hero-sm/cyrena.webp',
+  'Villa Arisyfa': '/hero-sm/arisyfa.webp',
+  'Villa Cempaka': '/hero-sm/cempaka.webp',
+  'Villa Arsy': '/hero-sm/arsy.webp',
+  'Villa Rayya': '/hero-sm/Rayya.webp',
 };

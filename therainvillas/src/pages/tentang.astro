@@ -7,17 +7,23 @@ import AboutSection from '../components/AboutSection.astro';
 import TeamSection from '../components/TeamSection.astro';
 import LocationSection from '../components/LocationSection.astro';
 import { villas } from '../data/villas';
-import { villaCovers } from '../data/covers';
+import { villaCovers, villaHeroCovers } from '../data/covers';
+
+const firstCover = villaCovers[villas[0].name] ?? villas[0].image;
+const firstCoverSm = villaHeroCovers[villas[0].name] ?? firstCover;
 ---
 
-<Layout title="Tentang Kami | The Rain Villas" description="Kenali The Rain Villas — manajemen villa murah dan modern di Puncak, Cisarua, Bogor.">
+<Layout title="Tentang Kami | The Rain Villas" description="Kenali The Rain Villas — manajemen villa murah dan modern di Puncak, Cisarua, Bogor." preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
   <Header />
 
   <section class="page-hero">
     <div class="page-hero__bg">
       {villas.slice(0, 12).map((v, i) => {
         const cover = villaCovers[v.name] ?? v.image;
-        return <div class="page-hero__slide" style={`background-image: url(${cover})`} data-index={i}></div>;
+        const coverSm = villaHeroCovers[v.name] ?? cover;
+        return i < 1
+          ? <div class="page-hero__slide" style={`--bg-lg: url("${cover}"); --bg-sm: url("${coverSm}")`} data-index={i}></div>
+          : <div class="page-hero__slide" data-bg={cover} data-bg-sm={coverSm} data-index={i}></div>;
       })}
       <div class="page-hero__overlay"></div>
     </div>
@@ -26,6 +32,28 @@ import { villaCovers } from '../data/covers';
       <p class="page-hero__subtitle reveal reveal--delay-1">Villa murah & modern di Puncak, Cisarua, Bogor</p>
     </div>
   </section>
+
+  <script is:inline>
+    // Slide pertama dimuat langsung; slide lainnya dimuat bertahap (3 detik
+    // sekali, selaras dengan animation-delay) agar tidak berebut di awal.
+    (function () {
+      var slides = document.querySelectorAll('.page-hero__slide[data-bg]');
+      if (!slides.length) return;
+      function start() {
+        for (var i = 0; i < slides.length; i++) {
+          (function (el) {
+            var idx = parseInt(el.getAttribute('data-index'), 10) || 0;
+            setTimeout(function () {
+              el.style.setProperty('--bg-lg', 'url("' + el.getAttribute('data-bg') + '")');
+              el.style.setProperty('--bg-sm', 'url("' + (el.getAttribute('data-bg-sm') || el.getAttribute('data-bg')) + '")');
+            }, 1500 + (idx - 1) * 3000);
+          })(slides[i]);
+        }
+      }
+      if (document.readyState === 'complete') start();
+      else window.addEventListener('load', start, { once: true });
+    })();
+  </script>
 
   <AboutSection />
   <TeamSection />
@@ -52,10 +80,16 @@ import { villaCovers } from '../data/covers';
   .page-hero__slide {
     position: absolute;
     inset: 0;
+    background-image: var(--bg-lg);
     background-size: cover;
     background-position: center;
     opacity: 0;
     animation: hero-fade 36s ease-in-out infinite;
+  }
+
+  /* Layar kecil: pakai varian hero yang jauh lebih ringan (HP ~60-100 KiB). */
+  @media (max-width: 768px) {
+    .page-hero__slide { background-image: var(--bg-sm); }
   }
   .page-hero__slide[data-index="0"] { animation-delay: 0s; }
   .page-hero__slide[data-index="1"] { animation-delay: 3s; }

@@ -1,11 +1,14 @@
 ---
 import '../styles/global.css';
 import PromoPopup from '../components/PromoPopup.vue';
+import { promos, isPromoActive } from '../data/promos.js';
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  /** Gambar hero halaman ini (varian kecil & besar) — akan di-preload. */
+  preloadImage?: { sm?: string; lg?: string };
   ogType?: string;
   noindex?: boolean;
   jsonLd?: object[];
@@ -15,6 +18,7 @@ const {
   title = 'Sewa Villa Murah di Puncak, Private Pool & View Mewah | The Rain Villas',
   description = 'Cari sewa villa murah di Puncak untuk keluarga & gathering? Tersedia 30+ pilihan villa private pool kapasitas 20-50 orang. Booking aman, harga transparan!',
   image = '/Agave/Cover.webp',
+  preloadImage,
   ogType = 'website',
   noindex = false,
   jsonLd = [],
@@ -24,6 +28,12 @@ const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 const isHome = Astro.url.pathname === '/';
+
+// Popup promo muncul ~0,7 s setelah halaman tampil dan gambarnya jadi elemen
+// LCP di halaman yang heronya memakai CSS background (background CSS tidak
+// dihitung sebagai LCP). Preload supaya gambarnya tidak baru diminta telat.
+const promoAktif =
+  !Astro.url.pathname.startsWith('/admin') && promos.some((p) => isPromoActive(p));
 
 // Satu gtag.js saja (milik Google Ads). GA4 dikirim lewat config tambahan di
 // blok yang sama, jadi tidak ada permintaan kedua ke googletagmanager.com.
@@ -93,6 +103,17 @@ const gaBootstrap = `
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Work+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,750&family=Dancing+Script:wght@600;700&family=Cinzel:wght@400;500;600;700;800;900&display=swap" />
     </noscript>
+
+    {preloadImage?.sm && (
+      <link rel="preload" as="image" href={preloadImage.sm} media="(max-width: 768px)" fetchpriority="high" />
+    )}
+    {preloadImage?.lg && (
+      <link rel="preload" as="image" href={preloadImage.lg} media="(min-width: 769px)" fetchpriority="high" />
+    )}
+
+    {promoAktif && (
+      <link rel="preload" as="image" href="/promo/promo oktober.webp" fetchpriority="low" />
+    )}
 
     <meta property="og:locale" content="id_ID" />
     <meta property="og:site_name" content="The Rain Villas" />

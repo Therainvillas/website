@@ -133,9 +133,11 @@ export const villas = [
     parking: 4,
     image: "/thumbnail/Calmora%20Thumb.webp",
     amenities: ["Water Heater", "Karaoke", "WiFi & Smart TV", "Living Room", "Private Pool", "Gazebo", "Billiard", "Kitchen Set", "Chill Space", "Best View (Mountain & Citylight)"],
-    dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 1700000, 1700000],
+    dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2000000, 3500000],
     pricingLabels: [
-      { label: "Per Malam", price: 1700000 },
+      { label: "Weekday (Min-Kam)", price: 1700000 },
+      { label: "Jumat", price: 2000000 },
+      { label: "Sabtu", price: 3500000 },
     ],
     coords: [-6.676800, 106.964200],
     mapsUrl: "https://maps.app.goo.gl/X6RttuoSEZ6zxSV37?g_st=iw",

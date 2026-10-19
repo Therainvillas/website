@@ -137,6 +137,10 @@ https://maps.google.com/?q=-6.688495,106.958366
 Rp 1.700.000
 Kapasitas : 35-40 Jika melebihi kapasitas di kenakan charge 50k/org 
 
+Weekday      : 1.700.000
+Jumat        : 2.000.000
+Sabtu        : 3.500.000
+
 5 kamar tidur ( 6 Queen Bed )
 6 kamar mandi
 Water heater

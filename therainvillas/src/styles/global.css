@@ -500,6 +500,22 @@ html[data-theme="dark"] .satisfaction__field textarea {
   }
 }
 
+/* ===== Ikon Flash Sale ===== */
+/* Dipakai sebagai pengganti emoji ⚡ di seluruh tampilan flash sale. */
+.flash-ico {
+  display: inline-block;
+  height: 1em;
+  width: auto;
+  vertical-align: -0.12em;
+  object-fit: contain;
+}
+
+/* Versi untuk latar gelap/gradien merah-oranye: beri halo putih agar kontras. */
+.flash-ico--on-color {
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.85));
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

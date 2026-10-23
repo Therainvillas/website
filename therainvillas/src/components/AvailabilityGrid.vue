@@ -21,7 +21,18 @@
     </div>
 
     <div v-if="showFlashNotice" class="avail__flash-notice">
-      <div class="avail__flash-notice-title">⚡ Flash Sale 24 Oktober 2026</div>
+      <div class="avail__flash-notice-title">
+        <img
+          class="flash-ico"
+          src="/icon/flash-sale-64.png"
+          width="123"
+          height="64"
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+        />
+        Flash Sale 24 Oktober 2026
+      </div>
       <ul class="avail__flash-notice-list">
         <li v-for="item in flashSaleList" :key="item.name">
           <strong>{{ item.name }}</strong>:
@@ -515,6 +526,9 @@ export default {
 }
 
 .avail__flash-notice-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 1.02rem;
   font-weight: 800;
   margin-bottom: 10px;

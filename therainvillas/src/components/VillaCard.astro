@@ -46,7 +46,18 @@ const flashSale = flash ? formatPrice(flash.salePrice) : '';
   <a href={link} class="villa-card__media" aria-hidden="true" tabindex="-1">
     <img src={image} alt={name} width="1200" height="675" loading="lazy" decoding="async" />
     {flash ? (
-      <span class="villa-card__badge villa-card__badge--flash">⚡ Flash Sale 24 Okt</span>
+      <span class="villa-card__badge villa-card__badge--flash">
+        <img
+          class="flash-ico flash-ico--on-color"
+          src="/icon/flash-sale-64.png"
+          width="123"
+          height="64"
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+        />
+        Flash Sale 24 Okt
+      </span>
     ) : (
       badge && <span class="villa-card__badge">{badge}</span>
     )}
@@ -114,14 +125,14 @@ const flashSale = flash ? formatPrice(flash.salePrice) : '';
     overflow: hidden;
   }
 
-  .villa-card__media img {
+  .villa-card__media > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
   }
 
-  .villa-card:hover .villa-card__media img {
+  .villa-card:hover .villa-card__media > img {
     transform: scale(1.06);
   }
 
@@ -174,6 +185,9 @@ const flashSale = flash ? formatPrice(flash.salePrice) : '';
   }
 
   .villa-card__badge--flash {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     color: #fff;
     background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
     box-shadow: 0 6px 18px rgba(255, 61, 110, 0.45);

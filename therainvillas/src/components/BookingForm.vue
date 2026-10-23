@@ -184,7 +184,16 @@
                 Harga tanggal ini belum pasti (TBA) — akan dikonfirmasi admin via WhatsApp.
               </div>
               <div v-if="flashSaleApplied" class="bf__package-note bf__package-note--flash">
-                ⚡ Harga FLASH SALE 24 Oktober 2026 sudah diterapkan otomatis.
+                <img
+                  class="flash-ico"
+                  src="/icon/flash-sale-64.png"
+                  width="123"
+                  height="64"
+                  alt=""
+                  aria-hidden="true"
+                  decoding="async"
+                />
+                Harga FLASH SALE 24 Oktober 2026 sudah diterapkan otomatis.
               </div>
 
               <div class="bf__promo">

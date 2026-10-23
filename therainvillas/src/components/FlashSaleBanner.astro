@@ -24,7 +24,18 @@ function bookingHref(name: string) {
   <section class="flash-sale" id="flash-sale" aria-label={FLASH_SALE_LABEL}>
     <div class="container">
       <div class="flash-sale__head">
-        <span class="flash-sale__eyebrow">⚡ {FLASH_SALE_LABEL}</span>
+        <span class="flash-sale__eyebrow">
+          <img
+            class="flash-ico flash-ico--on-color"
+            src="/icon/flash-sale-64.png"
+            width="123"
+            height="64"
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+          />
+          {FLASH_SALE_LABEL}
+        </span>
         <h2 class="flash-sale__title">Harga Spesial Hanya 24 Oktober 2026</h2>
         <p class="flash-sale__sub">
           Harga normal dicoret, harga flash sale berlaku untuk menginap tanggal 24 Oktober 2026.
@@ -37,7 +48,18 @@ function bookingHref(name: string) {
           <a class="flash-sale__card" href={bookingHref(item.name)}>
             <div class="flash-sale__media">
               <img src={item.image} alt={item.name} loading="lazy" decoding="async" />
-              <span class="flash-sale__tag">⚡ Flash Sale</span>
+              <span class="flash-sale__tag">
+                <img
+                  class="flash-ico flash-ico--on-color"
+                  src="/icon/flash-sale-64.png"
+                  width="123"
+                  height="64"
+                  alt=""
+                  aria-hidden="true"
+                  decoding="async"
+                />
+                Flash Sale
+              </span>
             </div>
             <div class="flash-sale__body">
               <h3>{item.name}</h3>
@@ -81,7 +103,9 @@ function bookingHref(name: string) {
   }
 
   .flash-sale__eyebrow {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     padding: 7px 18px;
     border-radius: var(--radius-pill);
     font-size: 0.72rem;
@@ -138,7 +162,7 @@ function bookingHref(name: string) {
     overflow: hidden;
   }
 
-  .flash-sale__media img {
+  .flash-sale__media > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -146,7 +170,7 @@ function bookingHref(name: string) {
     transition: transform 0.5s ease;
   }
 
-  .flash-sale__card:hover .flash-sale__media img {
+  .flash-sale__card:hover .flash-sale__media > img {
     transform: scale(1.06);
   }
 
@@ -154,6 +178,9 @@ function bookingHref(name: string) {
     position: absolute;
     top: 12px;
     left: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 5px 12px;
     border-radius: var(--radius-pill);
     font-size: 0.68rem;

@@ -28,6 +28,7 @@ const FLASH_SALE_PRICES = {
   'Villa Arsy': 3500000,
   'Villa De Summit': 4000000,
   'Villa Thymi': 3500000,
+  'Villa Twins': 3000000,
 };
 
 function findVilla(name) {

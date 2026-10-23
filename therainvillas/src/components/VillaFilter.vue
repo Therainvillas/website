@@ -80,7 +80,18 @@
         <a :href="`/${slugify(villa.name)}`" class="vf-card">
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
-            <span v-if="villa.flashSale" class="vf-card__badge vf-card__badge--flash">⚡ Flash Sale 24 Okt</span>
+            <span v-if="villa.flashSale" class="vf-card__badge vf-card__badge--flash">
+              <img
+                class="flash-ico flash-ico--on-color"
+                src="/icon/flash-sale-64.png"
+                width="123"
+                height="64"
+                alt=""
+                aria-hidden="true"
+                decoding="async"
+              />
+              Flash Sale 24 Okt
+            </span>
             <span v-else-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
             <span class="vf-card__price" :class="{ 'vf-card__price--flash': villa.flashSale }">
               <template v-if="villa.flashSale">
@@ -480,14 +491,14 @@ export default {
   overflow: hidden;
 }
 
-.vf-card__media img {
+.vf-card__media > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
 
-.vf-card:hover .vf-card__media img {
+.vf-card:hover .vf-card__media > img {
   transform: scale(1.06);
 }
 
@@ -539,6 +550,9 @@ export default {
 }
 
 .vf-card__badge--flash {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: #fff;
   background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
   box-shadow: 0 6px 18px rgba(255, 61, 110, 0.45);

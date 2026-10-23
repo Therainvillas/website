@@ -6,6 +6,9 @@ import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import { villas } from '../data/villas';
 import { villaCovers, villaHeroCovers } from '../data/covers';
+import { getFlashSale, isFlashSaleActive } from '../data/flashSale.js';
+
+const flashActive = isFlashSaleActive();
 
 const filterData = villas.map(v => ({
   id: v.id,
@@ -20,6 +23,7 @@ const filterData = villas.map(v => ({
   bathrooms: v.bathrooms,
   parking: v.parking,
   amenities: v.amenities,
+  flashSale: flashActive ? getFlashSale(v.name) : null,
 }));
 
 const firstCover = villaCovers[villas[0].name] ?? villas[0].image;

@@ -20,6 +20,18 @@
       </ul>
     </div>
 
+    <div v-if="showFlashNotice" class="avail__flash-notice">
+      <div class="avail__flash-notice-title">⚡ Flash Sale 24 Oktober 2026</div>
+      <ul class="avail__flash-notice-list">
+        <li v-for="item in flashSaleList" :key="item.name">
+          <strong>{{ item.name }}</strong>:
+          <s>{{ formatRupiah(item.originalPrice) }}</s> menjadi
+          <strong>{{ formatRupiah(item.salePrice) }}</strong>/malam
+        </li>
+      </ul>
+      <p class="avail__flash-notice-note">Harga khusus hanya untuk menginap tanggal 24 Oktober 2026.</p>
+    </div>
+
     <div v-if="notice" class="avail__notice">{{ notice }}</div>
     <div v-if="error" class="avail__error">{{ error }}</div>
 
@@ -48,14 +60,15 @@
                   v-else-if="isAvailable(v, cell)"
                   :href="dateHref(v, cell)"
                   class="avail-cell avail-cell--ready"
-                  :class="{ 'avail-cell--package': isPackageCell(v, cell) }"
+                  :class="{ 'avail-cell--package': isPackageCell(v, cell), 'avail-cell--flash': isFlashCell(v, cell) }"
                   :title="cellTitle(v, cell)"
                   data-track="booking_click"
                   :data-villa="v.name"
                 >
                   <span class="avail-cell__num">{{ cell.day }}</span>
                   <span class="avail-cell__price">{{ cellPrice(v, cell) }}</span>
-                  <span v-if="isPackageCell(v, cell)" class="avail-cell__pkg">Paket</span>
+                  <span v-if="isFlashCell(v, cell)" class="avail-cell__pkg avail-cell__flash">Flash</span>
+                  <span v-else-if="isPackageCell(v, cell)" class="avail-cell__pkg">Paket</span>
                 </a>
                 <span
                   v-else
@@ -88,6 +101,7 @@
 
 <script>
 import { getNightPrice, isDecPackageNight, toDateStr, hasDecPackage } from '../data/seasonPrices.js';
+import { FLASH_SALE_DATE, flashSaleVillas, getFlashSale, isFlashSaleActive } from '../data/flashSale.js';
 
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
@@ -137,6 +151,15 @@ export default {
     isDecember2026() {
       return this.year === 2026 && this.month === 11;
     },
+    isOctober2026() {
+      return this.year === 2026 && this.month === 9;
+    },
+    showFlashNotice() {
+      return this.isOctober2026 && isFlashSaleActive();
+    },
+    flashSaleList() {
+      return flashSaleVillas;
+    },
     calendarCells() {
       const firstDay = new Date(this.year, this.month, 1).getDay();
       const daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
@@ -166,12 +189,24 @@ export default {
     isPackageCell(v, cell) {
       return hasDecPackage(v) && isDecPackageNight(toDateStr(new Date(cell.year, cell.month, cell.day)));
     },
+    isFlashCell(v, cell) {
+      if (!v || this.dateStr(cell) !== FLASH_SALE_DATE) return false;
+      return !!getFlashSale(v.name);
+    },
     cellTitle(v, cell) {
       const base = 'Booking ' + v.name + ' mulai ' + this.dateStr(cell);
+      const flash = getFlashSale(v.name);
+      if (this.isFlashCell(v, cell) && flash) {
+        return base + ` (Flash Sale 24 Oktober — harga normal ${this.formatRupiah(flash.originalPrice)})`;
+      }
       if (this.isPackageCell(v, cell)) {
         return base + ' (masuk paket 2 malam 30–31 Des)';
       }
       return base;
+    },
+    formatRupiah(n) {
+      if (n == null) return '-';
+      return 'Rp ' + Number(n).toLocaleString('id-ID').replace(/,/g, '.');
     },
     dateStr(cell) {
       return `${cell.year}-${String(cell.month + 1).padStart(2, "0")}-${String(cell.day).padStart(2, "0")}`;
@@ -453,6 +488,48 @@ export default {
   color: #9a3412;
 }
 
+/* ===== Flash sale 24 Oktober ===== */
+.avail__flash-notice {
+  margin-bottom: 22px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff1f3 0%, #ffedd5 100%);
+  border: 1px solid #ff8fa3;
+  color: #7c1d2b;
+  box-shadow: 0 6px 18px rgba(192, 39, 80, 0.12);
+}
+
+.avail__flash-notice-title {
+  font-size: 1.02rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
+.avail__flash-notice-list {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.avail__flash-notice-list strong {
+  color: #b01f45;
+}
+
+.avail__flash-notice-list s {
+  color: #9a6b74;
+}
+
+.avail__flash-notice-note {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  color: #9a4a5c;
+}
+
 .avail__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -567,6 +644,22 @@ a.avail-cell.avail-cell--package {
 a.avail-cell.avail-cell--package:hover {
   background: rgba(252, 211, 77, 0.4);
   border-color: rgba(252, 211, 77, 0.95);
+}
+
+a.avail-cell.avail-cell--flash {
+  background: linear-gradient(135deg, rgba(255, 61, 110, 0.35) 0%, rgba(255, 122, 24, 0.35) 100%);
+  border-color: rgba(255, 138, 92, 0.9);
+  box-shadow: 0 0 0 1px rgba(255, 138, 92, 0.5), 0 4px 14px rgba(255, 61, 110, 0.25);
+}
+
+a.avail-cell.avail-cell--flash:hover {
+  background: linear-gradient(135deg, rgba(255, 61, 110, 0.5) 0%, rgba(255, 122, 24, 0.5) 100%);
+  border-color: #ff8a5c;
+}
+
+.avail-cell__flash {
+  color: #fff;
+  background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
 }
 
 .avail-cell__pkg {

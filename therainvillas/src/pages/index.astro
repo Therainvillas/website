@@ -14,6 +14,7 @@ import FaqSection from '../components/FaqSection.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import VillaCard from '../components/VillaCard.astro';
+import FlashSaleBanner from '../components/FlashSaleBanner.astro';
 import { villas } from '../data/villas';
 import { promoOfferJsonLd } from '../data/promos';
 
@@ -64,6 +65,8 @@ const homeFaq = [
 <Layout title="Sewa Villa Murah di Puncak, Private Pool & View Mewah | The Rain Villas" description="Cari sewa villa murah di Puncak untuk keluarga & gathering? Tersedia 30+ pilihan villa private pool kapasitas 20-50 orang. Booking aman, harga transparan!" jsonLd={[promoOfferJsonLd]}>
   <Header />
   <Slide01Hero />
+
+  <FlashSaleBanner />
 
   <section class="section featured-villas">
     <div class="container">

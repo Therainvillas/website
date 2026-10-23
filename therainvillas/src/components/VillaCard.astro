@@ -1,12 +1,14 @@
 ---
 import { slugify } from '../lib/slugify.js';
+import { formatPrice } from '../data/villas.js';
+import { getFlashSale, isFlashSaleActive } from '../data/flashSale.js';
 
 interface Props {
   id: number;
   name: string;
   description: string;
   image: string;
-  price?: string;
+  price?: string | number;
   priceLabel?: string;
   badge?: string;
   capacity?: number;
@@ -29,15 +31,33 @@ const {
   parking = 0,
 } = Astro.props;
 
-const priceText = price ?? priceLabel ?? 'Cek harga';
+const priceText = typeof price === 'number'
+  ? formatPrice(price)
+  : (price ?? priceLabel ?? 'Cek harga');
 const link = `/${slugify(name)}`;
+
+// Flash sale 24 Oktober (bila masih berlaku & villa ikut promo).
+const flash = isFlashSaleActive() ? getFlashSale(name) : null;
+const flashOriginal = flash?.originalPrice != null ? formatPrice(flash.originalPrice) : '';
+const flashSale = flash ? formatPrice(flash.salePrice) : '';
 ---
 
 <article class="villa-card">
   <a href={link} class="villa-card__media" aria-hidden="true" tabindex="-1">
     <img src={image} alt={name} width="1200" height="675" loading="lazy" decoding="async" />
-    {badge && <span class="villa-card__badge">{badge}</span>}
-    <span class="villa-card__price">{priceText}</span>
+    {flash ? (
+      <span class="villa-card__badge villa-card__badge--flash">⚡ Flash Sale 24 Okt</span>
+    ) : (
+      badge && <span class="villa-card__badge">{badge}</span>
+    )}
+    {flash ? (
+      <span class="villa-card__price villa-card__price--flash">
+        <s>{flashOriginal}</s>
+        <strong>{flashSale}</strong>
+      </span>
+    ) : (
+      <span class="villa-card__price">{priceText}</span>
+    )}
   </a>
 
   <div class="villa-card__body">
@@ -118,6 +138,26 @@ const link = `/${slugify(name)}`;
     backdrop-filter: blur(4px);
   }
 
+  /* Flash sale: harga normal dicoret + harga promo */
+  .villa-card__price--flash {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+    background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
+    box-shadow: 0 8px 22px rgba(255, 61, 110, 0.4);
+  }
+
+  .villa-card__price--flash s {
+    font-size: 0.75em;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  .villa-card__price--flash strong {
+    font-size: 1.02em;
+    font-weight: 800;
+  }
+
   .villa-card__badge {
     position: absolute;
     top: 14px;
@@ -131,6 +171,22 @@ const link = `/${slugify(name)}`;
     background: linear-gradient(135deg, #ffd76a 0%, #ffb84d 55%, #ff9d2e 100%);
     box-shadow: 0 6px 18px rgba(255, 170, 40, 0.45);
     letter-spacing: 0.2px;
+  }
+
+  .villa-card__badge--flash {
+    color: #fff;
+    background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
+    box-shadow: 0 6px 18px rgba(255, 61, 110, 0.45);
+    animation: villa-flash-pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes villa-flash-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .villa-card__badge--flash { animation: none; }
   }
 
   .villa-card__body {

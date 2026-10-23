@@ -14,7 +14,12 @@
  *
  * Harga per malam untuk 30 & 31 Des otomatis = total paket / 2, sehingga
  * 2 malam = harga paket.
+ *
+ * Flash sale (24 Oktober 2026) ditangani di `flashSale.js` dan menimpa harga
+ * normal pada tanggal tersebut.
  */
+
+import { getFlashSalePrice } from './flashSale.js';
 
 // ── Tanggal paket 2 malam ──────────────────────────────────────────────
 export const DEC_PACKAGE_DATES = ["2026-12-30", "2026-12-31"];
@@ -155,12 +160,17 @@ export function decPackageIsTba(villa) {
 
 /**
  * Harga satu malam untuk villa pada tanggal tertentu (objek Date).
- * Urutan: override Desember → setengah harga paket (30/31 Des) → harga normal.
+ * Urutan: flash sale → override Desember → setengah harga paket (30/31 Des)
+ * → harga normal.
  * Mengembalikan number, atau null bila malam paket berharga TBA.
  */
 export function getNightPrice(villa, date) {
   if (!villa) return 0;
   const key = toDateStr(date);
+
+  // Flash sale 24 Oktober 2026 (harga khusus, menimpa harga hari biasa).
+  const flashPrice = getFlashSalePrice(villa.name, key);
+  if (flashPrice != null) return flashPrice;
 
   // Harga TBA (belum pasti) → tidak ada angka.
   const tba = DECEMBER_2026_TBA[villa.name];

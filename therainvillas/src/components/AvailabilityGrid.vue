@@ -154,11 +154,26 @@ export default {
     isOctober2026() {
       return this.year === 2026 && this.month === 9;
     },
+    // Sel tanggal flash sale (24 Oktober 2026).
+    flashSaleCell() {
+      return { day: 24, month: 9, year: 2026 };
+    },
+    // Hanya villa yang tanggal 24 Oktober-nya masih bisa dipesan.
+    // Villa yang tanggalnya sudah diblokir (admin/API/static) otomatis dibuang.
+    flashSaleAvailableList() {
+      if (!isFlashSaleActive()) return [];
+      const cell = this.flashSaleCell;
+      return flashSaleVillas.filter((item) => {
+        const v = this.villas.find((x) => x.name === item.name);
+        if (!v) return false;
+        return this.isAvailable(v, cell);
+      });
+    },
     showFlashNotice() {
-      return this.isOctober2026 && isFlashSaleActive();
+      return this.isOctober2026 && this.flashSaleAvailableList.length > 0;
     },
     flashSaleList() {
-      return flashSaleVillas;
+      return this.flashSaleAvailableList;
     },
     calendarCells() {
       const firstDay = new Date(this.year, this.month, 1).getDay();

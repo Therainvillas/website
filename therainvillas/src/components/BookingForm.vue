@@ -183,18 +183,7 @@
               <div v-if="showTbaNote" class="bf__package-note">
                 Harga tanggal ini belum pasti (TBA) — akan dikonfirmasi admin via WhatsApp.
               </div>
-              <div v-if="flashSaleApplied" class="bf__package-note bf__package-note--flash">
-                <img
-                  class="flash-ico"
-                  src="/icon/flash-sale-64.png"
-                  width="123"
-                  height="64"
-                  alt=""
-                  aria-hidden="true"
-                  decoding="async"
-                />
-                Harga FLASH SALE 24 Oktober 2026 sudah diterapkan otomatis.
-              </div>
+
 
               <div class="bf__promo">
                 <div class="bf__promo-head">
@@ -422,7 +411,6 @@ import {
   DEC_PACKAGE_CHECKOUT,
   DEC_PACKAGE_DATES,
 } from '../data/seasonPrices.js';
-import { FLASH_SALE_DATE, getFlashSale } from '../data/flashSale.js';
 
 const BOOKING_API = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 const WHATSAPP = '6282125492037';
@@ -587,17 +575,7 @@ export default {
     showTbaNote() {
       return this.hasTbaNight && !this.selectedHasPackage;
     },
-    flashSaleApplied() {
-      if (!this.nightCount || !this.selectedVilla) return false;
-      if (!getFlashSale(this.selectedVilla.name)) return false;
-      const start = new Date(this.form.checkIn + 'T00:00:00');
-      for (let i = 0; i < this.nightCount; i++) {
-        const d = new Date(start);
-        d.setDate(d.getDate() + i);
-        if (toDateStr(d) === FLASH_SALE_DATE) return true;
-      }
-      return false;
-    },
+
     totalPrice() {
       const s = this.totalPriceRaw.toLocaleString('id-ID').replace(/,/g, '.');
       if (this.hasTbaNight) return this.totalPriceRaw > 0 ? `${s} + TBA` : 'TBA';
@@ -662,12 +640,6 @@ export default {
         ...(this.selectedHasPackage
           ? [
             l('Paket', this.packageTba ? 'Paket 2 malam 30–31 Des (harga TBA, menyusul)' : 'Paket 2 malam 30–31 Des'),
-            '',
-          ]
-          : []),
-        ...(this.flashSaleApplied
-          ? [
-            l('Flash sale', 'Harga khusus 24 Oktober 2026 sudah diterapkan'),
             '',
           ]
           : []),
@@ -1766,12 +1738,6 @@ export default {
   border: 1px solid #fed7aa;
   border-radius: 10px;
   padding: 9px 13px;
-}
-
-.bf__package-note--flash {
-  color: #b01f45;
-  background: linear-gradient(135deg, #fff1f3, #ffedd5);
-  border-color: #ff8fa3;
 }
 
 /* ===== PROMO ===== */

@@ -80,26 +80,8 @@
         <a :href="`/${slugify(villa.name)}`" class="vf-card">
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
-            <span v-if="villa.flashSale" class="vf-card__badge vf-card__badge--flash">
-              <img
-                class="flash-ico flash-ico--on-color"
-                src="/icon/flash-sale-64.png"
-                width="123"
-                height="64"
-                alt=""
-                aria-hidden="true"
-                decoding="async"
-              />
-              Flash Sale 24 Okt
-            </span>
-            <span v-else-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
-            <span class="vf-card__price" :class="{ 'vf-card__price--flash': villa.flashSale }">
-              <template v-if="villa.flashSale">
-                <s>{{ formatPrice(villa.flashSale.originalPrice) }}</s>
-                <strong>{{ formatPrice(villa.flashSale.salePrice) }}</strong>
-              </template>
-              <template v-else>{{ villa.priceLabel || formatPrice(villa.price) }}</template>
-            </span>
+            <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
+            <span class="vf-card__price">{{ villa.priceLabel || formatPrice(villa.price) }}</span>
           </div>
           <div class="vf-card__body">
             <h3 class="vf-card__title">{{ villa.name }}</h3>
@@ -515,25 +497,6 @@ export default {
   backdrop-filter: blur(4px);
 }
 
-.vf-card__price--flash {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 7px;
-  background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
-  box-shadow: 0 8px 22px rgba(255, 61, 110, 0.4);
-}
-
-.vf-card__price--flash s {
-  font-size: 0.75em;
-  font-weight: 500;
-  opacity: 0.8;
-}
-
-.vf-card__price--flash strong {
-  font-size: 1.02em;
-  font-weight: 800;
-}
-
 .vf-card__badge {
   position: absolute;
   top: 14px;
@@ -547,25 +510,6 @@ export default {
   background: linear-gradient(135deg, #ffd76a 0%, #ffb84d 55%, #ff9d2e 100%);
   box-shadow: 0 6px 18px rgba(255, 170, 40, 0.45);
   letter-spacing: 0.2px;
-}
-
-.vf-card__badge--flash {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #fff;
-  background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
-  box-shadow: 0 6px 18px rgba(255, 61, 110, 0.45);
-  animation: vf-flash-pulse 1.8s ease-in-out infinite;
-}
-
-@keyframes vf-flash-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .vf-card__badge--flash { animation: none; }
 }
 
 .vf-card__body {

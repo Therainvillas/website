@@ -10,7 +10,6 @@ import LocationMap from '../components/LocationMap.vue';
 import { villas } from '../data/villas';
 import { locations } from '../data/locations';
 import { villaCovers, villaHeroSm } from '../data/covers';
-import { FLASH_SALE_DATE, getFlashSale, isFlashSaleActive } from '../data/flashSale.js';
 
 export function getStaticPaths() {
   return villas.map((villa) => ({
@@ -28,10 +27,7 @@ const waMsg = `Halo The Rain Villas, saya ingin memesan ${villa.name}. Mohon inf
 const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(waMsg)}`;
 const villaUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://therainvillas.com/').href;
 
-// Flash sale 24 Oktober 2026 (bila masih berlaku & villa ikut promo).
-const flashSale = isFlashSaleActive() ? getFlashSale(villa.name) : null;
-const flashSaleHref = `/booking?villa=${encodeURIComponent(villa.name)}&checkIn=${FLASH_SALE_DATE}&checkOut=2026-10-25`;
-const flashPriceLabel = flashSale ? `Rp ${flashSale.salePrice.toLocaleString('id-ID')}/malam` : villa.priceLabel;
+const flashPriceLabel = villa.priceLabel;
 
 const localGalleries = {
   'Villa 4D': ['/4D/4d%20(1).webp', '/4D/4d%20(2).webp', '/4D/4d%20(3).webp', '/4D/4d%20(4).webp', '/4D/4d%20(5).webp', '/4D/4d%20(6).webp', '/4D/4d%20(7).webp', '/4D/4d%20(8).webp', '/4D/4d%20(9).webp', '/4D/4d%20(10).webp', '/4D/4d%20(11).webp', '/4D/4d%20(12).webp', '/4D/4d%20(13).webp', '/4D/4d%20(14).webp', '/4D/4d%20(15).webp'],
@@ -79,7 +75,7 @@ const villaJsonLd = [
     "image": villaShareImage,
     "description": villa.description,
     "url": villaUrl,
-    "priceRange": flashPriceLabel,
+    "priceRange": villa.priceLabel,
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Cisarua",
@@ -258,27 +254,7 @@ const villaFaq = [
           </span>
         </div>
 
-        {flashSale && (
-          <div class="vd-property__flash">
-            <span class="vd-property__flash-tag">
-              <img
-                class="flash-ico flash-ico--on-color"
-                src="/icon/flash-sale-64.png"
-                width="123"
-                height="64"
-                alt=""
-                aria-hidden="true"
-                decoding="async"
-              />
-              Flash Sale 24 Oktober
-            </span>
-            <span class="vd-property__flash-price">
-              {flashSale.originalPrice != null && <s>Rp {flashSale.originalPrice.toLocaleString('id-ID')}</s>}
-              <strong>Rp {flashSale.salePrice.toLocaleString('id-ID')}</strong>
-              <em>/malam</em>
-            </span>
-          </div>
-        )}
+
 
         {villa.pricingLabels && (
           <div class="vd-property__prices">
@@ -300,25 +276,8 @@ const villaFaq = [
           <div class="vd-stat__lbl">Tamu Maksimal</div>
         </div>
         <div class="vd-stat__meta">
-          <span>
-            {flashSale ? (
-              <>
-                <img
-                  class="flash-ico"
-                  src="/icon/flash-sale-64.png"
-                  width="123"
-                  height="64"
-                  alt=""
-                  aria-hidden="true"
-                  decoding="async"
-                />
-                Flash Sale 24 Okt
-              </>
-            ) : (
-              'Mulai dari'
-            )}
-          </span>
-          <strong>{flashPriceLabel}</strong>
+          <span>Mulai dari</span>
+          <strong>{villa.priceLabel}</strong>
         </div>
       </div>
 
@@ -334,29 +293,8 @@ const villaFaq = [
             {villa.description} Setiap area dibuat untuk liburan yang tenang, foto yang cantik, dan waktu berkumpul yang nyaman.
           </p>
 
-          {(flashSale || villa.pricingLabels) && (
+          {villa.pricingLabels && (
             <div class="vd-prices reveal reveal--delay-3">
-              {flashSale && (
-                <div class="vd-spec vd-spec--price vd-spec--flash">
-                  <span class="vd-spec__label">
-                    <img
-                      class="flash-ico"
-                      src="/icon/flash-sale-64.png"
-                      width="123"
-                      height="64"
-                      alt=""
-                      aria-hidden="true"
-                      decoding="async"
-                    />
-                    Flash Sale 24 Okt
-                  </span>
-                  {flashSale.originalPrice != null && (
-                    <s class="vd-spec__price-old">Rp {flashSale.originalPrice.toLocaleString('id-ID')}</s>
-                  )}
-                  <strong class="vd-spec__price">Rp {flashSale.salePrice.toLocaleString('id-ID')}</strong>
-                  <span class="vd-spec__pernight">/malam</span>
-                </div>
-              )}
               {(villa.pricingLabels ?? []).map((row) => (
                 <div class="vd-spec vd-spec--price">
                   <span class="vd-spec__label">{row.label}</span>
@@ -446,38 +384,11 @@ const villaFaq = [
         </div>
 
         <aside class="vd-booking reveal reveal--right" aria-label="Booking villa">
-          {flashSale ? (
-            <>
-              <p class="vd-booking__label">
-                <img
-                  class="flash-ico"
-                  src="/icon/flash-sale-64.png"
-                  width="123"
-                  height="64"
-                  alt=""
-                  aria-hidden="true"
-                  decoding="async"
-                />
-                Flash Sale 24 Oktober
-              </p>
-              <h3 class="vd-booking__flash-price">
-                {flashSale.originalPrice != null && (
-                  <s>Rp {flashSale.originalPrice.toLocaleString('id-ID')}</s>
-                )}
-                <span>Rp {flashSale.salePrice.toLocaleString('id-ID')}</span>
-              </h3>
-              <p class="vd-booking__desc">
-                per malam untuk menginap <strong>24 Oktober 2026</strong>.
-                <a href={flashSaleHref} class="vd-booking__flash-link">Pesan tanggal ini →</a>
-              </p>
-            </>
-          ) : (
-            <>
-              <p class="vd-booking__label">Mulai dari</p>
-              <h3>{villa.priceLabel}</h3>
-              <p class="vd-booking__desc">per malam, konfirmasi jadwal dan paket melalui WhatsApp.</p>
-            </>
-          )}
+          <>
+            <p class="vd-booking__label">Mulai dari</p>
+            <h3>{villa.priceLabel}</h3>
+            <p class="vd-booking__desc">per malam, konfirmasi jadwal dan paket melalui WhatsApp.</p>
+          </>
 
           <div class="vd-booking__rows">
             <span>{villa.capacity} tamu maksimal</span>
@@ -971,50 +882,7 @@ const villaFaq = [
     white-space: nowrap;
   }
 
-  /* ===== flash sale 24 Okt (kartu properti) ===== */
-  .vd-property__flash {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-top: 14px;
-    padding: 12px 14px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgba(255, 61, 110, 0.3) 0%, rgba(255, 122, 24, 0.3) 100%);
-    border: 1px solid rgba(255, 180, 120, 0.65);
-  }
 
-  .vd-property__flash-tag {
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    color: #fff3e6;
-  }
-
-  .vd-property__flash-price {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .vd-property__flash-price s {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.72);
-  }
-
-  .vd-property__flash-price strong {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #fff;
-  }
-
-  .vd-property__flash-price em {
-    font-size: 0.72rem;
-    font-style: normal;
-    color: rgba(255, 255, 255, 0.78);
-  }
 
   .vd-property__cta {
     display: flex;
@@ -1186,26 +1054,7 @@ const villaFaq = [
     color: #5b8def;
   }
 
-  /* Kartu flash sale di blok harga overview */
-  .vd-spec--flash {
-    border-left-color: #ff5a2e;
-    background: linear-gradient(135deg, rgba(255, 61, 110, 0.12) 0%, rgba(255, 122, 24, 0.14) 100%);
-  }
 
-  .vd-spec--flash .vd-spec__label {
-    color: #d92e5c;
-  }
-
-  .vd-spec__price-old {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: #8a8a80;
-    text-decoration: line-through;
-  }
-
-  .vd-spec--flash .vd-spec__price {
-    color: #c02750;
-  }
 
   .vd-spec strong {
     display: block;

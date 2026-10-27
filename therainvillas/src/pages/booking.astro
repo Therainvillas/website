@@ -60,19 +60,8 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
   .booking-page {
     min-height: 80vh;
     padding: 80px 0 100px;
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 40%, #eef1f6 100%);
+    background: var(--color-light);
     position: relative;
-  }
-  .booking-page::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(91,141,239,0.06) 0%, transparent 70%);
-    pointer-events: none;
   }
   .booking-page__head {
     text-align: center;
@@ -80,19 +69,6 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
     position: relative;
     padding: 44px 24px 40px;
     border-radius: var(--radius-lg);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .booking-page__head::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: url('/background.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.2;
   }
   .booking-page__badge {
     display: inline-block;

@@ -52,36 +52,12 @@ import PromoClaim from '../components/PromoClaim.vue';
     background: var(--color-light);
     position: relative;
   }
-  .promo-page::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 640px;
-    height: 640px;
-    background: radial-gradient(circle, rgba(var(--color-accent-rgb), 0.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
   .promo-page__head {
     text-align: center;
     margin-bottom: 36px;
     position: relative;
     padding: 44px 24px 40px;
     border-radius: var(--radius-lg);
-    overflow: hidden;
-    isolation: isolate;
-  }
-  .promo-page__head::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background-image: url('/background.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.18;
   }
   .promo-page__badge {
     display: inline-block;

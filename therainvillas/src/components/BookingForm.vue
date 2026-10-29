@@ -72,7 +72,7 @@
                     <img :src="selectedVilla.image" :alt="selectedVilla.name" class="bf__dd-trigger-img" />
                     <span class="bf__dd-trigger-info">
                       <span class="bf__dd-trigger-name">{{ selectedVilla.name }}</span>
-                      <span class="bf__dd-trigger-sub">{{ selectedVilla.capacity }} tamu • {{ selectedVilla.priceLabel }}</span>
+                      <span class="bf__dd-trigger-sub">{{ selectedVilla.capacity }} tamu • <s v-if="selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ selectedVilla.priceLabel }}</span>
                     </span>
                   </template>
                   <span v-else class="bf__dd-placeholder">— Pilih villa —</span>
@@ -110,7 +110,10 @@
                           <span class="bf__dd-option-name">{{ v.name }}</span>
                           <span class="bf__dd-option-meta">{{ v.capacity }} tamu • {{ v.bedrooms }} kamar</span>
                         </span>
-                        <span class="bf__dd-option-price">{{ v.priceLabel.replace('/malam', '') }}</span>
+                        <span class="bf__dd-option-price">
+                          <s v-if="v.originalPrice" class="bf__price-old">Rp {{ formatNum(v.originalPrice) }}</s>
+                          {{ v.priceLabel.replace('/malam', '') }}
+                        </span>
                       </button>
                       <p v-if="filteredVillas.length === 0" class="bf__dd-empty">Villa tidak ditemukan.</p>
                     </div>
@@ -124,7 +127,7 @@
               <div class="bf__villa-info">
                 <strong>{{ selectedVilla.name }}</strong>
                 <span>{{ selectedVilla.capacity }} tamu • {{ selectedVilla.bedrooms }} kamar • {{ selectedVilla.bathrooms }} KM</span>
-                <span class="bf__villa-price">Mulai dari {{ selectedVilla.priceLabel }}</span>
+                <span class="bf__villa-price">Mulai dari <s v-if="selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ selectedVilla.priceLabel }}</span>
               </div>
             </div>
 
@@ -182,6 +185,12 @@
               </div>
               <div v-if="showTbaNote" class="bf__package-note">
                 Harga tanggal ini belum pasti (TBA) — akan dikonfirmasi admin via WhatsApp.
+              </div>
+
+              <div v-if="promoGateOpen" class="bf__promo-gate">
+                <strong>🔒 Villa ini punya harga promo</strong>
+                <span>Klaim kode promo dulu lewat rating Google Maps. Tanpa kode promo yang valid, booking villa ini tidak bisa dilanjutkan.</span>
+                <a :href="promoHref" class="bf__promo-gate-link">Klaim kode promo &rarr;</a>
               </div>
 
 
@@ -358,7 +367,7 @@
           <button v-if="step < 4" type="submit" class="bf__nav-next">
             Lanjut →
           </button>
-          <a v-else :href="waLink" target="_blank" rel="nofollow" class="bf__nav-submit bf__nav-submit--link" @click="submit" data-track="lead_submit" data-form-name="booking_form" :data-villa="form.villa">
+          <a v-else :href="waLink" target="_blank" rel="nofollow" class="bf__nav-submit bf__nav-submit--link" @click="submit($event)" data-track="lead_submit" data-form-name="booking_form" :data-villa="form.villa">
             Kirim ke WhatsApp
           </a>
         </div>
@@ -399,7 +408,7 @@
 </template>
 
 <script>
-import { getPromo, isPromoActive, isPromoExcluded } from '../data/promos.js';
+import { getPromo, isPromoActive, isPromoBlockedForVilla, isVillaPromoEligible } from '../data/promos.js';
 import {
   getNightPrice,
   decPackageRangeError,
@@ -527,7 +536,17 @@ export default {
     },
     promoBlockedVilla() {
       if (!this.promoApplied) return false;
-      return isPromoExcluded(this.promoApplied, this.selectedVilla && this.selectedVilla.name);
+      return isPromoBlockedForVilla(this.promoApplied, this.selectedVilla);
+    },
+    requiresPromo() {
+      return isVillaPromoEligible(this.selectedVilla);
+    },
+    promoGateOpen() {
+      return this.requiresPromo && !(this.promoApplied && !this.promoBlockedVilla);
+    },
+    promoHref() {
+      if (!this.selectedVilla) return '/promo#klaim';
+      return `/promo?villa=${this.selectedVilla.slug}#klaim`;
     },
     filteredVillas() {
       const q = this.villaSearch.trim().toLowerCase();
@@ -1074,6 +1093,11 @@ export default {
           }
           cur.setDate(cur.getDate() + 1);
         }
+
+        if (this.promoGateOpen) {
+          this.error = `${this.form.villa} punya harga promo. Klaim kode promo dulu lewat halaman Promo (rating Google Maps) sebelum lanjut booking.`;
+          return false;
+        }
       }
       if (this.step === 2) {
         if (!this.form.name.trim()) { this.error = 'Nama pem-booking villa wajib diisi.'; return false; }
@@ -1091,7 +1115,13 @@ export default {
         this.step++;
       }
     },
-    submit() {
+    submit(event) {
+      if (this.promoGateOpen) {
+        if (event) event.preventDefault();
+        this.error = `${this.form.villa} punya harga promo. Klaim kode promo dulu lewat halaman Promo (rating Google Maps) sebelum booking.`;
+        this.step = 1;
+        return;
+      }
       if (this.appliedCode) this.consumeClaim(this.appliedCode);
       this.done = true;
     },
@@ -1572,6 +1602,13 @@ export default {
   color: #7a5ce0 !important;
   font-weight: 600;
 }
+.bf__price-old {
+  margin-right: 4px;
+  font-size: 0.85em;
+  font-weight: 500;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
 
 /* ===== CALENDAR ===== */
 .bf__dates {
@@ -1741,6 +1778,30 @@ export default {
 }
 
 /* ===== PROMO ===== */
+.bf__promo-gate {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+.bf__promo-gate strong {
+  font-size: 0.85rem;
+}
+.bf__promo-gate-link {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-weight: 700;
+  color: #c02750;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 .bf__promo {
   margin-top: 14px;
   border-top: 1px dashed rgba(91, 141, 239, 0.25);

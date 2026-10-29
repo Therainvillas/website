@@ -1,7 +1,8 @@
 *DETAIL VILLA 
 
 1. Villa Agave
-Rp 1.700.000
+harga awal Rp 1.700.000
+harga baru Rp 1.500.000
 Kapasitas 50 orang jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.700.000
@@ -54,7 +55,8 @@ Check out : 12.00
 https://maps.google.com/?q=-6.702472,106.915787
 
 3. Villa Cemara
-Rp 1.300.000
+Harga awal Rp 1.300.000
+Harga baru Rp 1.100.000
 Kapasitas 30-35 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.300.000
@@ -81,7 +83,8 @@ Check out jam : 12.00
 https://maps.app.goo.gl/9KmwvxzUyobBtfrY7
 
 4. Villa Aleia
-Rp 1.400.000
+Harga awal Rp 1.400.000
+harga baru Rp. 1.100.000
 Kapasitas Maks 30 orang Jika melebihi kapasitas di kenakan charge 50k/org 
 
 Minggu - kamis : 1.400.000
@@ -107,7 +110,8 @@ Checkout: 12.00
 https://maps.app.goo.gl/atcigvJzQaTWtzLNA
 
 5. Villa 4d
-Rp 1.200.000
+Harga awal Rp 1.200.000
+harga baru Rp 1.000.000
 Kapasitas 25-30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.200.000
@@ -160,7 +164,8 @@ Checkout jam : 12:00
 https://maps.app.goo.gl/X6RttuoSEZ6zxSV37?g_st=iw
 
 7. Villa Twins
-Rp 1.500.000
+Harga awal Rp 1.500.000
+harga baru Rp 1.200.000
 Kapasitas 25-30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.500.000
@@ -190,7 +195,8 @@ Check out jam : 12.00
 https://maps.app.goo.gl/P18BXifYWHnCeeHm9?g_st=ipc
 
 8. Villa Cyrena
-Rp 1.200.000
+Harga Awal Rp 1.200.000
+Harga baru Rp 1.000.000
 Kapasitas 25-30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.200.000
@@ -217,7 +223,8 @@ Check out jam : 12.00
 https://maps.app.goo.gl/qzgQ9WqeD1Rrz691A?g_st=aw
 
 9. Villa Arisyfa
-Rp 1.500.000
+Harga Awal Rp 1.500.000
+Harga baru Rp 1.200.000
 Kapasitas 35-40 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.500.000
@@ -245,7 +252,8 @@ Check out jam : 12.00
 https://maps.app.goo.gl/ZR2GrmQjcq6v8y1dA?g_st=ic/
 
 10. Villa Cempaka
-Rp 1.200.000
+Harga Awal Rp 1.200.000
+Harga Baru Rp 1.000.000
 Kapasitas 25-30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Senin s/d kamis      : 1.200.000
@@ -272,7 +280,8 @@ Check out jam : 12.00
 https://maps.app.goo.gl/NRWaEmkNTwTanr5z8?g_st=ipc
 
 11. Villa Arsy
-Rp 1.700.000
+Harga awal Rp 1.700.000
+Harga baru Rp 1.500.000
 Kapasitas Maks 40 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.700.000
@@ -296,7 +305,8 @@ Check in : 14.00
 Check out : 12.00
 
 12. Villa Rayya
-Rp 1.350.000 Rp 1.800.000
+Harga Awal Rp 1.800.000
+Harga baru Rp 1.350.000
 Kapasitas 40 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.350.000
@@ -482,7 +492,7 @@ Check out jam : 12:00
 https://maps.app.goo.gl/yYA4rgd2GC6XwfnD6
 
 19. Villa De Summit
-Rp 1.800.000 Rp 2.000.000
+Rp 2.500.000
 Maks Kapasitas 40 Jika melebihi kapasitas di kenakan charge 50rb/orang ( di wajibkan sewa extrabed 10pcs )
 
 Weekday : 2.000.000
@@ -506,7 +516,8 @@ Check out jam ; 12:00
 https://share.google/MnckzAtVbrrrmEOXZ
 
 20. Villa Bodas
-Rp 1.700.000 Rp 2.000.000
+Harga awal Rp 2.000.000
+harga baru Rp 1.700.000
 Kapasitas 50 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 2.000.000
@@ -533,7 +544,8 @@ Check out : 12.00
 https://maps.app.goo.gl/7WAmUacxpoPPe86g9
 
 21. Villa Thymi
-Rp 1.300.000 Rp 1.600.000
+harga awal Rp 1.600.000
+harga baru Rp 1.300.000
 Kapasitas 35-40 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.600.000
@@ -562,7 +574,7 @@ Check out jam : 12.00
 https://maps.app.goo.gl/chMyRVFdbW11KJky9?g_st=ipc
 
 22. Villa Albi
-Rp 1.100.000 Rp 1.300.000
+Rp 1.300.000
 Kapasitas 30 (jika melebihi kapasitas di kenakan charge 50k/orang)
 
 Minggu s/d Kamis : 1.300.000
@@ -585,7 +597,7 @@ Check out jam ; 12:00
 https://maps.app.goo.gl/yF87TuR9G7V4LpReA
 
 23. Villa Valora
-Rp 900.000 Rp 1.000.000
+Rp 1.000.000
 Kapasitas 20-25 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.000.000
@@ -611,7 +623,8 @@ Check out : 12.00
 https://maps.app.goo.gl/boDpD682N5Fhm6wu6?g_st=ipcg_st=ipc
 
 24. Echa Village
-Rp 1.300.000 Rp 1.500.000
+Harga awal Rp 1.500.000
+harga baru Rp 1.300.000 
 Kapasitas 25-30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.500.000
@@ -636,7 +649,8 @@ Check out : 12.00
 https://maps.app.goo.gl/zkJivbM1mKqpfmeC8?g_st=ipc
 
 25. Villa Awan
-Rp 1.100.000 Rp 1.350.000
+harga awal Rp 1.350.000
+harga baru Rp 1.100.000
 Kapasitas 25 - 30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.350.000
@@ -664,7 +678,8 @@ Check out : 12.00
 https://maps.app.goo.gl/c5BaWWNSydVz1x978?g_st=ipc
 
 26. Villa Baduo
-Rp 1.100.000 Rp 1.350.000
+harga awal Rp 1.350.000
+harga baru Rp 1.100.000 
 Kapasitass 30-35 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.350.000
@@ -691,7 +706,7 @@ Check out : 12.00
 https://maps.google.com/?q=-6.665145,106.933174
 
 27. Villa Hala
-Rp 1.800.000 Rp 2.000.000
+Rp 2.000.000
 Kapasitas 35 orang jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 2.000.000
@@ -721,7 +736,8 @@ Check out jam : 12.00
 https://maps.app.goo.gl/oD5P5iaYyCfYnPML7?g_st=ipc
 
 28. Villa Ranna
-Rp 1.000.000 Rp 1.200.000
+harga awal Rp 1.200.000
+harga baru Rp 1.000.000 
 Kapasitas 30 jika melebihi kapasitas di kenakan charge 50k/org
 
 Weekday      : 1.200.000
@@ -747,7 +763,8 @@ Check out : 12.00
 https://maps.google.com/?q=-6.672630,106.922195
 
 29. Villa Rio 5
-Rp 1.000.000 Rp 1.300.000
+harga awal Rp 1.300.000
+harga baru Rp 1.000.000 
 Kapasitas 30 orang Jika melebihi kapasitas di kenakan charge 50k/org 
 
 Weekday : 1.300.000
@@ -772,7 +789,8 @@ Check in: 14.00
 Checkout: 12.00
 
 30. The Herlina
-Rp 1.800.000 Rp 2.000.000
+harga awal Rp 2.000.000
+harga baru Rp 1.800.000 
 Kapasitas Maks 50 orang Jika melebihi kapasitas di kenakan charge 50k/org
 
 Minggu s/d kamis : 2.000.0000
@@ -797,7 +815,8 @@ Checkout : 12.00
 https://maps.app.goo.gl/WnhJM2TAJNp88JWR7?g_st=ic
 
 31. Villa Hariza
-Rp 1.000.000 Rp 1.100.000
+harga awal Rp 1.100.000
+harga baru Rp 1.000.000
 Kapasitas 20-25 orang
 jika melebihi kapasitas di kenakan charge 50k/org
 

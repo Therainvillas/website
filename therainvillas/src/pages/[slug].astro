@@ -10,6 +10,7 @@ import LocationMap from '../components/LocationMap.vue';
 import { villas } from '../data/villas';
 import { locations } from '../data/locations';
 import { villaCovers, villaHeroSm } from '../data/covers';
+import { isVillaPromoEligible } from '../data/promos';
 
 export function getStaticPaths() {
   return villas.map((villa) => ({
@@ -27,7 +28,10 @@ const waMsg = `Halo The Rain Villas, saya ingin memesan ${villa.name}. Mohon inf
 const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(waMsg)}`;
 const villaUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://therainvillas.com/').href;
 
-const flashPriceLabel = villa.priceLabel;
+const hasPromo = isVillaPromoEligible(villa);
+const promoHref = `/promo?villa=${villa.slug}#klaim`;
+const orderLink = hasPromo ? promoHref : waLink;
+const originalPriceLabel = hasPromo ? `Rp ${villa.originalPrice.toLocaleString('id-ID')}` : '';
 
 const localGalleries = {
   'Villa 4D': ['/4D/4d%20(1).webp', '/4D/4d%20(2).webp', '/4D/4d%20(3).webp', '/4D/4d%20(4).webp', '/4D/4d%20(5).webp', '/4D/4d%20(6).webp', '/4D/4d%20(7).webp', '/4D/4d%20(8).webp', '/4D/4d%20(9).webp', '/4D/4d%20(10).webp', '/4D/4d%20(11).webp', '/4D/4d%20(12).webp', '/4D/4d%20(13).webp', '/4D/4d%20(14).webp', '/4D/4d%20(15).webp'],
@@ -199,7 +203,7 @@ const villaFaq = [
 
         <div class="vd-nav__actions">
           <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="nofollow" class="vd-nav__contact">Kontak</a>
-          <a href={waLink} target="_blank" rel="nofollow" class="vd-nav__order" data-track="booking_click" data-villa={villa.name}>Reservasi <span aria-hidden="true">&rarr;</span></a>
+          <a href={orderLink} target={hasPromo ? undefined : '_blank'} rel={hasPromo ? undefined : 'nofollow'} class="vd-nav__order" data-track="booking_click" data-villa={villa.name}>Reservasi <span aria-hidden="true">&rarr;</span></a>
         </div>
       </nav>
 
@@ -228,7 +232,7 @@ const villaFaq = [
               {meta.location} • {meta.area}
             </span>
           </div>
-          <a href={waLink} target="_blank" rel="nofollow" class="vd-property__round" aria-label="Pesan sekarang" data-track="booking_click" data-villa={villa.name}>
+          <a href={orderLink} target={hasPromo ? undefined : '_blank'} rel={hasPromo ? undefined : 'nofollow'} class="vd-property__round" aria-label="Pesan sekarang" data-track="booking_click" data-villa={villa.name}>
             <svg viewBox="0 0 24 24" width="16" height="16"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
           </a>
         </div>
@@ -261,13 +265,16 @@ const villaFaq = [
             {villa.pricingLabels.map((row) => (
               <div class="vd-property__price">
                 <span>{row.label}</span>
-                <strong>Rp {row.price.toLocaleString('id-ID')}</strong>
+                <strong>
+                  {row.originalPrice && <s class="vd-price-old">Rp {row.originalPrice.toLocaleString('id-ID')}</s>}
+                  Rp {row.price.toLocaleString('id-ID')}
+                </strong>
               </div>
             ))}
           </div>
         )}
 
-        <a href="#booking" class="vd-property__cta" data-track="booking_click" data-villa={villa.name}>Pesan Sekarang</a>
+        <a href={hasPromo ? promoHref : '#booking'} class="vd-property__cta" data-track="booking_click" data-villa={villa.name}>{hasPromo ? 'Klaim Kode & Pesan' : 'Pesan Sekarang'}</a>
       </div>
 
       <div class="vd-stat glass">
@@ -277,7 +284,10 @@ const villaFaq = [
         </div>
         <div class="vd-stat__meta">
           <span>Mulai dari</span>
-          <strong>{villa.priceLabel}</strong>
+          <strong>
+            {hasPromo && <s class="vd-price-old">{originalPriceLabel}</s>}
+            {villa.priceLabel}
+          </strong>
         </div>
       </div>
 
@@ -298,7 +308,10 @@ const villaFaq = [
               {(villa.pricingLabels ?? []).map((row) => (
                 <div class="vd-spec vd-spec--price">
                   <span class="vd-spec__label">{row.label}</span>
-                  <strong class="vd-spec__price">Rp {row.price.toLocaleString('id-ID')}</strong>
+                  <strong class="vd-spec__price">
+                    {row.originalPrice && <s class="vd-price-old">Rp {row.originalPrice.toLocaleString('id-ID')}</s>}
+                    Rp {row.price.toLocaleString('id-ID')}
+                  </strong>
                   <span class="vd-spec__pernight">/malam</span>
                 </div>
               ))}
@@ -386,8 +399,17 @@ const villaFaq = [
         <aside class="vd-booking reveal reveal--right" aria-label="Booking villa">
           <>
             <p class="vd-booking__label">Mulai dari</p>
-            <h3>{villa.priceLabel}</h3>
+            <h3>
+              {hasPromo && <s class="vd-booking__price-old">{originalPriceLabel}</s>}
+              {villa.priceLabel}
+            </h3>
             <p class="vd-booking__desc">per malam, konfirmasi jadwal dan paket melalui WhatsApp.</p>
+            {hasPromo && (
+              <p class="vd-booking__promo-note">
+                🔒 Harga promo khusus villa ini. Klaim kode dengan rating Google Maps dulu sebelum booking.
+                <a href={promoHref}>Klaim kode promo &rarr;</a>
+              </p>
+            )}
           </>
 
           <div class="vd-booking__rows">
@@ -402,13 +424,16 @@ const villaFaq = [
               {villa.pricingLabels.map((row) => (
                 <span class="vd-booking__price-row">
                   <span class="vd-booking__price-day">{row.label}</span>
-                  <span class="vd-booking__price-amount">Rp {row.price.toLocaleString('id-ID')}</span>
+                  <span class="vd-booking__price-amount">
+                    {row.originalPrice && <s class="vd-price-old">Rp {row.originalPrice.toLocaleString('id-ID')}</s>}
+                    Rp {row.price.toLocaleString('id-ID')}
+                  </span>
                 </span>
               ))}
             </div>
           )}
 
-          <a href={waLink} target="_blank" rel="nofollow" class="vd-booking__button" data-track="booking_click" data-villa={villa.name}>Pesan Sekarang</a>
+          <a href={orderLink} target={hasPromo ? undefined : '_blank'} rel={hasPromo ? undefined : 'nofollow'} class="vd-booking__button" data-track="booking_click" data-villa={villa.name}>{hasPromo ? 'Klaim Kode & Pesan Sekarang' : 'Pesan Sekarang'}</a>
           <a href="/availability" class="vd-booking__link" data-track="booking_click" data-villa={villa.name}>Cek kalender semua villa &rarr;</a>
 
           <div class="vd-calendar">
@@ -882,6 +907,14 @@ const villaFaq = [
     white-space: nowrap;
   }
 
+  .vd-price-old {
+    margin-right: 6px;
+    font-size: 0.82em;
+    font-weight: 600;
+    opacity: 0.72;
+    text-decoration: line-through;
+  }
+
 
 
   .vd-property__cta {
@@ -1338,6 +1371,36 @@ const villaFaq = [
     color: rgba(23, 24, 19, 0.72);
     font-size: 0.92rem;
     line-height: 1.65;
+  }
+
+  .vd-booking__price-old {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 0.5em;
+    font-weight: 500;
+    color: #8a8a80;
+    text-decoration: line-through;
+    vertical-align: middle;
+  }
+
+  .vd-booking__promo-note {
+    margin: -8px 0 18px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(192, 39, 80, 0.08);
+    border: 1px solid rgba(192, 39, 80, 0.2);
+    color: #8a2440;
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+
+  .vd-booking__promo-note a {
+    display: inline-block;
+    margin-top: 4px;
+    font-weight: 700;
+    color: #c02750;
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .vd-booking__rows {

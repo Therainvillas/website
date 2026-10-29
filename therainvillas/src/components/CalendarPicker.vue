@@ -13,7 +13,10 @@
           >
             <span class="booking__pill-img" :style="{ backgroundImage: `url(${v.image})` }"></span>
             <span class="booking__pill-name">{{ v.name.replace('Villa ', '') }}</span>
-            <span class="booking__pill-price">{{ v.priceLabel.replace('/malam', '') }}</span>
+            <span class="booking__pill-price">
+              <s v-if="v.originalPrice" class="booking__price-old">Rp {{ v.originalPrice.toLocaleString('id-ID') }}</s>
+              {{ v.priceLabel.replace('/malam', '') }}
+            </span>
           </button>
         </div>
       </div>
@@ -24,7 +27,10 @@
           <div class="booking__villa-content">
             <h3>{{ selectedVilla.name }}</h3>
             <p class="booking__capacity">{{ selectedVilla.capacity }} tamu • {{ selectedVilla.bedrooms }} kamar</p>
-            <p class="booking__price">{{ selectedVilla.priceLabel }}</p>
+            <p class="booking__price">
+              <s v-if="selectedVilla.originalPrice" class="booking__price-old">Rp {{ selectedVilla.originalPrice.toLocaleString('id-ID') }}</s>
+              {{ selectedVilla.priceLabel }}
+            </p>
           </div>
         </div>
       </div>
@@ -676,6 +682,14 @@ formatDateDisplay(d) {
   color: #5b8def;
   font-weight: 500;
   margin-top: 1px;
+}
+
+.booking__price-old {
+  margin-right: 5px;
+  font-size: 0.8em;
+  font-weight: 500;
+  opacity: 0.7;
+  text-decoration: line-through;
 }
 
 .booking__villa {

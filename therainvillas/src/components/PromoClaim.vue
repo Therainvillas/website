@@ -6,6 +6,17 @@
       <p>Ikuti 3 langkah berikut. Setelah bukti terkirim, kode promo muncul <strong>secara acak</strong> dan hanya <strong>berlaku 2 menit</strong>.</p>
     </header>
 
+    <div class="claim__villa">
+      <label for="claim-villa">Pilih villa yang akan dipesan <span class="claim__req">*</span></label>
+      <select id="claim-villa" v-model="villaSlug">
+        <option value="">— Pilih villa —</option>
+        <option v-for="v in eligibleVillas" :key="v.id" :value="v.slug">
+          {{ v.name }} — {{ v.priceLabel.replace('/malam', '') }} (harga awal Rp {{ formatRupiah(v.originalPrice) }})
+        </option>
+      </select>
+      <p class="claim__villa-note">Kode promo hanya berlaku untuk villa dengan harga promo (harga awal dicoret). Villa tanpa harga coret tidak bisa klaim kode.</p>
+    </div>
+
     <div class="claim__grid">
       <div class="claim__step" :class="{ 'is-done': rated }">
         <span class="claim__num">1</span>
@@ -69,7 +80,8 @@
 </template>
 
 <script>
-import { MAPS_RATING_URL, PROOF_API, promos } from '../data/promos.js';
+import { MAPS_RATING_URL, PROOF_API, promos, isVillaPromoEligible } from '../data/promos.js';
+import { villas } from '../data/villas.js';
 
 const CLAIM_KEY = 'trv_promo_claimed';
 const CLAIM_TTL_MS = 2 * 60 * 1000; // kode berlaku 2 menit
@@ -88,6 +100,7 @@ export default {
       status: '',
       statusType: '',
       code: '',
+      villaSlug: '',
       claimTs: 0,
       remain: 0,
       zoom: false,
@@ -95,8 +108,14 @@ export default {
     };
   },
   computed: {
+    eligibleVillas() {
+      return villas.filter((v) => isVillaPromoEligible(v));
+    },
+    selectedVilla() {
+      return this.eligibleVillas.find((v) => v.slug === this.villaSlug) || null;
+    },
     canSubmit() {
-      return this.rated && !!this.dataUrl && !this.sending && !this.code;
+      return !!this.selectedVilla && this.rated && !!this.dataUrl && !this.sending && !this.code;
     },
     mmss() {
       const m = Math.floor(this.remain / 60);
@@ -104,16 +123,39 @@ export default {
       return `${m}:${s}`;
     },
     bookingHref() {
-      return this.code ? `/booking?promo=${encodeURIComponent(this.code)}` : '/booking';
+      if (!this.code) return '/booking';
+      const params = new URLSearchParams({ promo: this.code });
+      if (this.selectedVilla) params.set('villa', this.selectedVilla.name);
+      return `/booking?${params.toString()}`;
     },
   },
   mounted() {
+    this.readVillaFromQuery();
     this.restore();
   },
   beforeUnmount() {
     clearInterval(this.timer);
   },
   methods: {
+    formatRupiah(n) {
+      return (Number(n) || 0).toLocaleString('id-ID');
+    },
+    readVillaFromQuery() {
+      let slug = '';
+      try {
+        slug = new URLSearchParams(window.location.search).get('villa') || '';
+      } catch (e) { /* ignore */ }
+      if (!slug) return;
+      const eligible = this.eligibleVillas.find((v) => v.slug === slug);
+      if (eligible) {
+        this.villaSlug = eligible.slug;
+        return;
+      }
+      const any = villas.find((v) => v.slug === slug);
+      if (any) {
+        this.setStatus(`${any.name} tidak punya harga promo (harga coret), jadi tidak bisa klaim kode promo.`, 'err');
+      }
+    },
     // ---------- penyimpanan klaim (sinkron dengan BookingForm) ----------
     readClaims() {
       let claims = {};
@@ -367,6 +409,42 @@ export default {
   line-height: 1.7;
   max-width: 560px;
   margin: 0 auto;
+}
+.claim__villa {
+  max-width: 560px;
+  margin: 0 auto 18px;
+  text-align: left;
+}
+.claim__villa label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-dark, #0f172a);
+  margin-bottom: 6px;
+}
+.claim__req {
+  color: #dc2626;
+}
+.claim__villa select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-dark, #0f172a);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.claim__villa select:focus {
+  outline: none;
+  border-color: var(--color-accent, #5b8def);
+  box-shadow: 0 0 0 4px rgba(91, 141, 239, 0.1);
+}
+.claim__villa-note {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--color-gray, #64748b);
 }
 .claim__grid {
   display: grid;

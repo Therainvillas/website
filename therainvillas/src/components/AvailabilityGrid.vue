@@ -37,7 +37,10 @@
           <header class="avail-card__head">
             <h3 class="avail-card__name">{{ v.name }}</h3>
             <p class="avail-card__meta">{{ v.capacity }} tamu &#8226; {{ v.bedrooms }} kamar</p>
-            <p class="avail-card__price">{{ v.priceLabel }}</p>
+            <p class="avail-card__price">
+              <s v-if="v.originalPrice" class="avail-card__price-old">Rp {{ v.originalPrice.toLocaleString('id-ID') }}</s>
+              {{ v.priceLabel }}
+            </p>
           </header>
           <div class="avail-cal">
             <div class="avail-cal__weekdays">
@@ -507,6 +510,14 @@ export default {
   font-size: 1rem;
   font-weight: 700;
   color: white;
+}
+
+.avail-card__price-old {
+  margin-right: 6px;
+  font-size: 0.82em;
+  font-weight: 500;
+  opacity: 0.7;
+  text-decoration: line-through;
 }
 
 .avail-cal {

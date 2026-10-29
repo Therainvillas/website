@@ -81,7 +81,10 @@
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
-            <span class="vf-card__price">{{ villa.priceLabel || formatPrice(villa.price) }}</span>
+            <span class="vf-card__price">
+              <s v-if="villa.originalPrice && villa.originalPrice > villa.price" class="vf-card__price-old">{{ formatPrice(villa.originalPrice) }}</s>
+              <span>{{ villa.priceLabel || formatPrice(villa.price) }}</span>
+            </span>
           </div>
           <div class="vf-card__body">
             <h3 class="vf-card__title">{{ villa.name }}</h3>
@@ -488,6 +491,9 @@ export default {
   position: absolute;
   left: 14px;
   bottom: 14px;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
   padding: 7px 14px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -495,6 +501,12 @@ export default {
   color: #fff;
   background: rgba(91, 141, 239, 0.92);
   backdrop-filter: blur(4px);
+}
+
+.vf-card__price-old {
+  font-size: 0.78em;
+  font-weight: 600;
+  opacity: 0.78;
 }
 
 .vf-card__badge {

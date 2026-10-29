@@ -9,6 +9,7 @@ interface Props {
   image: string;
   price?: string | number;
   priceLabel?: string;
+  originalPrice?: number;
   badge?: string;
   capacity?: number;
   bedrooms?: number;
@@ -23,6 +24,7 @@ const {
   image,
   priceLabel,
   price,
+  originalPrice,
   badge,
   capacity = 0,
   bedrooms = 0,
@@ -33,6 +35,10 @@ const {
 const priceText = typeof price === 'number'
   ? formatPrice(price)
   : (price ?? priceLabel ?? 'Cek harga');
+const priceNumber = typeof price === 'number' ? price : null;
+const showOriginal = typeof originalPrice === 'number'
+  && (!priceNumber || originalPrice > priceNumber);
+const originalPriceText = showOriginal ? formatPrice(originalPrice) : '';
 const link = `/${slugify(name)}`;
 ---
 
@@ -40,7 +46,10 @@ const link = `/${slugify(name)}`;
   <a href={link} class="villa-card__media" aria-hidden="true" tabindex="-1">
     <img src={image} alt={name} width="1200" height="675" loading="lazy" decoding="async" />
     {badge && <span class="villa-card__badge">{badge}</span>}
-    <span class="villa-card__price">{priceText}</span>
+    <span class="villa-card__price">
+      {originalPriceText && <s class="villa-card__price-old">{originalPriceText}</s>}
+      <span>{priceText}</span>
+    </span>
   </a>
 
   <div class="villa-card__body">
@@ -112,6 +121,9 @@ const link = `/${slugify(name)}`;
     position: absolute;
     left: 14px;
     bottom: 14px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
     padding: 7px 14px;
     border-radius: 20px;
     font-size: 0.85rem;
@@ -119,6 +131,12 @@ const link = `/${slugify(name)}`;
     color: #fff;
     background: rgba(91, 141, 239, 0.92);
     backdrop-filter: blur(4px);
+  }
+
+  .villa-card__price-old {
+    font-size: 0.78em;
+    font-weight: 600;
+    opacity: 0.78;
   }
 
   .villa-card__badge {

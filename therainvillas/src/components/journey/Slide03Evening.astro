@@ -33,7 +33,10 @@ function getVillaImage(name, fallback) {
           <div class="evening__slide-meta">
             <span><img src="/icon/icon%20light/bed.png" alt="" class="evening__slide-meta-icon ti ti--light" loading="lazy" /><img src="/icon/icon%20dark/bedroom.png" alt="" class="evening__slide-meta-icon ti ti--dark" loading="lazy" /> {villa.bedrooms} kamar</span>
             <span><img src="/icon/icon%20light/groupp.png" alt="" class="evening__slide-meta-icon ti ti--light" loading="lazy" /><img src="/icon/icon%20dark/grup.png" alt="" class="evening__slide-meta-icon ti ti--dark" loading="lazy" /> {villa.capacity} tamu</span>
-            <span>{villa.priceLabel}</span>
+            <span>
+              {villa.originalPrice && <s class="evening__slide-price-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>}
+              {villa.priceLabel}
+            </span>
           </div>
           <a href={`/${slugify(villa.name)}`} class="evening__slide-cta">Lihat Detail</a>
         </div>
@@ -203,6 +206,13 @@ function getVillaImage(name, fallback) {
     width: 15px;
     height: 15px;
     vertical-align: -2px;
+  }
+
+  .evening__slide-price-old {
+    margin-right: 5px;
+    font-size: 0.85em;
+    opacity: 0.75;
+    text-decoration: line-through;
   }
 
   .evening__slide-cta {

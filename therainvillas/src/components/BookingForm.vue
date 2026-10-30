@@ -189,7 +189,7 @@
 
               <div v-if="promoGateOpen" class="bf__promo-gate">
                 <strong>🔒 Villa ini punya harga promo</strong>
-                <span>Klaim kode promo dulu lewat rating Google Maps. Tanpa kode promo yang valid, booking villa ini tidak bisa dilanjutkan.</span>
+                <span>Harga promo berlaku untuk malam Minggu–Kamis. Klaim kode promo dulu lewat rating Google Maps. Malam Jumat &amp; Sabtu tidak wajib klaim kode.</span>
                 <a :href="promoHref" class="bf__promo-gate-link">Klaim kode promo &rarr;</a>
               </div>
 
@@ -408,7 +408,7 @@
 </template>
 
 <script>
-import { getPromo, isPromoActive, isPromoBlockedForVilla, isVillaPromoEligible } from '../data/promos.js';
+import { getPromo, isPromoActive, isPromoBlockedForVilla, stayRequiresPromoClaim } from '../data/promos.js';
 import {
   getNightPrice,
   decPackageRangeError,
@@ -539,7 +539,7 @@ export default {
       return isPromoBlockedForVilla(this.promoApplied, this.selectedVilla);
     },
     requiresPromo() {
-      return isVillaPromoEligible(this.selectedVilla);
+      return stayRequiresPromoClaim(this.selectedVilla, this.form.checkIn, this.form.checkOut);
     },
     promoGateOpen() {
       return this.requiresPromo && !(this.promoApplied && !this.promoBlockedVilla);
@@ -1095,7 +1095,7 @@ export default {
         }
 
         if (this.promoGateOpen) {
-          this.error = `${this.form.villa} punya harga promo. Klaim kode promo dulu lewat halaman Promo (rating Google Maps) sebelum lanjut booking.`;
+          this.error = `${this.form.villa} punya harga promo untuk malam Minggu–Kamis. Klaim kode promo dulu lewat halaman Promo (rating Google Maps) sebelum lanjut booking.`;
           return false;
         }
       }

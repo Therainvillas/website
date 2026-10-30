@@ -14,7 +14,7 @@
           {{ v.name }} — {{ v.priceLabel.replace('/malam', '') }} (harga awal Rp {{ formatRupiah(v.originalPrice) }})
         </option>
       </select>
-      <p class="claim__villa-note">Kode promo hanya diperlukan untuk malam Minggu–Kamis pada villa dengan harga promo (harga awal dicoret). Malam Jumat &amp; Sabtu tidak wajib klaim kode.</p>
+      <p class="claim__villa-note">Kode promo hanya diperlukan untuk malam Minggu–Kamis pada villa dengan harga promo (harga awal dicoret). Malam Jumat, Sabtu, dan 20–31 Desember tidak wajib klaim kode.</p>
     </div>
 
     <div class="claim__grid">

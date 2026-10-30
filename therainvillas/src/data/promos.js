@@ -6,7 +6,7 @@ export const promos = [
     description: 'Harga promo (harga awal dicoret) bisa diklaim dengan memberikan rating Google Maps dan mengirim bukti rating.',
     excluded: ['Rjs Cottage 1', 'Rjs Cottage 2', 'Rjs Cottage 3', 'Villa Kaca 1', 'Villa Kaca 2'],
     terms: [
-      'Berlaku untuk malam Minggu–Kamis pada villa dengan harga promo (harga awal dicoret). Malam Jumat & Sabtu tidak wajib klaim kode.',
+      'Berlaku untuk malam Minggu–Kamis pada villa dengan harga promo (harga awal dicoret). Malam Jumat, Sabtu, dan 20–31 Desember tidak wajib klaim kode.',
       'Wajib memberi rating Google Maps dan mengirimkan bukti rating.',
       'Kode promo muncul secara acak setelah bukti terkirim dan hanya berlaku selama 2 menit.',
       'Kode promo hanya membuka akses ke harga promo, bukan potongan tambahan.',
@@ -64,7 +64,8 @@ export function isVillaPromoEligible(villa) {
 
 /**
  * Klaim kode promo hanya diwajibkan untuk malam Minggu–Kamis (harga promo).
- * Malam Jumat & Sabtu memakai harga normal, jadi tidak perlu klaim kode.
+ * Malam Jumat & Sabtu serta tanggal 20–31 Desember memakai harga normal,
+ * jadi tidak perlu klaim kode.
  * Bila tanggal belum dipilih, anggap perlu klaim agar kode tetap diminta.
  */
 export function stayRequiresPromoClaim(villa, checkIn, checkOut) {
@@ -75,6 +76,10 @@ export function stayRequiresPromoClaim(villa, checkIn, checkOut) {
   if (!(end > start)) return false;
   for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
     const day = d.getDay();
+    const date = d.getDate();
+    const month = d.getMonth();
+    // 20–31 Desember: harga khusus, tidak wajib klaim kode
+    if (month === 11 && date >= 20) continue;
     if (day !== 5 && day !== 6) return true; // ada malam Minggu–Kamis
   }
   return false;

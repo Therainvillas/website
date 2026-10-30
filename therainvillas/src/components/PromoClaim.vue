@@ -2,7 +2,7 @@
   <section class="claim" id="klaim">
     <header class="claim__head">
       <span class="claim__badge">Klaim di Halaman Ini</span>
-      <h3>Cara Klaim Kode Promo Oktober</h3>
+      <h3>Cara Klaim Harga Promo</h3>
       <p>Ikuti 3 langkah berikut. Setelah bukti terkirim, kode promo muncul <strong>secara acak</strong> dan hanya <strong>berlaku 2 menit</strong>.</p>
     </header>
 
@@ -85,7 +85,7 @@ import { villas } from '../data/villas.js';
 
 const CLAIM_KEY = 'trv_promo_claimed';
 const CLAIM_TTL_MS = 2 * 60 * 1000; // kode berlaku 2 menit
-const PROMO_CODE = (promos[0] && promos[0].code) || 'OKTOBER10';
+const PROMO_CODE = (promos[0] && promos[0].code) || 'TRVPROMO';
 
 export default {
   name: 'PromoClaim',
@@ -275,7 +275,7 @@ export default {
       for (let i = 0; i < 6; i += 1) {
         s += chars[Math.floor(Math.random() * chars.length)];
       }
-      return `OKT-${s}`;
+      return `TRV-${s}`;
     },
     async submit() {
       if (!this.canSubmit) return;

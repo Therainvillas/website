@@ -7,37 +7,36 @@ import PromoClaim from '../components/PromoClaim.vue';
 ---
 
 <Layout
-  title="Promo & Voucher Villa | The Rain Villas"
-  description="Klaim promo Oktober 2026 di The Rain Villas — diskon hingga 10% dengan kode hasil klaim setelah memberi rating Google Maps."
+  title="Klaim Harga Promo Villa | The Rain Villas"
+  description="Klaim harga promo The Rain Villas dengan memberi rating Google Maps dan mengirim bukti rating. Harga awal dicoret khusus villa yang sedang promo."
 >
   <Header />
   <main class="promo-page">
     <div class="container">
       <header class="promo-page__head">
         <span class="promo-page__badge">Promo &amp; Voucher</span>
-        <h1>Promo &amp; Voucher</h1>
-        <p>Sedang berlangsung: <strong>Promo Oktober 10%</strong> — klaim kode di halaman ini (wajib rating Google Maps).</p>
+        <h1>Klaim Harga Promo</h1>
+        <p>Harga promo (harga awal dicoret) bisa diklaim dengan memberi rating Google Maps dan mengirim bukti rating.</p>
       </header>
 
-      <div class="promo-empty">
-        <img src="/promo/promo oktober.webp" alt="Promo Oktober 10% - Kode OKTOBER10" class="promo-page__img" />
-        <h2>Promo Oktober Spesial</h2>
+      <section class="promo-card">
+        <h2>Harga Promo Spesial</h2>
         <div class="promo-page__terms">
+          <p class="promo-page__terms-title">Syarat &amp; Ketentuan</p>
           <ul>
-            <li>Hanya berlaku untuk <strong>villa dengan harga promo</strong> (harga awal dicoret). Villa tanpa harga coret tidak bisa klaim kode.</li>
-            <li>Wajib memberikan <strong>rating Google Maps</strong> dan mengirim <strong>bukti rating</strong>.</li>
-            <li>Setelah mengirim bukti rating, <strong>kode promo akan muncul secara acak dan hanya berlaku selama 2 menit</strong>.</li>
-            <li>Berlaku untuk pemesanan Oktober 2026.</li>
-            <li><strong>Tidak berlaku</strong> untuk Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2.</li>
-            <li>Potongan dihitung otomatis di formulir booking.</li>
+            <li>Berlaku hanya untuk villa dengan harga promo (harga awal dicoret). Villa tanpa harga coret tidak perlu klaim kode.</li>
+            <li>Wajib memberi rating Google Maps dan mengirimkan bukti rating.</li>
+            <li>Kode promo muncul secara acak setelah bukti terkirim dan hanya berlaku selama 2 menit.</li>
+            <li>Kode promo hanya membuka akses ke harga promo, bukan potongan tambahan.</li>
+            <li>Tidak berlaku untuk Rjs Cottage 1, Rjs Cottage 2, Rjs Cottage 3, Villa Kaca 1, dan Villa Kaca 2.</li>
             <li>Tidak dapat digabungkan dengan promo atau voucher lain.</li>
           </ul>
         </div>
         <div class="promo-page__actions">
           <a href="#klaim" class="promo-page__btn promo-page__btn--primary">Klaim Kode Promo</a>
-          <a href="/" class="promo-page__btn">Kembali ke Beranda</a>
+          <a href="/our-villas" class="promo-page__btn">Lihat Villa</a>
         </div>
-      </div>
+      </section>
 
       <PromoClaim client:load />
     </div>
@@ -86,31 +85,18 @@ import PromoClaim from '../components/PromoClaim.vue';
     font-size: 0.95rem;
   }
 
-  .promo-empty {
+  .promo-card {
     text-align: center;
     background: var(--color-panel);
-    border: 1px dashed var(--color-border);
+    border: 1px solid var(--color-border);
     border-radius: 22px;
-    padding: 60px 24px;
-    margin-bottom: 48px;
+    padding: 48px 24px;
+    margin-bottom: 8px;
   }
-  .promo-empty__icon {
-    font-size: 2.6rem;
-    display: block;
-    margin-bottom: 14px;
-  }
-  .promo-empty h2 {
+  .promo-card h2 {
     font-size: 1.4rem;
     color: var(--color-dark);
     margin-bottom: 6px;
-  }
-  .promo-page__img {
-    max-width: 520px;
-    width: 100%;
-    height: auto;
-    border-radius: 16px;
-    margin-bottom: 18px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
   }
   .promo-page__actions {
     display: flex;
@@ -140,6 +126,14 @@ import PromoClaim from '../components/PromoClaim.vue';
     border-radius: 14px;
     padding: 20px 24px;
   }
+  .promo-page__terms-title {
+    margin: 0 0 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--color-dark);
+  }
   .promo-page__terms ul {
     margin: 0;
     padding-left: 18px;
@@ -157,6 +151,9 @@ import PromoClaim from '../components/PromoClaim.vue';
     }
     .promo-page__head h1 {
       font-size: 1.8rem;
+    }
+    .promo-card {
+      padding: 36px 18px;
     }
   }
 </style>

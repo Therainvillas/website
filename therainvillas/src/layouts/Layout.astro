@@ -1,7 +1,5 @@
 ---
 import '../styles/global.css';
-import PromoPopup from '../components/PromoPopup.vue';
-import { promos, isPromoActive } from '../data/promos.js';
 
 export interface Props {
   title?: string;
@@ -28,12 +26,6 @@ const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 const isHome = Astro.url.pathname === '/';
-
-// Popup promo muncul ~0,7 s setelah halaman tampil dan gambarnya jadi elemen
-// LCP di halaman yang heronya memakai CSS background (background CSS tidak
-// dihitung sebagai LCP). Preload supaya gambarnya tidak baru diminta telat.
-const promoAktif =
-  !Astro.url.pathname.startsWith('/admin') && promos.some((p) => isPromoActive(p));
 
 // Satu gtag.js saja (milik Google Ads). GA4 dikirim lewat config tambahan di
 // blok yang sama, jadi tidak ada permintaan kedua ke googletagmanager.com.
@@ -111,10 +103,6 @@ const gaBootstrap = `
       <link rel="preload" as="image" href={preloadImage.lg} media="(min-width: 769px)" fetchpriority="high" />
     )}
 
-    {promoAktif && (
-      <link rel="preload" as="image" href="/promo/promo oktober.webp" fetchpriority="low" />
-    )}
-
     <meta property="og:locale" content="id_ID" />
     <meta property="og:site_name" content="The Rain Villas" />
     <meta property="og:title" content={title} />
@@ -184,6 +172,5 @@ const gaBootstrap = `
     <script>
       import '../scripts/analytics.js';
     </script>
-    <PromoPopup client:load />
   </body>
 </html>

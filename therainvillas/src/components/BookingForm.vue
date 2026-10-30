@@ -291,7 +291,7 @@
             </div>
 
             <div v-if="nightCount > 0 && promoApplied && !promoBlockedVilla" class="bf__amount-hint">
-              <span>Saran nominal transfer (sudah termasuk diskon): <strong>Rp {{ totalAfterPromo }}</strong></span>
+              <span>Saran nominal transfer (harga promo): <strong>Rp {{ totalAfterPromo }}</strong></span>
               <button type="button" class="bf__amount-fill" @click="fillAmount">Isi otomatis</button>
             </div>
 
@@ -995,7 +995,7 @@ export default {
       if (isNaN(until.getTime())) return null;
       const checkInEnd = new Date(this.form.checkIn + 'T23:59:59');
       if (checkInEnd > until) {
-        return `Promo ${promo.label} hanya berlaku untuk booking s.d. ${this.formatValidUntil(promo.validUntil)}. Pilih tanggal menginap sebelum Oktober untuk memakai kode ini.`;
+        return `Promo ${promo.label} hanya berlaku untuk booking s.d. ${this.formatValidUntil(promo.validUntil)}. Pilih tanggal menginap sebelum masa berlaku promo berakhir.`;
       }
       return null;
     },

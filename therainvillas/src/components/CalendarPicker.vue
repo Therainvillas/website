@@ -49,7 +49,7 @@
       </div>
 
       <div v-if="selectedVilla && !loading" class="booking__calendar">
-        <div class="calendar" :style="{ backgroundImage: `url(${selectedVilla.image})` }">
+        <div class="calendar" :style="{ backgroundImage: `url(${calendarBg})` }">
           <div class="calendar__overlay"></div>
           <div class="calendar__nav">
             <button @click="prevMonth">&larr;</button>
@@ -135,6 +135,7 @@ import {
   DEC_PACKAGE_CHECKIN,
   DEC_PACKAGE_CHECKOUT,
 } from '../data/seasonPrices.js';
+import { calendarThemeImage } from '../data/calendarThemes.js';
 
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
@@ -200,6 +201,9 @@ export default {
   computed: {
     selectedVilla() {
       return this.villas.find((v) => v.id === Number(this.selectedId));
+    },
+    calendarBg() {
+      return calendarThemeImage(this.selectedVilla);
     },
     monthLabel() {
       const months = [
@@ -761,7 +765,7 @@ formatDateDisplay(d) {
 .calendar__overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.5) 100%);
   z-index: 0;
 }
 

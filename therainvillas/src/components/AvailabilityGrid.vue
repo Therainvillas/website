@@ -30,8 +30,14 @@
         v-for="v in villas"
         :key="v.id"
         class="avail-card"
-        :style="{ backgroundImage: `url(${v.image})` }"
       >
+        <img
+          class="avail-card__bg"
+          :src="calendarImage(v)"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
         <div class="avail-card__overlay"></div>
         <div class="avail-card__inner">
           <header class="avail-card__head">
@@ -93,6 +99,7 @@
 
 <script>
 import { getNightPrice, isDecPackageNight, toDateStr, hasDecPackage } from '../data/seasonPrices.js';
+import { calendarThemeImage } from '../data/calendarThemes.js';
 
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
@@ -101,6 +108,11 @@ const MONTHS = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
   "Juli", "Agustus", "September", "Oktober", "November", "Desember",
 ];
+
+// Background tema kalender per villa
+function calendarImage(villa) {
+  return calendarThemeImage(villa);
+}
 
 export default {
   data() {
@@ -154,6 +166,7 @@ export default {
     },
   },
   methods: {
+    calendarImage,
     dayPrice(v, date) {
       return getNightPrice(v, date);
     },
@@ -472,10 +485,19 @@ export default {
   overflow: hidden;
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background-size: cover;
-  background-position: center;
+  background: #1f2937;
   display: flex;
   flex-direction: column;
+}
+
+.avail-card__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
 }
 
 .avail-card__overlay {

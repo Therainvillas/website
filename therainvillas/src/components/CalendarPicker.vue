@@ -1063,7 +1063,7 @@ formatDateDisplay(d) {
   }
 
   .calendar {
-    padding: 16px;
+    padding: 12px;
   }
 
   .calendar__grid {

@@ -668,7 +668,7 @@ export default {
   }
 
   .vf__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .vf-card__media {

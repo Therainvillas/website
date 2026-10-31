@@ -475,7 +475,7 @@ export default {
 
 .avail__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 20px;
 }
 
@@ -702,12 +702,24 @@ a.avail-cell.avail-cell--package:hover {
 
 @media (max-width: 768px) {
   .avail__grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
 
   .avail__month {
     min-width: 130px;
+  }
+}
+
+/* Layar sangat kecil: rapatkan padding kartu supaya sel kalender tetap nyaman disentuh. */
+@media (max-width: 380px) {
+  .avail-card__inner {
+    padding: 16px 14px;
+    gap: 12px;
+  }
+
+  .avail-cal__cells {
+    gap: 3px;
   }
 }
 </style>

@@ -274,5 +274,16 @@ const link = `/${slugify(name)}`;
     .villa-card__media {
       height: 190px;
     }
+
+    /* Judul villa juga berfungsi sebagai link, beri area tap yang nyaman. */
+    .villa-card__title a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+    }
+
+    .villa-card__stats {
+      margin-bottom: 14px;
+    }
   }
 </style>

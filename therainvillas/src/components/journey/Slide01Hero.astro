@@ -44,7 +44,7 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
       Villa Murah, View Mewah di Puncak
     </div>
     <h1 class="journey-hero__title reveal reveal--delay-2">
-      Vacation with Family and Gathering with Friends
+      <span class="scramble" data-text="Vacation with Family and Gathering with Friends">Vacation with Family and Gathering with Friends</span>
     </h1>
     <p class="journey-hero__subtitle reveal reveal--delay-3">
       Pilih villa, cek jadwal, lalu booking dengan proses yang jelas. Cocok untuk
@@ -354,6 +354,18 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
     text-wrap: balance;
   }
 
+  .scramble {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Cinzel', serif;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scramble {
+      animation: none !important;
+    }
+  }
+
   .journey-hero__subtitle {
     max-width: 610px;
     color: rgba(255, 255, 255, 0.82);
@@ -557,3 +569,53 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
     }
   }
 </style>
+
+<script>
+  // Scramble text effect: setiap huruf berganti karakter acak sebelum
+  // berakhir menampilkan teks asli, di-resolve secara berurutan dari kiri ke kanan.
+  (() => {
+    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+    const TICK = 40;
+
+    const scramble = (el) => {
+      const finalText = el.dataset.text || el.textContent || '';
+      const len = finalText.length;
+      if (!len) return;
+
+      const resolved = new Array(len).fill(false);
+      const current = new Array(len).fill('');
+      let nextResolve = 0;
+
+      const tick = () => {
+        const batch = Math.max(1, Math.floor(len * 0.08));
+        for (let b = 0; b < batch && nextResolve < len; b++, nextResolve++) {
+          resolved[nextResolve] = true;
+        }
+
+        for (let i = 0; i < len; i++) {
+          current[i] = resolved[i] ? finalText[i] : CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
+
+        el.textContent = current.join('');
+
+        if (nextResolve < len) {
+          setTimeout(tick, TICK);
+        } else {
+          el.textContent = finalText;
+        }
+      };
+
+      tick();
+    };
+
+    const init = () => {
+      document.querySelectorAll('.scramble').forEach(scramble);
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

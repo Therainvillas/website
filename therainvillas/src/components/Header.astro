@@ -221,20 +221,28 @@ const isLinkActive = (href: string) => {
         hideT = 0;
       }
       dockHeader?.classList.add('show');
+      dockHeader?.classList.remove('peek');
     }
 
     function hideSoon(ms) {
-      if (!desktopDock.matches || hideT || !dockHeader?.classList.contains('show')) return;
-      hideT = window.setTimeout(() => {
+      if (hideT) return;
+      if (desktopDock.matches) {
+        hideT = window.setTimeout(() => {
+          hideT = 0;
+          if (!inside && !near && !focused) {
+            dockHeader?.classList.remove('show');
+            dockHeader?.classList.add('peek');
+          }
+        }, ms);
+      } else {
+        // On mobile the dock stays visible; don't auto-hide.
         hideT = 0;
-        if (desktopDock.matches && !inside && !near && !focused) {
-          dockHeader?.classList.remove('show');
-        }
-      }, ms);
+      }
     }
 
     function syncDockMode(event) {
       if (!event.matches) {
+        // Mobile: dock stays visible.
         showDock();
       } else if (!inside && !near && !focused) {
         hideSoon(2600);
@@ -697,6 +705,17 @@ const isLinkActive = (href: string) => {
   .dock-header.show .shelf {
     transform: none;
     opacity: 1;
+  }
+
+  .dock-header.peek .shelf {
+    transform: translateY(75%);
+    opacity: 1;
+  }
+
+  @media (min-width: 861px) {
+    .dock-header.peek .shelf {
+      transform: translateY(calc(75% + env(safe-area-inset-bottom, 0px)));
+    }
   }
 
   .shelf ul {

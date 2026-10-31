@@ -30,9 +30,30 @@
   --font-secondary: "Work Sans", "Inter", sans-serif;
   --font-display: "Fraunces", "Playfair Display", Georgia, serif;
   --font-cursive: "Dancing Script", cursive;
+
+  /* Reference tokens */
+  --b0: #eef1ee;
+  --b1: #dce8e2;
+  --b2: #e4edf1;
+  --b3: #d6e4dd;
+  --text: #1e2927;
+  --sub: #5a6763;
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-line: rgba(255, 255, 255, 0.85);
+  --sep: rgba(30, 40, 38, 0.18);
+  --dot: rgba(30, 40, 38, 0.7);
+  --t1: #fdfdfb;
+  --t2: #e7e5df;
+  --ic: #27302d;
+  --a1: #4f9d86;
+  --a2: #25695a;
+  --tip: rgba(38, 38, 42, 0.88);
+  --base: 48px;
+  --gap: 6px;
 }
 
-html[data-theme="dark"] {
+html[data-theme="dark"],
+:root[data-theme="dark"] {
   --color-primary: #8fd0bd;
   --color-primary-dark: #bde7dc;
   --color-accent: #d9a15f;
@@ -43,7 +64,7 @@ html[data-theme="dark"] {
   --color-gray: #a8b5af;
   --color-muted: #879690;
   --color-gray-light: #17221f;
-  --color-light: #0e1513;
+  --color-light: #0e1412;
   --color-white: #111c19;
   --color-panel: #14201d;
   --color-border: #263a35;
@@ -52,6 +73,53 @@ html[data-theme="dark"] {
   --shadow-soft: 0 16px 42px rgba(0, 0, 0, 0.28);
   --shadow-lift: 0 24px 62px rgba(0, 0, 0, 0.36);
   color-scheme: dark;
+
+  /* Reference tokens dark */
+  --b0: #0e1412;
+  --b1: #17241f;
+  --b2: #121c21;
+  --b3: #15251f;
+  --text: #eef2f0;
+  --sub: #9aa8a3;
+  --glass: rgba(30, 36, 34, 0.55);
+  --glass-line: rgba(255, 255, 255, 0.12);
+  --sep: rgba(255, 255, 255, 0.2);
+  --dot: rgba(255, 255, 255, 0.85);
+  --t1: #4b514f;
+  --t2: #2c302f;
+  --ic: #f1f4f2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]),
+  html:not([data-theme="light"]) {
+    --b0: #0e1412;
+    --b1: #17241f;
+    --b2: #121c21;
+    --b3: #15251f;
+    --text: #eef2f0;
+    --sub: #9aa8a3;
+    --glass: rgba(30, 36, 34, 0.55);
+    --glass-line: rgba(255, 255, 255, 0.12);
+    --sep: rgba(255, 255, 255, 0.2);
+    --dot: rgba(255, 255, 255, 0.85);
+    --t1: #4b514f;
+    --t2: #2c302f;
+    --ic: #f1f4f2;
+  }
+}
+
+/* ===== View Transition Mode Gelap ===== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
 }
 
 *,
@@ -78,6 +146,66 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(60% 50% at 18% 18%, var(--b1), transparent 62%),
+    radial-gradient(50% 50% at 85% 28%, var(--b2), transparent 62%),
+    radial-gradient(80% 60% at 50% 105%, var(--b3), transparent 62%),
+    var(--b0);
+  background-color: var(--b0);
+}
+
+/* Langit berbintang saat mode gelap */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+body::before {
+  background:
+    radial-gradient(1.5px 1.5px at 8% 14%, #fff, transparent),
+    radial-gradient(1px 1px at 22% 38%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 35% 9%, #fff, transparent),
+    radial-gradient(1px 1px at 48% 27%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 63% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 77% 33%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 91% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 14% 62%, #fff, transparent),
+    radial-gradient(1px 1px at 86% 58%, #fff, transparent);
+}
+
+body::after {
+  background:
+    radial-gradient(2px 2px at 16% 26%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 29% 18%, #fff, transparent),
+    radial-gradient(2px 2px at 55% 8%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 70% 22%, #fff, transparent),
+    radial-gradient(2px 2px at 84% 41%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 6% 47%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 42% 52%, #fff, transparent);
+}
+
+:root[data-theme="dark"] body::before,
+html[data-theme="dark"] body::before {
+  opacity: 0.9;
+}
+
+:root[data-theme="dark"] body::after,
+html[data-theme="dark"] body::after {
+  opacity: 1;
+  animation: twinkle 3.4s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  50% { opacity: 0.3; }
 }
 
 body::selection {

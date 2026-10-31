@@ -1,16 +1,67 @@
 ---
 const navLinks = [
-  { href: '/', label: 'Beranda' },
-  { href: '/our-villas', label: 'Villa' },
-  { href: '/tentang', label: 'Tentang' },
-  { href: '/availability', label: 'Jadwal' },
-  { href: '/promo', label: 'Promo' },
-  { href: '/booking', label: 'Booking', track: 'booking_click' },
-  { href: '/#lokasi', label: 'Lokasi' },
-  { href: '/admin', label: 'Admin' },
+  {
+    id: 'beranda',
+    href: '/',
+    label: 'Beranda',
+    icon: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/>',
+  },
+  {
+    id: 'villa',
+    href: '/our-villas',
+    label: 'Villa',
+    icon: '<path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/>',
+  },
+  {
+    id: 'tentang',
+    href: '/tentang',
+    label: 'Tentang',
+    icon: '<circle cx="12" cy="12" r="9.5"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  },
+  {
+    id: 'jadwal',
+    href: '/availability',
+    label: 'Jadwal',
+    icon: '<rect x="3" y="4.5" width="18" height="17" rx="2.5"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/>',
+  },
+  {
+    id: 'promo',
+    href: '/promo',
+    label: 'Promo',
+    icon: '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1" fill="#fff"/>',
+  },
+  {
+    id: 'booking',
+    href: '/booking',
+    label: 'Booking',
+    track: 'booking_click',
+    icon: '<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2M13 17v2M13 11v2"/>',
+  },
+  {
+    id: 'lokasi',
+    href: '/#lokasi',
+    label: 'Lokasi',
+    icon: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>',
+  },
+  {
+    id: 'admin',
+    href: '/admin',
+    label: 'Admin',
+    sep: true,
+    icon: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+  },
 ];
+
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isLinkActive = (href: string) => {
+  if (href.includes('#')) return false;
+  const path = href.replace(/\/+$/, '') || '/';
+  if (path === '/') return currentPath === '/';
+  return currentPath.startsWith(path);
+};
 ---
 
+<!-- Top Bar: Logo & Actions -->
 <header class="header" id="main-header" data-header-theme="light">
   <div class="container header__inner">
     <a href="/" class="header__logo" aria-label="The Rain Villas beranda">
@@ -25,114 +76,362 @@ const navLinks = [
       </span>
     </a>
 
-    <nav class="header__nav" id="mainNav" aria-label="Navigasi utama">
-      <ul class="header__nav-list">
-        {navLinks.map((link) => (
-          <li>
-            <a href={link.href} class="header__nav-link" data-track={link.track}>{link.label}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-
     <div class="header__actions">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Ganti tema" title="Ganti tema">
-        <span class="theme-toggle__track" aria-hidden="true">
-          <span class="theme-toggle__knob"></span>
-        </span>
+      <!-- Referensi Switch Dark Mode Beranimasi -->
+      <button class="theme" id="theme" type="button" role="switch" aria-checked="false" aria-label="Mode gelap">
+        <span class="sky"></span>
+        <span class="stars"><i></i><i></i><i></i><i></i><i></i></span>
+        <span class="clouds"><i></i><i></i></span>
+        <span class="knob"><b></b><b></b><b></b></span>
       </button>
 
       <a href="https://wa.me/6282125492037" target="_blank" rel="nofollow" class="btn btn--whatsapp header__cta">
         Hubungi Kami
       </a>
     </div>
-
-    <button class="header__burger" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mainNav">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
   </div>
 </header>
 
+<!-- Dock Navbar Bawah Sesuai Referensi -->
+<header class="dock-header show" id="dockHeader">
+  <nav class="shelf" id="shelf" aria-label="Navigasi utama">
+    <ul>
+      {navLinks.map((link) => (
+        <>
+          {link.sep && <li class="sep" aria-hidden="true" />}
+          <li class={`item ${isLinkActive(link.href) ? 'active' : ''}`} data-id={link.id}>
+            <a
+              class="icon"
+              href={link.href}
+              aria-label={link.label}
+              data-track={link.track}
+              aria-current={isLinkActive(link.href) ? 'page' : undefined}
+            >
+              <span class="tile">
+                <svg viewBox="0 0 24 24" set:html={link.icon} />
+              </span>
+              <span class="tip">{link.label}</span>
+            </a>
+          </li>
+        </>
+      ))}
+    </ul>
+  </nav>
+</header>
+<button class="handle" id="handle" type="button" aria-label="Tampilkan menu"></button>
+
 <script is:inline>
   (() => {
+    // 1. Observer logo kontras pada section gelap
     const header = document.getElementById('main-header');
-    const toggle = document.getElementById('menuToggle');
-    const nav = document.getElementById('mainNav');
-    const themeToggle = document.getElementById('themeToggle');
     const darkSelectors = ['.journey-hero', '.evening', '.reviews-marquee', '.satisfaction'];
-
-    function setMenu(open) {
-      nav?.classList.toggle('header__nav--open', open);
-      toggle?.classList.toggle('header__burger--active', open);
-      toggle?.setAttribute('aria-expanded', String(open));
-      document.documentElement.classList.toggle('nav-lock', open);
-    }
-
     function isDarkSection(el) {
       return darkSelectors.some((sel) => el.matches(sel));
     }
 
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      try { localStorage.setItem('therainvillas_theme', theme); } catch (e) {}
-      syncThemeIcon();
+    const sections = document.querySelectorAll('section');
+    if (header && sections.length) {
+      const observer = new IntersectionObserver((entries) => {
+        let maxRatio = 0;
+        let theme = 'light';
+        entries.forEach((entry) => {
+          if (entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            theme = isDarkSection(entry.target) ? 'dark' : 'light';
+          }
+        });
+        header.setAttribute('data-header-theme', theme);
+      }, { threshold: [0, 0.18, 0.36, 0.54, 0.72, 0.9, 1] });
+
+      sections.forEach((s) => observer.observe(s));
     }
 
-    function syncThemeIcon() {
-      if (!themeToggle) return;
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      themeToggle.classList.toggle('theme-toggle--dark', isDark);
+    // 2. Mode Gelap dengan Animasi Lingkaran Membesar (View Transition)
+    const root = document.documentElement;
+    const themeBtn = document.getElementById('theme');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function setTheme(t) {
+      root.setAttribute('data-theme', t);
+      if (themeBtn) {
+        themeBtn.setAttribute('aria-checked', String(t === 'dark'));
+      }
+      try {
+        localStorage.setItem('therainvillas_theme', t);
+      } catch (e) {}
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      syncThemeIcon();
+    const initialTheme = root.getAttribute('data-theme') || 'light';
+    if (themeBtn) {
+      themeBtn.setAttribute('aria-checked', String(initialTheme === 'dark'));
+    }
 
-      const sections = document.querySelectorAll('section');
-      if (header && sections.length) {
-        const observer = new IntersectionObserver((entries) => {
-          let maxRatio = 0;
-          let theme = 'light';
+    themeBtn?.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
 
-          entries.forEach((entry) => {
-            if (entry.intersectionRatio > maxRatio) {
-              maxRatio = entry.intersectionRatio;
-              theme = isDarkSection(entry.target) ? 'dark' : 'light';
-            }
-          });
+      if (!document.startViewTransition || reduceMotion) {
+        setTheme(next);
+        return;
+      }
 
-          header.setAttribute('data-header-theme', theme);
-        }, { threshold: [0, 0.18, 0.36, 0.54, 0.72, 0.9, 1] });
+      const r = themeBtn.getBoundingClientRect();
+      const x = r.left + r.width / 2;
+      const y = r.top + r.height / 2;
+      const end = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
 
-        sections.forEach((section) => observer.observe(section));
+      const vt = document.startViewTransition(() => {
+        setTheme(next);
+      });
+
+      vt.ready.then(() => {
+        root.animate(
+          {
+            clipPath: [
+              `circle(0px at ${x}px ${y}px)`,
+              `circle(${end}px at ${x}px ${y}px)`
+            ]
+          },
+          {
+            duration: 850,
+            easing: 'cubic-bezier(.4, 0, .2, 1)',
+            pseudoElement: '::view-transition-new(root)'
+          }
+        );
+      });
+    });
+
+    // 3. Auto-hide Dock & Handle
+    const dockHeader = document.getElementById('dockHeader');
+    const shelf = document.getElementById('shelf');
+    const handle = document.getElementById('handle');
+    const desktopDock = window.matchMedia('(min-width: 861px)');
+    const ZONE = 32;
+    let hideT = 0;
+    let inside = false;
+    let near = false;
+    let focused = false;
+
+    function showDock() {
+      if (hideT) {
+        clearTimeout(hideT);
+        hideT = 0;
+      }
+      dockHeader?.classList.add('show');
+    }
+
+    function hideSoon(ms) {
+      if (!desktopDock.matches || hideT || !dockHeader?.classList.contains('show')) return;
+      hideT = window.setTimeout(() => {
+        hideT = 0;
+        if (desktopDock.matches && !inside && !near && !focused) {
+          dockHeader?.classList.remove('show');
+        }
+      }, ms);
+    }
+
+    function syncDockMode(event) {
+      if (!event.matches) {
+        showDock();
+      } else if (!inside && !near && !focused) {
+        hideSoon(2600);
+      }
+    }
+
+    if (desktopDock.addEventListener) {
+      desktopDock.addEventListener('change', syncDockMode);
+    } else {
+      desktopDock.addListener(syncDockMode);
+    }
+
+    shelf?.addEventListener('pointerenter', () => {
+      inside = true;
+      showDock();
+    });
+
+    shelf?.addEventListener('pointerleave', (e) => {
+      inside = false;
+      hideSoon(e.pointerType === 'touch' ? 3500 : 450);
+    });
+
+    document.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      near = e.clientY >= window.innerHeight - ZONE;
+      if (near) {
+        showDock();
+      } else if (!inside) {
+        hideSoon(450);
       }
     });
 
-    toggle?.addEventListener('click', () => {
-      setMenu(!(nav?.classList.contains('header__nav--open')));
+    document.documentElement.addEventListener('mouseleave', () => {
+      near = false;
+      hideSoon(300);
     });
 
-    nav?.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => setMenu(false));
+    handle?.addEventListener('click', () => {
+      showDock();
+      hideSoon(3500);
     });
 
-    themeToggle?.addEventListener('click', () => {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      applyTheme(isDark ? 'light' : 'dark');
+    document.addEventListener('focusin', (e) => {
+      if (
+        (shelf?.contains(e.target) || e.target === handle) &&
+        e.target.matches(':focus-visible')
+      ) {
+        focused = true;
+        showDock();
+      }
+    });
+
+    document.addEventListener('focusout', () => {
+      focused = false;
+      hideSoon(600);
+    });
+
+    if (desktopDock.matches) hideSoon(2600);
+    else showDock();
+
+    // 4. Efek Magnifikasi macOS Dock
+    const items = shelf ? Array.from(shelf.querySelectorAll('.item')) : [];
+    const icons = items.map((li) => li.querySelector('.icon'));
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    let base = 48;
+    let max = 79;
+    let radius = 135;
+    let cx = 0;
+    let offs = [];
+    let cur = [];
+    let mouseX = null;
+    let raf = 0;
+
+    function applyDock() {
+      items.forEach((li, i) => {
+        const s = `${cur[i]}px`;
+        li.style.width = s;
+        if (icons[i]) {
+          icons[i].style.width = s;
+          icons[i].style.height = s;
+        }
+      });
+    }
+
+    function measureDock() {
+      items.forEach((li, i) => {
+        li.style.width = '';
+        if (icons[i]) {
+          icons[i].style.width = '';
+          icons[i].style.height = '';
+        }
+      });
+      base = items[0]?.getBoundingClientRect().width || 48;
+      max = (reduceMotion || !fine.matches) ? base : base * 1.65;
+      radius = base * 2.8;
+      cur = items.map(() => base);
+      applyDock();
+      if (shelf) {
+        const r = shelf.getBoundingClientRect();
+        cx = r.left + r.width / 2;
+        offs = items.map((li) => {
+          const b = li.getBoundingClientRect();
+          return b.left + b.width / 2 - cx;
+        });
+      }
+    }
+
+    function frameDock() {
+      let moving = false;
+      items.forEach((li, i) => {
+        let t = base;
+        if (mouseX !== null) {
+          const d = Math.abs(mouseX - (cx + offs[i]));
+          if (d < radius) {
+            t = base + (max - base) * Math.pow(Math.cos((d / radius) * (Math.PI / 2)), 2);
+          }
+        }
+        const diff = t - cur[i];
+        if (Math.abs(diff) > 0.2) {
+          cur[i] += diff * 0.3;
+          moving = true;
+        } else {
+          cur[i] = t;
+        }
+      });
+      applyDock();
+      raf = moving ? requestAnimationFrame(frameDock) : 0;
+    }
+
+    function kickDock() {
+      if (!raf) raf = requestAnimationFrame(frameDock);
+    }
+
+    shelf?.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch' || max === base) return;
+      mouseX = e.clientX;
+      kickDock();
+    });
+
+    shelf?.addEventListener('pointerleave', () => {
+      mouseX = null;
+      kickDock();
     });
 
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 860) setMenu(false);
+      mouseX = null;
+      measureDock();
     });
+
+    icons.forEach((a, i) => {
+      if (!a) return;
+      a.addEventListener('click', (e) => {
+        const li = items[i];
+        a.classList.remove('bounce');
+        void a.offsetWidth;
+        a.classList.add('bounce');
+        li.classList.add('show-tip');
+        setTimeout(() => li.classList.remove('show-tip'), 1300);
+
+        const targetId = li.dataset.id;
+        if (targetId === 'lokasi') {
+          const currentP = window.location.pathname.replace(/\/+$/, '') || '/';
+          if (currentP === '/') {
+            e.preventDefault();
+            const lokasiEl = document.getElementById('lokasi');
+            if (lokasiEl) {
+              lokasiEl.scrollIntoView({ behavior: 'smooth' });
+            }
+            window.history.pushState(null, '', '#lokasi');
+            items.forEach((item) => item.classList.remove('active'));
+            li.classList.add('active');
+          }
+        }
+      });
+      a.addEventListener('animationend', () => a.classList.remove('bounce'));
+    });
+
+    function syncActiveHash() {
+      if (window.location.hash === '#lokasi') {
+        items.forEach((li) => {
+          const on = li.dataset.id === 'lokasi';
+          li.classList.toggle('active', on);
+          const a = li.querySelector('.icon');
+          if (on) a?.setAttribute('aria-current', 'page');
+          else a?.removeAttribute('aria-current');
+        });
+      }
+    }
+    window.addEventListener('hashchange', syncActiveHash);
+    syncActiveHash();
+
+    measureDock();
   })();
 </script>
 
 <style>
-  :global(html.nav-lock) {
-    overflow: hidden;
-  }
-
+  /* ===== Header Top Bar ===== */
   .header {
     position: sticky;
     top: 0;
@@ -150,17 +449,17 @@ const navLinks = [
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
   }
 
-  html[data-theme="dark"] .header[data-header-theme="light"] {
-    background: rgba(14, 21, 19, 0.82);
-    border-bottom-color: var(--color-border);
+  html[data-theme="dark"] .header {
+    background: rgba(14, 20, 18, 0.75);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
   }
 
   .header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 72px;
-    gap: 18px;
+    min-height: 70px;
+    gap: 16px;
   }
 
   .header__logo {
@@ -178,7 +477,7 @@ const navLinks = [
   .header__logo-img {
     display: block;
     width: auto;
-    height: 42px;
+    height: 40px;
     object-fit: contain;
     transition: opacity 0.25s ease;
   }
@@ -202,218 +501,459 @@ const navLinks = [
     opacity: 1;
   }
 
-  .header__nav {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .header__nav-list {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .header__nav-link {
-    display: inline-flex;
-    align-items: center;
-    min-height: 38px;
-    padding: 0 13px;
-    border-radius: var(--radius-pill);
-    color: var(--color-gray-dark);
-    font-size: 0.88rem;
-    font-weight: 700;
-    letter-spacing: 0;
-    transition: color 0.2s ease, background 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .header__nav-link:hover {
-    color: var(--color-primary);
-    background: rgba(var(--color-primary-rgb), 0.07);
-  }
-
-  .header[data-header-theme="dark"] .header__nav-link {
-    color: rgba(255, 255, 255, 0.88);
-  }
-
-  .header[data-header-theme="dark"] .header__nav-link:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.12);
-  }
-
   .header__actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
     flex: 0 0 auto;
   }
 
   .header__cta {
-    min-height: 42px;
+    min-height: 40px;
     padding: 0 18px;
     font-size: 0.86rem;
   }
 
-  .theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 32px;
-    border: 1px solid rgba(var(--color-primary-rgb), 0.18);
-    border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.68);
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-  }
-
-  .theme-toggle__track {
+  /* ===== Tombol Theme (Mode Gelap/Terang Beranimasi Sesuai Referensi) ===== */
+  .theme {
     position: relative;
-    width: 32px;
-    height: 18px;
-    border-radius: var(--radius-pill);
-    background: rgba(23, 68, 60, 0.14);
-  }
-
-  .theme-toggle__knob {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(23, 68, 60, 0.08);
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-
-  .theme-toggle--dark .theme-toggle__knob {
-    transform: translateX(14px);
-    background: var(--color-accent);
-  }
-
-  .header[data-header-theme="dark"] .theme-toggle,
-  html[data-theme="dark"] .theme-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.16);
-  }
-
-  .header__burger {
-    display: none;
-    width: 42px;
-    height: 42px;
-    border: 1px solid rgba(var(--color-primary-rgb), 0.16);
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.68);
+    width: 56px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 99px;
+    overflow: hidden;
     cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 5px;
+    background: #5cb8ff;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.4), 0 6px 16px rgba(0, 0, 0, 0.22);
+    -webkit-tap-highlight-color: transparent;
+    flex: 0 0 auto;
   }
 
-  .header__burger span {
-    display: block;
-    width: 18px;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--color-dark);
-    transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
+  .theme:focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
   }
 
-  .header[data-header-theme="dark"] .header__burger {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.16);
+  .theme .sky,
+  .theme .sky::after {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.7s ease;
   }
 
-  .header[data-header-theme="dark"] .header__burger span {
-    background: #fff;
+  .theme .sky {
+    background: linear-gradient(180deg, #4aa8ff, #bfe8ff);
   }
 
-  .header__burger--active span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .header__burger--active span:nth-child(2) {
+  .theme .sky::after {
+    content: "";
+    background: linear-gradient(180deg, #080c26, #2b2366);
     opacity: 0;
   }
 
-  .header__burger--active span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
+  :root[data-theme="dark"] .theme .sky::after,
+  html[data-theme="dark"] .theme .sky::after {
+    opacity: 1;
   }
 
-  @media (max-width: 1020px) {
-    .header__nav-link {
-      padding: 0 9px;
-      font-size: 0.82rem;
+  .theme .stars i {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transform: translateY(-10px) scale(0.4);
+    transition: opacity 0.5s ease 0.15s, transform 0.6s ease 0.15s;
+  }
+
+  .theme .stars i:nth-child(1) { left: 10px; top: 7px; }
+  .theme .stars i:nth-child(2) { left: 18px; top: 18px; width: 1.5px; height: 1.5px; }
+  .theme .stars i:nth-child(3) { left: 25px; top: 8px; }
+  .theme .stars i:nth-child(4) { left: 13px; top: 22px; width: 1.5px; height: 1.5px; }
+  .theme .stars i:nth-child(5) { left: 32px; top: 20px; width: 1.5px; height: 1.5px; }
+
+  :root[data-theme="dark"] .theme .stars i,
+  html[data-theme="dark"] .theme .stars i {
+    opacity: 1;
+    transform: none;
+    animation: theme-twinkle 2.6s ease-in-out infinite;
+  }
+
+  :root[data-theme="dark"] .theme .stars i:nth-child(even),
+  html[data-theme="dark"] .theme .stars i:nth-child(even) {
+    animation-delay: -1.3s;
+  }
+
+  @keyframes theme-twinkle {
+    50% { opacity: 0.3; }
+  }
+
+  .theme .clouds i {
+    position: absolute;
+    border-radius: 99px;
+    background: #fff;
+    opacity: 0.95;
+    transition: transform 0.7s cubic-bezier(0.5, 0, 0.3, 1), opacity 0.5s ease;
+  }
+
+  .theme .clouds i:nth-child(1) { width: 22px; height: 8px; right: 5px; bottom: 2px; }
+  .theme .clouds i:nth-child(2) { width: 15px; height: 7px; right: 20px; bottom: 8px; opacity: 0.7; }
+
+  :root[data-theme="dark"] .theme .clouds i,
+  html[data-theme="dark"] .theme .clouds i {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+
+  .theme .knob {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff3a8, #ffc83d 55%, #ff9a1f);
+    box-shadow: 0 0 0 4px rgba(255, 214, 90, 0.28), 0 0 16px 4px rgba(255, 190, 50, 0.75);
+    transform: translateX(0) rotate(0deg);
+    transition: transform 0.8s cubic-bezier(0.3, 1.35, 0.4, 1), box-shadow 0.6s ease;
+  }
+
+  .theme .knob::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #f7f9ff, #c9d0e3 60%, #9aa3bd);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .theme .knob b {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(120, 130, 160, 0.45);
+    opacity: 0;
+    transition: opacity 0.5s ease 0.2s;
+  }
+
+  .theme .knob b:nth-child(1) { width: 5px; height: 5px; left: 12px; top: 5px; }
+  .theme .knob b:nth-child(2) { width: 4px; height: 4px; left: 5px; top: 12px; }
+  .theme .knob b:nth-child(3) { width: 3px; height: 3px; left: 14px; top: 15px; }
+
+  :root[data-theme="dark"] .theme .knob,
+  html[data-theme="dark"] .theme .knob {
+    transform: translateX(26px) rotate(360deg);
+    box-shadow: 0 0 0 4px rgba(200, 210, 255, 0.14), 0 0 14px 2px rgba(190, 205, 255, 0.45);
+  }
+
+  :root[data-theme="dark"] .theme .knob::before,
+  :root[data-theme="dark"] .theme .knob b,
+  html[data-theme="dark"] .theme .knob::before,
+  html[data-theme="dark"] .theme .knob b {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme .knob,
+    .theme .knob::before,
+    .theme .knob b,
+    .theme .sky::after,
+    .theme .stars i,
+    .theme .clouds i {
+      transition: none;
+      animation: none !important;
+    }
+  }
+
+  /* ===== Dock Navbar Bawah (Persis Sesuai Referensi) ===== */
+  .dock-header {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 120;
+    display: flex;
+    justify-content: center;
+    padding: 0 10px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    pointer-events: none;
+  }
+
+  .shelf {
+    pointer-events: auto;
+    display: inline-flex;
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid var(--glass-line);
+    border-radius: 22px;
+    box-shadow: 0 10px 30px rgba(20, 30, 28, 0.16), 0 0 0 0.5px rgba(20, 30, 28, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transform: translateY(calc(100% + 40px + env(safe-area-inset-bottom, 0px)));
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2, 0.85, 0.25, 1), opacity 0.35s ease;
+  }
+
+  .dock-header.show .shelf {
+    transform: none;
+    opacity: 1;
+  }
+
+  .shelf ul {
+    list-style: none;
+    margin: 0;
+    padding: 8px 10px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--gap, 6px);
+  }
+
+  .item {
+    position: relative;
+    height: var(--base, 48px);
+    width: var(--base, 48px);
+  }
+
+  .sep {
+    width: 1px;
+    height: calc(var(--base, 48px) * 0.82);
+    margin: 4px 4px 0;
+    background: var(--sep);
+    border-radius: 1px;
+  }
+
+  .icon {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    display: block;
+    width: var(--base, 48px);
+    height: var(--base, 48px);
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .tile {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 22.5%;
+    background: linear-gradient(165deg, var(--t1), var(--t2));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 0 0 1px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.16);
+  }
+
+  .tile::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 52% 0;
+    background: linear-gradient(rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0));
+  }
+
+  .tile svg {
+    position: relative;
+    z-index: 1;
+    width: 54%;
+    height: 54%;
+    fill: none;
+    stroke: var(--ic);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.25s ease;
+  }
+
+  .icon:focus-visible .tile {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+
+  /* Status Aktif Minimalis Beraksen Emerald */
+  .tile::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(165deg, var(--a1), var(--a2));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .item.active .tile::before {
+    opacity: 1;
+  }
+
+  .item.active .tile svg {
+    stroke: #fff;
+  }
+
+  .tile svg circle[fill] {
+    fill: var(--ic);
+  }
+
+  .item.active .tile svg circle[fill] {
+    fill: #fff;
+  }
+
+  /* Tooltip Label Menu */
+  .tip {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    transform: translate(-50%, 4px);
+    padding: 5px 12px;
+    border-radius: 9px;
+    background: var(--tip);
+    color: #fff;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .tip::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    transform: translateX(-50%) rotate(45deg);
+    border-radius: 2px;
+  }
+
+  .icon:hover .tip,
+  .icon:focus-visible .tip,
+  .item.show-tip .tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  /* Indikator Titik Aktif */
+  .item.active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: calc(var(--base, 48px) + 5px);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--dot);
+    transform: translateX(-50%);
+  }
+
+  /* Animasi Pantulan Ikon saat Diklik */
+  .icon.bounce {
+    animation: dock-bounce 0.9s cubic-bezier(0.3, 0.6, 0.4, 1);
+  }
+
+  @keyframes dock-bounce {
+    0%, 100% { transform: translateY(0); }
+    18% { transform: translateY(-16px); }
+    38% { transform: translateY(0); }
+    56% { transform: translateY(-9px); }
+    74% { transform: translateY(0); }
+    88% { transform: translateY(-3px); }
+  }
+
+  /* Handle Garis Bawah untuk Membuka Dock */
+  .handle {
+    position: fixed;
+    left: 50%;
+    bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 119;
+    width: 140px;
+    height: 32px;
+    transform: translateX(-50%);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.3s ease;
+  }
+
+  .handle::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 9px;
+    width: 46px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--dot);
+    opacity: 0.55;
+    transform: translateX(-50%);
+    transition: opacity 0.3s ease;
+  }
+
+  .dock-header.show + .handle {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .handle:focus-visible {
+    outline: none;
+  }
+
+  .handle:focus-visible::before {
+    opacity: 1;
+    outline: 2px solid var(--dot);
+    outline-offset: 4px;
+  }
+
+  /* Responsif Layar Kecil (Mobile) */
+  @media (max-width: 600px) {
+    :root {
+      --base: clamp(28px, calc((100vw - 90px) / 8), 44px);
+      --gap: 5px;
+    }
+    .shelf {
+      border-radius: 20px;
+    }
+    .shelf ul {
+      padding: 7px 8px 13px;
+    }
+    .tip {
+      font-size: 12px;
+      padding: 4px 10px;
+    }
+    .icon::before {
+      content: "";
+      position: absolute;
+      inset: -6px -2px;
     }
   }
 
   @media (max-width: 860px) {
     .header__inner {
-      min-height: 68px;
+      min-height: 60px;
     }
-
     .header__actions {
-      margin-left: auto;
+      gap: 10px;
     }
-
     .header__cta {
-      display: none;
-    }
-
-    .header__burger {
       display: inline-flex;
+      min-height: 36px;
+      padding: 0 12px;
+      font-size: 0.8rem;
     }
+  }
 
-    .header__nav {
-      position: fixed;
-      top: 68px;
-      left: 16px;
-      right: 16px;
-      display: block;
-      padding: 12px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-md);
-      background: rgba(251, 252, 250, 0.96);
-      box-shadow: var(--shadow-lift);
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .header__nav--open {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    html[data-theme="dark"] .header__nav,
-    .header[data-header-theme="dark"] .header__nav {
-      background: rgba(14, 21, 19, 0.98);
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .header__nav-list {
-      align-items: stretch;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .header__nav-link {
-      width: 100%;
-      justify-content: space-between;
-      min-height: 44px;
-      padding: 0 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.96rem;
-    }
-
-    .theme-toggle {
-      width: 52px;
-      height: 40px;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    .icon.bounce { animation: none; }
+    .tip { transition: none; }
+    .shelf, .handle, .handle::before { transition: none; }
   }
 </style>

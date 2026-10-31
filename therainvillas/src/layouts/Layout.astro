@@ -120,7 +120,11 @@ const gaBootstrap = `
         try {
           var t = localStorage.getItem("therainvillas_theme");
           var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-          if (t === "dark" || (!t && prefersDark)) document.documentElement.setAttribute("data-theme", "dark");
+          if (t === "dark" || (!t && prefersDark)) {
+            document.documentElement.setAttribute("data-theme", "dark");
+          } else {
+            document.documentElement.setAttribute("data-theme", "light");
+          }
         } catch (e) {}
       })();
     </script>

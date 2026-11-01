@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
 
+Content-Signal: search=yes, ai-train=no
+
 Sitemap: https://therainvillas.com/sitemap-index.xml

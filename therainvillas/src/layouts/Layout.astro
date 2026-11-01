@@ -46,6 +46,8 @@ const gaBootstrap = `
   <head>
     <meta charset="utf-8" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="alternate" type="text/markdown" href="/" title="Markdown version" />
+    <link rel="llms-txt" href="/llms.txt" />
     <script is:inline>
       document.documentElement.classList.replace('no-js', 'js');
     </script>
@@ -140,10 +142,19 @@ const gaBootstrap = `
     {isHome && (
       <script type="application/ld+json" set:html={JSON.stringify({
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": ["Organization", "LocalBusiness"],
         "name": "The Rain Villas",
         "url": "https://therainvillas.com",
         "logo": "https://therainvillas.com/logo%20trv2.png",
+        "telephone": "+6282125492037",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Kp. Ciburial Cibarengkok, RT.01 RW.05, Tugu Utara",
+          "addressLocality": "Cisarua",
+          "addressRegion": "Jawa Barat",
+          "postalCode": "16750",
+          "addressCountry": "ID"
+        },
         "contactPoint": {
           "@type": "ContactPoint",
           "telephone": "+6282125492037",
@@ -151,6 +162,11 @@ const gaBootstrap = `
           "areaServed": "ID",
           "availableLanguage": "Indonesian",
         },
+        "sameAs": [
+          "https://www.instagram.com/therainvillas",
+          "https://www.tiktok.com/@therainvillas",
+          "https://wa.me/6282125492037"
+        ]
       })} />
     )}
     {jsonLd.map((schema) => (

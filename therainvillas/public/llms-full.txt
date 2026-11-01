@@ -1,0 +1,59 @@
+# The Rain Villas - Full Information
+
+## Overview
+Website: https://therainvillas.com
+Type: Villa rental business (Lodging)
+Location: Cisarua, Puncak, Bogor, West Java, Indonesia
+Capacity: 20-50 guests per villa
+Total Villas: 30+
+
+## All Pages
+- Home: https://therainvillas.com/
+- Villas: https://therainvillas.com/our-villas
+- Availability: https://therainvillas.com/availability
+- Booking: https://therainvillas.com/booking
+- Promo: https://therainvillas.com/promo
+- About: https://therainvillas.com/tentang
+- Contact: https://therainvillas.com/kontak
+- Terms: https://therainvillas.com/syarat-ketentuan
+
+## Features
+- Private Pool
+- Karaoke
+- Billiard
+- Gazebo
+- BBQ Area
+- Kitchen Set
+- Smart TV & WiFi
+- Parking
+- Mountain View (select villas)
+
+## Booking Policy
+- DP: minimum 30% of villa price
+- Full payment: due H-3 before check-in
+- Reschedule: max H-7 before check-in with additional DP
+- DP is non-refundable
+- Late payment forfeits DP
+- Check-out: 12.00 WIB (late checkout fee Rp 500.000)
+- Extra guest: Rp 50.000/person if over capacity
+- Prohibited: alcohol, drugs, sharp weapons, pets
+- Quiet hours until 22.00 WIB
+
+## Contact
+Phone/WhatsApp: +62 821-2549-2037
+Email: therainvillas@gmail.com
+Instagram: https://www.instagram.com/therainvillas
+TikTok: https://www.tiktok.com/@therainvillas
+Address: Kp. Ciburial Cibarengkok, RT.01 RW.05, Tugu Utara, Kec. Cisarua, Kab. Bogor, Jawa Barat 16750
+
+## Structured Data
+- Organization/LocalBusiness schema on homepage
+- LodgingBusiness schema on villa pages
+- BreadcrumbList on villa pages
+- FAQ schema available
+
+## Technical
+- Sitemap: https://therainvillas.com/sitemap-index.xml
+- Robots: https://therainvillas.com/robots.txt
+- llms.txt: https://therainvillas.com/llms.txt
+- MCP Server Card: https://therainvillas.com/.well-known/mcp/server-card.json

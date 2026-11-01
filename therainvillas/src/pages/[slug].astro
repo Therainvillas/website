@@ -79,11 +79,14 @@ const villaJsonLd = [
     "image": villaShareImage,
     "description": villa.description,
     "url": villaUrl,
+    "telephone": "+6282125492037",
     "priceRange": villa.priceLabel,
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Kp. Ciburial Cibarengkok, RT.01 RW.05, Tugu Utara",
       "addressLocality": "Cisarua",
       "addressRegion": "Jawa Barat",
+      "postalCode": "16750",
       "addressCountry": "ID",
     },
     "geo": {
@@ -96,6 +99,11 @@ const villaJsonLd = [
       "@type": "LocationFeatureSpecification",
       "name": a,
     })),
+    "sameAs": [
+      "https://www.instagram.com/therainvillas",
+      "https://www.tiktok.com/@therainvillas",
+      "https://wa.me/6282125492037"
+    ]
   },
   {
     "@context": "https://schema.org",
@@ -174,6 +182,26 @@ const villaFaq = [
   preloadImage={{ sm: villaHeroSm[villa.name], lg: heroImage }}
 >
   <main class="villa-detail">
+    <script is:inline>
+      if (typeof window !== 'undefined' && 'modelContext' in navigator) {
+        try {
+          navigator.modelContext.registerTool({
+            name: 'book_this_villa',
+            description: 'Booking villa ini via WhatsApp',
+            inputSchema: {
+              type: 'object',
+              properties: {
+                message: { type: 'string', description: 'Pesan tambahan' }
+              }
+            },
+            execute: async () => {
+              window.open('https://wa.me/6282125492037?text=' + encodeURIComponent('Halo The Rain Villas, saya ingin memesan villa ini'), '_blank');
+              return { success: true };
+            }
+          });
+        } catch (e) {}
+      }
+    </script>
     <section class="vd-showcase" id="top">
       <div class="vd-showcase__media">
         <picture>

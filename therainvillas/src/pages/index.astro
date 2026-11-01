@@ -62,6 +62,54 @@ const homeFaq = [
 
 <Layout title="Sewa Villa Murah di Puncak, Private Pool & View Mewah | The Rain Villas" description="Cari sewa villa murah di Puncak untuk keluarga & gathering? Tersedia 30+ pilihan villa private pool kapasitas 20-50 orang. Booking aman, harga transparan!">
   <Header />
+  <script is:inline>
+    if (typeof window !== 'undefined' && 'modelContext' in navigator) {
+      try {
+        navigator.modelContext.registerTool({
+          name: 'check_availability',
+          description: 'Cek ketersediaan villa The Rain Villas untuk tanggal tertentu',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              checkIn: { type: 'string', description: 'Tanggal check-in (YYYY-MM-DD)' },
+              checkOut: { type: 'string', description: 'Tanggal check-out (YYYY-MM-DD)' },
+              guests: { type: 'number', description: 'Jumlah tamu' }
+            },
+            required: ['checkIn']
+          },
+          execute: async () => {
+            window.location.href = '/availability';
+            return { success: true, message: 'Mengarahkan ke halaman cek ketersediaan' };
+          }
+        });
+        navigator.modelContext.registerTool({
+          name: 'book_villa',
+          description: 'Booking villa The Rain Villas via WhatsApp',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              villaName: { type: 'string', description: 'Nama villa' },
+              message: { type: 'string', description: 'Pesan booking' }
+            }
+          },
+          execute: async (input) => {
+            const msg = encodeURIComponent(input.message || 'Halo The Rain Villas, saya ingin booking villa');
+            window.open('https://wa.me/6282125492037?text=' + msg, '_blank');
+            return { success: true, message: 'Membuka WhatsApp untuk booking' };
+          }
+        });
+        navigator.modelContext.registerTool({
+          name: 'get_villa_list',
+          description: 'Lihat daftar villa The Rain Villas',
+          inputSchema: { type: 'object', properties: {} },
+          execute: async () => {
+            window.location.href = '/our-villas';
+            return { success: true, message: 'Menampilkan daftar villa' };
+          }
+        });
+      } catch (e) {}
+    }
+  </script>
   <Slide01Hero />
 
   <section class="section featured-villas">

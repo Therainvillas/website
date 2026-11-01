@@ -17,6 +17,10 @@ export default defineConfig({
     vue(),
     sitemap({
       filter: (page) => !page.includes('/admin/') && !page.includes('/villas/'),
+      serialize(item) {
+        item.lastmod = new Date().toISOString();
+        return item;
+      },
     }),
   ],
   image: {

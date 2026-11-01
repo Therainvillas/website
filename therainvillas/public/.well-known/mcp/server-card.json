@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "2025-06-18",
+  "name": "The Rain Villas MCP Server",
+  "version": "1.0.0",
+  "description": "MCP server for The Rain Villas - villa rental booking information, availability, and contact.",
+  "documentationUrl": "https://therainvillas.com/llms.txt",
+  "websiteUrl": "https://therainvillas.com",
+  "icons": [
+    {
+      "src": "https://therainvillas.com/logo%20trv2.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    }
+  ],
+  "endpoints": [
+    {
+      "type": "http",
+      "url": "https://therainvillas.com/api/mcp"
+    }
+  ],
+  "capabilities": {
+    "tools": true,
+    "resources": true,
+    "prompts": false
+  },
+  "tools": [
+    {
+      "name": "search_villas",
+      "description": "Search available villas by capacity, date, or location"
+    },
+    {
+      "name": "check_availability",
+      "description": "Check villa availability for specific dates"
+    },
+    {
+      "name": "get_villa_details",
+      "description": "Get detailed information about a specific villa"
+    },
+    {
+      "name": "contact_booking",
+      "description": "Get booking contact information via WhatsApp"
+    }
+  ],
+  "authentication": {
+    "type": "none"
+  }
+}

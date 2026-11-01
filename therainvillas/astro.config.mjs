@@ -5,7 +5,7 @@ import { villas } from './src/data/villas.js';
 
 export default defineConfig({
   site: 'https://therainvillas.com',
-  trailingSlash: 'always',
+  trailingSlash: 'ignore',
   redirects: {
     ...Object.fromEntries(
       villas.map((villa) => [`/villas/${villa.id}`, `/${villa.slug}`]),

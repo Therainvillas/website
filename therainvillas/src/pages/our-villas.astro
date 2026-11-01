@@ -4,8 +4,13 @@ import Header from '../components/Header.astro';
 import VillaFilter from '../components/VillaFilter.vue';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription } from '../lib/seo.js';
 import { villas } from '../data/villas';
 import { villaCovers, villaHeroCovers } from '../data/covers';
+
+const ourVillasTitle = makeTitle('Daftar Villa Puncak: Harga, Kapasitas, Fasilitas');
+const ourVillasDesc = makeDescription('Bandingkan harga, kapasitas, dan fasilitas villa private pool di Puncak Cisarua untuk keluarga & gathering. Cek ketersediaan & booking via WhatsApp.');
 
 const filterData = villas.map(v => ({
   id: v.id,
@@ -27,7 +32,8 @@ const firstCover = villaCovers[villas[0].name] ?? villas[0].image;
 const firstCoverSm = villaHeroCovers[villas[0].name] ?? firstCover;
 ---
 
-<Layout title="Our Villas | Koleksi Villa Modern di Puncak | The Rain Villas" description="Lihat koleksi villa modern kami di Puncak. Lengkap dengan fasilitas, harga, dan foto berkualitas." preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
+<Layout title={ourVillasTitle} description={ourVillasDesc} preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
+  <Seo title={ourVillasTitle} description={ourVillasDesc} />
   <Header />
 
   <section class="page-hero">

@@ -43,9 +43,18 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-  <FilesMatch "^index\.html$">
+  <FilesMatch "^(admin/|index\.html)$">
     Header append Link '</llms.txt>; rel="alternate"; type="text/plain", </>; rel="canonical"'
   </FilesMatch>
+  <FilesMatch "^admin/">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </FilesMatch>
+</IfModule>
+
+# WWW to non-WWW redirect (adjust if DNS/hosting differs; test after deploy)
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTP_HOST} ^www\.therainvillas\.com$ [NC]
+  RewriteRule ^(.*)$ https://therainvillas.com/$1 [R=301,L]
 </IfModule>
 
 <IfModule mod_rewrite.c>

@@ -1,0 +1,41 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  image?: string;
+  ogType?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  canonical,
+  image = '/Agave/Cover.webp',
+  ogType = 'website',
+  noindex = false,
+} = Astro.props;
+
+const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
+const canonicalUrl = canonical || new URL(Astro.url.pathname, siteRoot).href;
+const shareImage = new URL(image, siteRoot).href;
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+<meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+
+<meta property="og:locale" content="id_ID" />
+<meta property="og:site_name" content="The Rain Villas" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={shareImage} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={shareImage} />

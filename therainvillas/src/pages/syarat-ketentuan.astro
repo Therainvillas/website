@@ -3,9 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription } from '../lib/seo.js';
+
+const skTitle = makeTitle('Syarat & Ketentuan Booking Villa');
+const skDesc = makeDescription('Syarat dan ketentuan booking, DP, pelunasan, reschedule, check-in/check-out villa The Rain Villas Puncak.');
 ---
 
-<Layout title="Syarat & Ketentuan | The Rain Villas" description="Syarat dan ketentuan booking The Rain Villas.">
+<Layout title={skTitle} description={skDesc}>
+  <Seo title={skTitle} description={skDesc} />
   <Header />
   <main class="page">
     <section class="page-hero">

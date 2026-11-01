@@ -1,9 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import AdminDashboard from '../../components/AdminDashboard.vue';
+import Seo from '../../components/Seo.astro';
 ---
 
 <Layout title="Admin Dashboard | The Rain Villas" description="Panel admin untuk mengelola jadwal villa" noindex>
+  <Seo title="Admin Dashboard | The Rain Villas" description="Dashboard admin The Rain Villas" noindex={true} />
   <div class="page">
     <div class="container">
       <AdminDashboard client:load />

@@ -14,7 +14,14 @@ import FaqSection from '../components/FaqSection.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import VillaCard from '../components/VillaCard.astro';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription, countVillas, getMinPrice, formatIdr } from '../lib/seo.js';
 import { villas } from '../data/villas';
+
+const villaCount = countVillas(villas);
+const minPrice = getMinPrice(villas);
+const homeTitle = makeTitle('Sewa Villa Murah Puncak Private Pool');
+const homeDesc = makeDescription(`${villaCount} villa private pool di Cisarua, kapasitas 20-50 tamu${minPrice ? `, mulai Rp${formatIdr(minPrice)}/malam` : ', mulai Rp1 jt/malam'}. Cek jadwal & booking via WhatsApp.`);
 
 const allVillas = villas;
 // Hanya tampilkan 6 villa pertama di halaman utama (sisanya lewat "Lihat Semua Villa").
@@ -60,7 +67,8 @@ const homeFaq = [
 ];
 ---
 
-<Layout title="Sewa Villa Murah di Puncak, Private Pool & View Mewah | The Rain Villas" description="Cari sewa villa murah di Puncak untuk keluarga & gathering? Tersedia 30+ pilihan villa private pool kapasitas 20-50 orang. Booking aman, harga transparan!">
+<Layout title={homeTitle} description={homeDesc}>
+  <Seo title={homeTitle} description={homeDesc} />
   <Header />
   <script is:inline>
     if (typeof window !== 'undefined' && 'modelContext' in navigator) {

@@ -3,9 +3,15 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription } from '../lib/seo.js';
+
+const kontakTitle = makeTitle('Kontak The Rain Villas Puncak');
+const kontakDesc = makeDescription('Hubungi The Rain Villas untuk konsultasi booking villa private pool di Cisarua, Puncak, Bogor via WhatsApp, Instagram, atau email.');
 ---
 
-<Layout title="Kontak | The Rain Villas" description="Hubungi The Rain Villas untuk konsultasi booking villa di Puncak, Cisarua, Bogor.">
+<Layout title={kontakTitle} description={kontakDesc}>
+  <Seo title={kontakTitle} description={kontakDesc} />
   <Header />
   <main class="page">
     <section class="page-hero">

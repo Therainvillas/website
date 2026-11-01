@@ -6,14 +6,20 @@ import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import AboutSection from '../components/AboutSection.astro';
 import TeamSection from '../components/TeamSection.astro';
 import LocationSection from '../components/LocationSection.astro';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription } from '../lib/seo.js';
 import { villas } from '../data/villas';
 import { villaCovers, villaHeroCovers } from '../data/covers';
 
 const firstCover = villaCovers[villas[0].name] ?? villas[0].image;
 const firstCoverSm = villaHeroCovers[villas[0].name] ?? firstCover;
+
+const tentangTitle = makeTitle('Tentang The Rain Villas Puncak');
+const tentangDesc = makeDescription('Kenali The Rain Villas, penyedia sewa villa private pool di Cisarua, Puncak, Bogor untuk keluarga, gathering, dan staycation.');
 ---
 
-<Layout title="Tentang Kami | The Rain Villas" description="Kenali The Rain Villas — manajemen villa murah dan modern di Puncak, Cisarua, Bogor." preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
+<Layout title={tentangTitle} description={tentangDesc} preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
+  <Seo title={tentangTitle} description={tentangDesc} />
   <Header />
 
   <section class="page-hero">

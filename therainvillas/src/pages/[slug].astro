@@ -7,6 +7,8 @@ import VillaReviews from '../components/VillaReviews.vue';
 import VillaSorotan from '../components/VillaSorotan.vue';
 import FaqSection from '../components/FaqSection.astro';
 import LocationMap from '../components/LocationMap.vue';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription, formatIdr } from '../lib/seo.js';
 import { villas } from '../data/villas';
 import { locations } from '../data/locations';
 import { villaCovers, villaHeroSm } from '../data/covers';
@@ -172,15 +174,30 @@ const villaFaq = [
     a: 'Check-out wajib dilakukan pukul 12.00. Lebih dari jam tersebut dikenakan charge Rp 500.000.',
   },
 ];
+
+const hasPrivatePool = Array.isArray(villa.amenities) && villa.amenities.some((a) => String(a).toLowerCase().includes('pool'));
+const weekdayPrice = Array.isArray(villa.pricingLabels)
+  ? villa.pricingLabels.find((p) => /min|senin|minggu.?kamis/i.test(p.label))?.price || villa.pricingLabels[0]?.price || villa.price
+  : villa.price;
+const saturdayPrice = Array.isArray(villa.pricingLabels)
+  ? villa.pricingLabels.find((p) => /sabtu/i.test(p.label))?.price || villa.price
+  : villa.price;
+const topAmenities = Array.isArray(villa.amenities) ? villa.amenities.slice(0, 3).join(', ') : '';
+
+const villaDetailTitle = makeTitle(`Villa ${villa.name.replace('Villa ', '')} Puncak: ${villa.bedrooms} Kamar${hasPrivatePool ? ', Private Pool' : ''}, ${villa.capacity} Tamu`);
+const villaDetailDesc = makeDescription(
+  `${villa.name}: ${villa.bedrooms} kamar, maks ${villa.capacity} tamu${topAmenities ? `, ${topAmenities}` : ''}. ${Array.isArray(villa.pricingLabels) && villa.pricingLabels.length ? `Weekday Rp${formatIdr(weekdayPrice)}, Sabtu Rp${formatIdr(saturdayPrice)}.` : `Mulai Rp${formatIdr(weekdayPrice)}/malam.`} Cek jadwal & booking via WhatsApp.`
+);
 ---
 
 <Layout
-  title={`${villa.name} | The Rain Villas`}
-  description={villa.description}
+  title={villaDetailTitle}
+  description={villaDetailDesc}
   image={heroImage}
   jsonLd={villaJsonLd}
   preloadImage={{ sm: villaHeroSm[villa.name], lg: heroImage }}
 >
+  <Seo title={villaDetailTitle} description={villaDetailDesc} image={heroImage} />
   <main class="villa-detail">
     <script is:inline>
       if (typeof window !== 'undefined' && 'modelContext' in navigator) {
@@ -241,7 +258,7 @@ const villaFaq = [
           <span>Private Collection</span>
         </div>
 
-        <h1 class={titleClass}>{heroWord}</h1>
+        <h1 class={titleClass}>Villa {shortName} Puncak</h1>
         <p class="vd-hero__script">{scriptWord}</p>
 
         <div class="vd-hero__sub">

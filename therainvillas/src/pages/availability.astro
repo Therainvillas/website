@@ -4,14 +4,20 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import AvailabilityGrid from '../components/AvailabilityGrid.vue';
+import Seo from '../components/Seo.astro';
+import { makeTitle, makeDescription } from '../lib/seo.js';
 import { villas } from '../data/villas';
 import { villaCovers, villaHeroCovers } from '../data/covers';
 
 const firstCover = villaCovers[villas[0].name] ?? villas[0].image;
 const firstCoverSm = villaHeroCovers[villas[0].name] ?? firstCover;
+
+const availTitle = makeTitle('Cek Ketersediaan Villa Puncak');
+const availDesc = makeDescription('Cek ketersediaan tanggal villa private pool di Cisarua, Puncak secara realtime. Lihat kalender semua villa & booking via WhatsApp.');
 ---
 
-<Layout title="Cek Jadwal & Ketersediaan Villa | The Rain Villas" description="Cek ketersediaan villa di Puncak secara real-time. Lihat kalender, pilih tanggal, dan pesan langsung via WhatsApp." preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
+<Layout title={availTitle} description={availDesc} preloadImage={{ sm: firstCoverSm, lg: firstCover }}>
+  <Seo title={availTitle} description={availDesc} />
   <Header />
 
   <section class="page-hero">

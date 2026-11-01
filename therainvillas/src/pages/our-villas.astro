@@ -81,6 +81,40 @@ const firstCoverSm = villaHeroCovers[villas[0].name] ?? firstCover;
     </div>
   </section>
 
+  <section class="landing-links">
+    <div class="container">
+      <h2>Cari Berdasarkan Kapasitas &amp; Fasilitas</h2>
+      <p class="landing-links__sub">Telusuri villa sesuai kebutuhan group Anda.</p>
+      <div class="landing-links__grid">
+        <div>
+          <h3>Kapasitas</h3>
+          <ul>
+            <li><a href="/landing/villa-puncak-20-orang/">Villa untuk 20 Orang</a></li>
+            <li><a href="/landing/villa-puncak-30-orang/">Villa untuk 30 Orang</a></li>
+            <li><a href="/landing/villa-puncak-40-orang/">Villa untuk 40 Orang</a></li>
+            <li><a href="/landing/villa-puncak-50-orang/">Villa untuk 50 Orang</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Fasilitas</h3>
+          <ul>
+            <li><a href="/landing/villa-puncak-billiard/">Billiard</a></li>
+            <li><a href="/landing/villa-puncak-karaoke/">Karaoke</a></li>
+            <li><a href="/landing/villa-puncak-private-pool/">Private Pool</a></li>
+            <li><a href="/landing/villa-puncak-playground/">Playground</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Harga</h3>
+          <ul>
+            <li><a href="/landing/villa-puncak-murah/">Villa Murah (Under 1.2jt)</a></li>
+            <li><a href="/landing/villa-puncak-tahun-baru-2027/">Tahun Baru 2027</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <Footer />
   <WhatsAppBubble />
 </Layout>
@@ -153,6 +187,71 @@ const firstCoverSm = villaHeroCovers[villas[0].name] ?? firstCover;
 
   .villa-list {
     background: var(--color-gray-light);
+  }
+
+  .landing-links {
+    padding: 60px 0;
+    background: var(--color-light);
+  }
+
+  .landing-links h2 {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .landing-links__sub {
+    text-align: center;
+    color: var(--color-gray);
+    margin-bottom: 28px;
+  }
+
+  .landing-links__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .landing-links h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--color-dark);
+  }
+
+  .landing-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .landing-links li a {
+    display: block;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--color-panel);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-dark);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .landing-links li a:hover {
+    background: var(--color-primary);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .landing-links__grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
   }
 
   @media (max-width: 768px) {

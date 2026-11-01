@@ -60,6 +60,22 @@
       </div>
     </div>
 
+    <div class="footer__landing">
+      <h4>Cari Villa</h4>
+      <ul>
+        <li><a href="/landing/villa-puncak-20-orang/">Villa 20 Orang</a></li>
+        <li><a href="/landing/villa-puncak-30-orang/">Villa 30 Orang</a></li>
+        <li><a href="/landing/villa-puncak-40-orang/">Villa 40 Orang</a></li>
+        <li><a href="/landing/villa-puncak-50-orang/">Villa 50 Orang</a></li>
+        <li><a href="/landing/villa-puncak-billiard/">Billiard</a></li>
+        <li><a href="/landing/villa-puncak-karaoke/">Karaoke</a></li>
+        <li><a href="/landing/villa-puncak-private-pool/">Private Pool</a></li>
+        <li><a href="/landing/villa-puncak-playground/">Playground</a></li>
+        <li><a href="/landing/villa-puncak-murah/">Murah</a></li>
+        <li><a href="/landing/villa-puncak-tahun-baru-2027/">Tahun Baru 2027</a></li>
+      </ul>
+    </div>
+
     <div class="footer__bottom">
       <p>&copy; {new Date().getFullYear()} The Rain Villas. All rights reserved. Est. 2022</p>
     </div>
@@ -174,6 +190,48 @@
     color: rgba(255, 255, 255, 0.62);
     font-size: 0.86rem;
     line-height: 1.7;
+  }
+
+  .footer__landing {
+    padding-top: 36px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .footer__landing h4 {
+    margin-bottom: 16px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .footer__landing ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer__landing a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .footer__landing a:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-1px);
   }
 
   .footer__bottom {

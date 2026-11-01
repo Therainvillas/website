@@ -1,0 +1,12 @@
+---
+import LandingPage from './[slug].astro';
+import { landingPages } from '../../data/landing-pages.js';
+
+const page = landingPages.find((p) => p.slug === 'villa-puncak-tahun-baru-2027');
+
+if (!page) {
+  return Astro.redirect('/');
+}
+---
+
+<LandingPage page={page} />

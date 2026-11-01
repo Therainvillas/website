@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
 import WhatsAppBubble from '../components/WhatsAppBubble.astro';
 import VillaCard from '../components/VillaCard.astro';
 import CalendarPicker from '../components/CalendarPicker.vue';
@@ -198,6 +199,7 @@ const villaDetailDesc = makeDescription(
   preloadImage={{ sm: villaHeroSm[villa.name], lg: heroImage }}
 >
   <Seo title={villaDetailTitle} description={villaDetailDesc} image={heroImage} />
+  <Header />
   <main class="villa-detail">
     <script is:inline>
       if (typeof window !== 'undefined' && 'modelContext' in navigator) {
@@ -258,7 +260,7 @@ const villaDetailDesc = makeDescription(
           <span>Private Collection</span>
         </div>
 
-        <h1 class={titleClass}>Villa {shortName} Puncak</h1>
+        <h1 class={titleClass}>Villa {shortName}</h1>
         <p class="vd-hero__script">{scriptWord}</p>
 
         <div class="vd-hero__sub">
@@ -816,7 +818,7 @@ const villaDetailDesc = makeDescription(
   .vd-hero__title {
     position: absolute;
     left: 14.5%;
-    top: 21%;
+    top: 26%;
     color: #fff;
     font-family: var(--font-display);
     font-size: clamp(3rem, 7vw, 6.4rem);
@@ -1668,7 +1670,7 @@ const villaDetailDesc = makeDescription(
 
     .vd-hero__title {
       left: 6%;
-      top: 18%;
+      top: 23%;
       right: 6%;
     }
 
@@ -1741,37 +1743,44 @@ const villaDetailDesc = makeDescription(
 
     .vd-nav {
       top: 2%;
-      left: 3%;
-      right: 3%;
-      gap: 8px;
+      left: 2%;
+      right: 2%;
+      gap: 6px;
     }
 
     .vd-nav__pills {
       flex-grow: 1;
       max-width: none;
       justify-content: flex-start;
-      padding: 5px 6px;
-      gap: 4px;
+      padding: 4px 5px;
+      gap: 3px;
+      overflow-x: auto;
       scroll-snap-type: x proximity;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .vd-nav__pills::-webkit-scrollbar {
+      display: none;
     }
 
     .vd-nav__pill {
       flex-shrink: 0;
-      min-height: 36px;
+      min-height: 34px;
       min-width: auto;
-      padding: 0 12px;
-      font-size: 0.64rem;
+      padding: 0 10px;
+      font-size: 0.62rem;
+      letter-spacing: 0;
       scroll-snap-align: start;
     }
 
     .vd-brand {
-      padding: 6px 10px;
+      padding: 6px 8px;
     }
 
     .vd-brand__mark {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
     }
 
     .vd-hero__eyebrow {
@@ -1782,7 +1791,7 @@ const villaDetailDesc = makeDescription(
     }
 
     .vd-hero__title {
-      top: 16%;
+      top: 21%;
       left: 5%;
       right: 5%;
       font-size: 2.6rem;

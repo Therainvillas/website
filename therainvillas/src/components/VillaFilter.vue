@@ -652,6 +652,12 @@ export default {
     flex-direction: column;
   }
 
+  .vf__search {
+    height: 40px;
+    font-size: 0.88rem;
+    padding: 0 14px;
+  }
+
   .vf__search,
   .vf__dropdown {
     width: 100%;

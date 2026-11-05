@@ -12,6 +12,10 @@
  *      dan baris header ("Tanggal"/"Nama Villa") di atas kolom boleh ada — dilewati.
  *   2. Sheet 'Booking' → record lama & verifikasi dari admin (baris 'Ditolak' dilewati),
  *      agar booking lama tidak tiba-tiba terbuka.
+ *   3. Sheet 'Blokir Manual' → tanggal yang diblokir admin lewat panel admin.
+ *      Kolom: Villa | Tanggal | Catatan | Timestamp. Tanggal di sheet ini
+ *      otomatis ikut terkirim pada respons ?villa=... sehingga semua pengunjung
+ *      melihat tanggal yang sama (bukan hanya browser admin).
  *
  * Cara deploy:
  * 1. Buka Script Editor di spreadsheet kamu (atau https://script.google.com)
@@ -23,13 +27,18 @@
  *    - Who has access: Anyone (Siapa saja)  <-- SANGAT PENTING!
  * 6. Klik Deploy.
  * 7. Tes: buka URL web app + ?villa=Nama%20Villa
+ * 8. Tes blokir manual: buka URL web app + ?action=manualBlocks
+ *    (sheet 'Blokir Manual' dibuat otomatis saat admin memblokir tanggal pertama kali)
  */
 
 const SPREADSHEET_ID = '1Ejv_rcKsN7sN-fzZ5gdf8FsrS1ey6Z0Xc3Vi_XuFWmA';
 /** Tanda versi — wajib tampil di output debug untuk memastikan file yang ter-deploy sama dgn repo. */
-var __GS_VERSION__ = 'SV-20260907-v10';
+var __GS_VERSION__ = 'SV-20261103-v11';
 /** Nama sheet jadwal manual (tiap baris = villa + tanggal/rentang terbooking). */
 const SCHEDULE_SHEET = 'Sheet1';
+/** Nama sheet blokir manual dari panel admin. */
+const MANUAL_BLOCK_SHEET = 'Blokir Manual';
+const MANUAL_BLOCK_HEADERS = ['Villa', 'Tanggal', 'Catatan', 'Timestamp'];
 
 function getSS() {
   if (SPREADSHEET_ID && SPREADSHEET_ID !== 'YOUR_SPREADSHEET_ID_HERE') {
@@ -157,8 +166,144 @@ function cellRange(v) {
 }
 
 /**
+ * Format tanggal menjadi kunci YYYY-MM-DD yang dipakai frontend.
+ * Menerima Date (dari sheet) maupun teks ("2026-04-01", "1 Apr 2026").
+ */
+function formatDateKey(val) {
+  if (val === null || val === undefined || val === '') return '';
+  if (val instanceof Date) {
+    return isNaN(val.getTime())
+      ? ''
+      : Utilities.formatDate(val, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+  }
+  var str = String(val).trim();
+  if (!str) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.substring(0, 10);
+  var d = parseManualDate(str);
+  return d ? Utilities.formatDate(d, Session.getScriptTimeZone(), 'yyyy-MM-dd') : '';
+}
+
+/** Buat sheet 'Blokir Manual' bila belum ada, lalu pastikan baris header terisi. */
+function getManualBlockSheet(ss) {
+  var sh = ss.getSheetByName(MANUAL_BLOCK_SHEET);
+  if (!sh) sh = ss.insertSheet(MANUAL_BLOCK_SHEET);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(MANUAL_BLOCK_HEADERS);
+  } else {
+    var first = sh.getRange(1, 1, 1, Math.max(4, sh.getLastColumn())).getValues()[0];
+    var joined = first.map(function (v) { return String(v || '').trim().toLowerCase(); }).join('|');
+    if (joined.indexOf('villa') === -1 || joined.indexOf('tanggal') === -1) {
+      sh.insertRowBefore(1);
+      sh.getRange(1, 1, 1, MANUAL_BLOCK_HEADERS.length).setValues([MANUAL_BLOCK_HEADERS]);
+    }
+  }
+  return sh;
+}
+
+/** Deteksi indeks kolom pada header sheet 'Blokir Manual' (urutan bebas). */
+function manualBlockColumns(headerRow) {
+  var header = (headerRow || []).map(function (h) { return String(h || '').trim().toLowerCase(); });
+  function find(name, fallback) {
+    var idx = header.indexOf(name);
+    return idx > -1 ? idx : fallback;
+  }
+  return {
+    villa: find('villa', 0),
+    date: find('tanggal', 1),
+    note: find('catatan', 2),
+    timestamp: find('timestamp', 3)
+  };
+}
+
+/** Baca seluruh baris blokir manual yang valid. */
+function readManualBlocks(ss) {
+  var sh = ss.getSheetByName(MANUAL_BLOCK_SHEET);
+  if (!sh || sh.getLastRow() < 1) return [];
+  var values = sh.getDataRange().getValues();
+  if (!values.length) return [];
+  var cols = manualBlockColumns(values[0]);
+  var out = [];
+  for (var i = 1; i < values.length; i++) {
+    var row = values[i];
+    var villa = String(row[cols.villa] || '').trim();
+    var date = formatDateKey(row[cols.date]);
+    if (!villa || !date) continue;
+    var ts = row[cols.timestamp];
+    if (ts instanceof Date) ts = ts.toISOString();
+    out.push({
+      villa: villa,
+      date: date,
+      note: String(row[cols.note] || '').trim(),
+      timestamp: ts ? String(ts) : ''
+    });
+  }
+  return out;
+}
+
+/** Daftar tanggal blokir manual untuk satu villa (sudah unik & terurut). */
+function manualDatesForVilla(ss, villaName) {
+  var target = normalizeVilla(villaName);
+  var seen = {};
+  readManualBlocks(ss).forEach(function (b) {
+    if (normalizeVilla(b.villa) === target) seen[b.date] = true;
+  });
+  return Object.keys(seen).sort();
+}
+
+/**
+ * Tambah / hapus blokir manual.
+ * op: 'block' | 'unblock' | 'toggle' (default toggle).
+ * Operasi block/unblock bersifat idempotent supaya aman diulang saat retry.
+ */
+function toggleManualBlock(ss, villaName, dateValue, note, op) {
+  var displayVilla = String(villaName || '').trim();
+  var targetVilla = normalizeVilla(displayVilla);
+  var dateKey = formatDateKey(dateValue);
+  if (!targetVilla) throw new Error('Nama villa wajib diisi');
+  if (!dateKey) throw new Error('Tanggal tidak valid: ' + dateValue);
+
+  var sh = getManualBlockSheet(ss);
+  var values = sh.getLastRow() >= 1 ? sh.getDataRange().getValues() : [];
+  var cols = manualBlockColumns(values.length ? values[0] : MANUAL_BLOCK_HEADERS);
+  var rowsToDelete = [];
+  var alreadyBlocked = false;
+
+  for (var i = 1; i < values.length; i++) {
+    var row = values[i];
+    if (normalizeVilla(row[cols.villa]) !== targetVilla) continue;
+    if (formatDateKey(row[cols.date]) !== dateKey) continue;
+    alreadyBlocked = true;
+    rowsToDelete.push(i + 1);
+  }
+
+  var action = String(op || 'toggle').toLowerCase();
+  var shouldBlock = action === 'block' ? true : action === 'unblock' ? false : !alreadyBlocked;
+
+  if (shouldBlock && !alreadyBlocked) {
+    sh.appendRow([displayVilla, dateKey, String(note || '').trim(), new Date().toISOString()]);
+  } else if (!shouldBlock && rowsToDelete.length) {
+    rowsToDelete.sort(function (a, b) { return b - a; });
+    for (var r = 0; r < rowsToDelete.length; r++) sh.deleteRow(rowsToDelete[r]);
+  }
+
+  return {
+    success: true,
+    type: 'manualBlock',
+    villa: displayVilla,
+    date: dateKey,
+    blocked: shouldBlock,
+    dates: manualDatesForVilla(ss, displayVilla)
+  };
+}
+
+/**
  * GET /?villa=Nama%20Villa
- * Mengembalikan array tanggal YYYY-MM-DD yang sudah terbooking untuk villa tertentu.
+ * Mengembalikan array tanggal YYYY-MM-DD yang sudah terbooking untuk villa tertentu,
+ * termasuk blokir manual dari sheet 'Blokir Manual'. Tambahkan &manual=0 bila hanya
+ * ingin jadwal otomatis (dipakai panel admin).
+ *
+ * GET /?action=manualBlocks[&villa=Nama%20Villa]
+ * Mengembalikan seluruh (atau per-villa) blokir manual untuk panel admin.
  *
  * GET /?action=bookings
  * Mengembalikan seluruh data booking (untuk admin dashboard).
@@ -362,6 +507,30 @@ function doGet(e) {
       return respond({ bookings: bookings, headers: headers2 }, callback);
     }
 
+    // Admin dashboard — seluruh tanggal blokir manual (opsional ?villa=...).
+    if (action === 'manualBlocks') {
+      var manualBlocks = readManualBlocks(ss);
+      if (villaName) {
+        var manualFilter = normalizeVilla(villaName);
+        manualBlocks = manualBlocks.filter(function (b) {
+          return normalizeVilla(b.villa) === manualFilter;
+        });
+      }
+      return respond({ version: __GS_VERSION__, blocks: manualBlocks }, callback);
+    }
+
+    // Fallback JSONP untuk menyimpan blokir manual (POST tetap jalur utama).
+    if (action === 'toggleManualBlock') {
+      var toggleResult = toggleManualBlock(
+        ss,
+        e.parameter.villa,
+        e.parameter.date,
+        e.parameter.note || '',
+        e.parameter.op || 'toggle'
+      );
+      return respond(toggleResult, callback);
+    }
+
     if (!villaName) {
       return respond({ status: 'ok', message: 'API Summervills aktif. Gunakan ?villa=Nama%20Villa atau ?action=bookings' }, callback);
     }
@@ -504,6 +673,16 @@ function doGet(e) {
       }
     }
 
+    // 4. Gabungkan blokir manual admin (sheet 'Blokir Manual') agar semua
+    //    pengunjung melihat tanggal yang sama. Panel admin memakai &manual=0
+    //    untuk memisahkan jadwal otomatis dari blokir manual.
+    var includeManual = !(e && e.parameter && (e.parameter.manual === '0' || e.parameter.manual === 'false'));
+    if (includeManual) {
+      readManualBlocks(ss).forEach(function (b) {
+        if (normalizeVilla(b.villa) === targetVilla) bookedDatesSet[b.date] = true;
+      });
+    }
+
     var resultDates = Object.keys(bookedDatesSet);
     return respond(resultDates, callback);
 
@@ -513,7 +692,8 @@ function doGet(e) {
 }
 
 /**
- * POST — Menerima data satisfaction form, data booking baru, ATAU update status verifikasi.
+ * POST — Menerima data satisfaction form, data booking baru, update status verifikasi,
+ * atau blokir manual admin ({ type: 'manualBlock', villa, date, op }).
  */
 function doPost(e) {
   try {
@@ -574,6 +754,18 @@ function doPost(e) {
       }
 
       return respond({ success: true, type: 'verify', bookingId: bookingId, status: newStatus });
+    }
+
+    // === BLOKIR MANUAL (panel admin) ===
+    if (data.type === 'manualBlock' || data.type === 'manualBlocks') {
+      var manualResult = toggleManualBlock(
+        ss,
+        data.villa,
+        data.date,
+        data.note || '',
+        data.op || data.action || 'toggle'
+      );
+      return respond(manualResult);
     }
 
     // === BOOKING ===

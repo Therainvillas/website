@@ -50,6 +50,23 @@
         </div>
       </div>
 
+      <div class="vf__date">
+        <label class="vf__date-label" for="vf-checkin">Tanggal Menginap</label>
+        <div class="vf__date-row">
+          <input
+            id="vf-checkin"
+            v-model="checkIn"
+            type="date"
+            class="vf__date-input"
+            :min="todayStr"
+            @focus="ensureSchedules()"
+          />
+        </div>
+        <span class="vf__date-hint">
+          {{ checkIn ? 'Villa otomatis difilter untuk ' + formatDateID(checkIn) : 'Pilih tanggal — villa langsung terfilter' }}
+        </span>
+      </div>
+
       <button
         v-if="hasFilter"
         class="vf__clear"
@@ -72,8 +89,13 @@
     </div>
 
     <div class="vf__count">
-      Menampilkan <strong>{{ filtered.length }}</strong> dari {{ villas.length }} villa
+      Menampilkan <strong>{{ filtered.length }}</strong> dari {{ villas.length }} villa<span v-if="checkIn"> yang tersedia pada <strong>{{ formatDateID(checkIn) }}</strong></span>
     </div>
+
+    <p v-if="checkIn && scheduleLoading" class="vf__notice vf__notice--loading">
+      <span class="vf__spinner"></span> Memeriksa jadwal terbaru dari sheet…
+    </p>
+    <p v-else-if="checkIn && scheduleNotice" class="vf__notice">{{ scheduleNotice }}</p>
 
     <div class="vf__grid">
       <div v-for="villa in paginated" :key="villa.id" class="vf__card-wrap">
@@ -81,6 +103,7 @@
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
+            <span v-if="checkIn && isVillaAvailable(villa, checkIn)" class="vf-card__available">Tersedia</span>
             <span class="vf-card__price">
               <s v-if="villa.originalPrice && villa.originalPrice > villa.price" class="vf-card__price-old">{{ formatPrice(villa.originalPrice) }}</s>
               <span>{{ villa.priceLabel || formatPrice(villa.price) }}</span>
@@ -105,7 +128,8 @@
     </div>
 
     <div v-if="filtered.length === 0" class="vf__empty">
-      <p>Tidak ada villa yang cocok dengan filter Anda.</p>
+      <p v-if="checkIn">Tidak ada villa yang tersedia pada {{ formatDateID(checkIn) }}. Coba pilih tanggal lain.</p>
+      <p v-else>Tidak ada villa yang cocok dengan filter Anda.</p>
       <button class="vf__clear" @click="clearAll">Reset Filter</button>
     </div>
 
@@ -116,6 +140,15 @@
 </template>
 
 <script>
+import {
+  fetchVillaSchedule,
+  isScheduleCacheFresh,
+  readAdminBlockedDates,
+  readAdminScheduleCache,
+  readScheduleCache,
+  writeScheduleCache,
+} from '../data/scheduleApi.js';
+
 const PRICE_OPTIONS = [
   { label: 'Semua Harga', value: '' },
   { label: 'Sampai Rp 1.000.000', value: '0-1000000' },
@@ -184,6 +217,12 @@ export default {
       capOptions: CAP_OPTIONS,
       bedOptions: BED_OPTIONS,
       amenityOptions: AMENITY_OPTIONS,
+      checkIn: '',
+      scheduleDates: {},
+      scheduleLoading: false,
+      scheduleNotice: '',
+      schedulesFetchedAt: 0,
+      scheduleTimer: null,
     };
   },
   computed: {
@@ -200,7 +239,11 @@ export default {
       return o && o.value ? o.label : '';
     },
     hasFilter() {
-      return this.search || this.priceRange || this.capMin || this.bedMin || this.selectedAmenities.length;
+      return this.search || this.priceRange || this.capMin || this.bedMin || this.selectedAmenities.length || this.checkIn;
+    },
+    todayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     },
     filtered() {
       let list = this.villas;
@@ -226,6 +269,9 @@ export default {
           );
         });
       }
+      if (this.checkIn) {
+        list = list.filter(v => this.isVillaAvailable(v, this.checkIn));
+      }
       return list;
     },
     paginated() {
@@ -238,6 +284,10 @@ export default {
   watch: {
     hasFilter() {
       this.visibleCount = PAGE_SIZE;
+    },
+    checkIn(value) {
+      this.visibleCount = PAGE_SIZE;
+      if (value) this.ensureSchedules();
     },
   },
   methods: {
@@ -262,12 +312,94 @@ export default {
       this.capMin = 0;
       this.bedMin = 0;
       this.selectedAmenities = [];
+      this.checkIn = '';
     },
-    showMore() {
-      this.visibleCount += PAGE_SIZE;
+    formatDateID(value) {
+      if (!value) return '';
+      const d = new Date(value + 'T00:00:00');
+      if (Number.isNaN(d.getTime())) return value;
+      return d.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    },
+    isVillaAvailable(villa, dateStr) {
+      if (!dateStr || !villa) return true;
+      const key = String(dateStr).slice(0, 10);
+      return !this.getBlockedDates(villa).includes(key);
+    },
+    getBlockedDates(villa) {
+      const set = new Set();
+
+      // Tanggal tidak tersedia bawaan data villa.
+      if (Array.isArray(villa.unavailable)) {
+        villa.unavailable.forEach((d) => set.add(String(d).slice(0, 10)));
+      }
+
+      // Blokir manual admin (localStorage, key = id villa).
+      readAdminBlockedDates(villa).forEach((d) => set.add(d));
+
+      // Cache jadwal dari sheet yang ditulis panel admin (key = id villa).
+      readAdminScheduleCache(villa).forEach((d) => set.add(d));
+
+      // Jadwal sheet terbaru yang diambil langsung oleh filter ini.
+      const live = this.scheduleDates[villa.id];
+      if (Array.isArray(live)) live.forEach((d) => set.add(d));
+
+      return Array.from(set);
+    },
+    loadCachedSchedules() {
+      const map = {};
+      let newest = 0;
+      let allFresh = this.villas.length > 0;
+      this.villas.forEach((villa) => {
+        const entry = readScheduleCache(villa);
+        const merged = new Set([
+          ...entry.dates,
+          ...readAdminScheduleCache(villa),
+        ]);
+        if (merged.size) map[villa.id] = Array.from(merged);
+        if (entry.savedAt > newest) newest = entry.savedAt;
+        if (!isScheduleCacheFresh(entry.savedAt)) allFresh = false;
+      });
+      this.scheduleDates = map;
+      // Fetch ulang bila masih ada villa yang belum punya cache segar.
+      this.schedulesFetchedAt = allFresh ? newest : 0;
+    },
+    async ensureSchedules(force = false) {
+      if (this.scheduleLoading || !this.villas.length) return;
+      if (!force && isScheduleCacheFresh(this.schedulesFetchedAt)) return;
+
+      this.scheduleLoading = true;
+      this.scheduleNotice = '';
+      this.schedulesFetchedAt = Date.now();
+
+      let failed = 0;
+      await Promise.all(
+        this.villas.map(async (villa) => {
+          try {
+            const dates = await fetchVillaSchedule(villa);
+            this.scheduleDates = { ...this.scheduleDates, [villa.id]: dates };
+            writeScheduleCache(villa, dates);
+          } catch {
+            // Pertahankan cache terakhir agar tanggal tetap terblok.
+            failed += 1;
+          }
+        })
+      );
+
+      this.scheduleLoading = false;
+      this.scheduleNotice = failed
+        ? 'Sebagian jadwal gagal diperbarui — memakai data terakhir yang tersimpan.'
+        : '';
     },
     villaAmenities(villa) {
       return villa.amenities || [];
+    },
+    showMore() {
+      this.visibleCount += PAGE_SIZE;
     },
     handleClickOutside(e) {
       if (this.openDrop && !e.target.closest('.vf__dropdown')) {
@@ -276,9 +408,13 @@ export default {
     },
   },
   mounted() {
+    this.loadCachedSchedules();
+    // Prefetch diam-diam agar saat pengguna memilih tanggal, data sheet sudah siap.
+    this.scheduleTimer = setTimeout(() => this.ensureSchedules(), 1500);
     document.addEventListener('click', this.handleClickOutside);
   },
   beforeUnmount() {
+    if (this.scheduleTimer) clearTimeout(this.scheduleTimer);
     document.removeEventListener('click', this.handleClickOutside);
   },
 };
@@ -308,6 +444,111 @@ export default {
   font-size: 0.92rem;
   outline: none;
   transition: border-color 0.2s;
+}
+
+.vf__date {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vf__date-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-gray, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vf__date-input {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 12px;
+  background: var(--color-panel, #fff);
+  color: var(--color-dark, #0f172a);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  color-scheme: light;
+}
+
+[data-theme="dark"] .vf__date-input {
+  color-scheme: dark;
+}
+
+.vf__date-input:focus {
+  border-color: #5b8def;
+}
+
+.vf__date-hint {
+  font-size: 0.72rem;
+  color: var(--color-gray, #6b7280);
+  line-height: 1.4;
+}
+
+.vf__notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -8px 0 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  color: #64748b;
+  background: rgba(91, 141, 239, 0.08);
+  border: 1px solid rgba(91, 141, 239, 0.2);
+}
+
+.vf__notice--loading {
+  color: #3b6fd4;
+}
+
+.vf__spinner {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border: 2px solid rgba(91, 141, 239, 0.25);
+  border-top-color: #5b8def;
+  border-radius: 50%;
+  animation: vf-spin 0.8s linear infinite;
+}
+
+@keyframes vf-spin {
+  to { transform: rotate(360deg); }
+}
+
+.vf__date-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.vf__date-row .vf__date-input {
+  flex: 1 1 auto;
+}
+
+.vf__date-btn {
+  height: 44px;
+  padding: 0 20px;
+  border: 1px solid #5b8def;
+  border-radius: 12px;
+  background: #5b8def;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.vf__date-btn:hover {
+  background: #4a7de0;
+  transform: translateY(-1px);
+}
+
+.vf__date-btn:active {
+  transform: translateY(0);
 }
 
 .vf__search:focus {
@@ -524,6 +765,21 @@ export default {
   letter-spacing: 0.2px;
 }
 
+.vf-card__available {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(22, 163, 74, 0.95);
+  box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35);
+  letter-spacing: 0.2px;
+}
+
 .vf-card__body {
   display: flex;
   flex-direction: column;
@@ -653,14 +909,35 @@ export default {
   }
 
   .vf__search {
-    height: 40px;
-    font-size: 0.88rem;
-    padding: 0 14px;
+    height: 36px;
+    font-size: 0.82rem;
+    padding: 0 12px;
+    border-radius: 10px;
+    line-height: 22.528px;
   }
 
   .vf__search,
-  .vf__dropdown {
+  .vf__dropdown,
+  .vf__date {
     width: 100%;
+  }
+
+  .vf__date-input {
+    height: 36px;
+    font-size: 0.82rem;
+    padding: 0 12px;
+    border-radius: 10px;
+  }
+
+  .vf__date-row {
+    flex-direction: column;
+  }
+
+  .vf__date-btn {
+    height: 36px;
+    font-size: 0.82rem;
+    padding: 0 14px;
+    border-radius: 10px;
   }
 
   .vf__drop-btn {

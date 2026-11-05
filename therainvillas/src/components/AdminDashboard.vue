@@ -52,17 +52,18 @@
       <div class="dashboard__schedule-bar">
         <div>
           <h2>Blokir Jadwal</h2>
-          <p class="dashboard__schedule-sub">Tanggal dari sheet terisi otomatis. Klik tanggal untuk memblokir / membuka secara manual.</p>
+          <p class="dashboard__schedule-sub">Tanggal dari sheet terisi otomatis. Klik tanggal untuk memblokir / membuka secara manual — blokir manual disimpan ke sheet dan tampil untuk semua pengunjung.</p>
           <p class="dashboard__schedule-legend">
             <span><i class="dashboard__legend-dot dashboard__legend-dot--sheet"></i> Dari sheet (otomatis)</span>
             <span><i class="dashboard__legend-dot dashboard__legend-dot--admin"></i> Manual admin</span>
           </p>
         </div>
-        <button @click="fetchAllSchedules" class="dashboard__proof-refresh" :disabled="sheetLoading">
-          {{ sheetLoading ? 'Memuat…' : 'Refresh Jadwal' }}
+        <button @click="fetchAllSchedules" class="dashboard__proof-refresh" :disabled="sheetLoading || manualLoading">
+          {{ sheetLoading || manualLoading ? 'Memuat…' : 'Refresh Jadwal' }}
         </button>
       </div>
       <p v-if="sheetNotice" class="dashboard__schedule-notice" :class="{ 'dashboard__schedule-notice--warn': sheetFailed.length }">{{ sheetNotice }}</p>
+      <p v-if="manualNotice" class="dashboard__schedule-notice dashboard__schedule-notice--warn">{{ manualNotice }}</p>
 
       <div class="dashboard__calendar-wrap">
         <div v-for="villa in villas" :key="villa.id" class="dashboard__villa">
@@ -122,25 +123,18 @@
 
 <script>
 import { PROOF_API } from "../data/promos.js";
+import {
+  fetchManualBlocks as fetchManualBlocksApi,
+  normalizeVillaName,
+  readAdminBlockedDates,
+  scheduleName,
+  SPREADSHEET_API_URL,
+  toggleManualBlock as toggleManualBlockApi,
+  writeAdminBlockedDates,
+} from "../data/scheduleApi.js";
 
-const STORAGE_KEY = "therainvillas_blocked";
 // Simpan tanggal hasil tarikan sheet agar tetap terblok saat koneksi/API gagal.
 const SHEET_BLOCKED_KEY = "therainvillas_sheet_blocked";
-// Endpoint Web App Google Apps Script (sumber jadwal terbooking).
-const SPREADSHEET_API_URL =
-  "https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec";
-
-function loadBlocked() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  } catch {
-    return {};
-  }
-}
-
-function saveBlocked(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
 
 function loadSheetBlocked() {
   try {
@@ -175,6 +169,10 @@ export default {
       sheetFailed: [],
       sheetNotice: "",
       sheetRetryTimer: null,
+      // Blokir manual per id villa. Sumber utama: sheet 'Blokir Manual'.
+      manualBlocks: {},
+      manualLoading: false,
+      manualNotice: "",
     };
   },
   async mounted() {
@@ -187,6 +185,8 @@ export default {
       // walau koneksi belum/sedang tidak tersambung.
       const cached = this.loadSheetCache(v.id);
       if (cached.length) this.sheetSchedules[v.id] = cached;
+      const cachedManual = readAdminBlockedDates(v);
+      if (cachedManual.length) this.manualBlocks[v.id] = cachedManual;
     });
     if (this.authenticated) {
       this.loadProofs();
@@ -200,12 +200,11 @@ export default {
     }
   },
   methods: {
-    getBlocked() {
-      return loadBlocked();
-    },
     getBlockedForVilla(villaId) {
-      const all = this.getBlocked();
-      return all[String(villaId)] || [];
+      const villa = this.villas.find((v) => v.id === villaId) || { id: villaId };
+      const fromState = this.manualBlocks[villaId] || [];
+      const fromCache = readAdminBlockedDates(villa);
+      return Array.from(new Set([...fromState, ...fromCache])).sort();
     },
     getSheetBlockedForVilla(villaId) {
       const list = this.sheetSchedules[villaId];
@@ -285,27 +284,43 @@ export default {
 
       return classes;
     },
-    toggleDate(villaId, cell) {
+    async toggleDate(villaId, cell) {
       const ds = dateStr(cell.year, cell.month, cell.day);
       const d = new Date(cell.year, cell.month, cell.day);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (d < today) return;
 
-      const all = this.getBlocked();
-      const key = String(villaId);
-      if (!all[key]) all[key] = [];
+      const villa = this.villas.find((v) => v.id === villaId);
+      if (!villa) return;
 
-      const idx = all[key].indexOf(ds);
-      if (idx > -1) {
-        all[key].splice(idx, 1);
-      } else {
-        all[key].push(ds);
-        all[key].sort();
-      }
+      const current = this.getBlockedForVilla(villaId);
+      const willBlock = !current.includes(ds);
+      const previous = this.manualBlocks[villaId] || [];
+      const next = willBlock
+        ? Array.from(new Set([...previous, ds])).sort()
+        : previous.filter((x) => x !== ds);
 
-      saveBlocked(all);
+      // Optimistic update supaya kalender langsung merespons.
+      this.manualBlocks = { ...this.manualBlocks, [villaId]: next };
+      writeAdminBlockedDates(villa, next);
+      this.manualNotice = "";
       this.$forceUpdate();
+
+      try {
+        const result = await toggleManualBlockApi(villa, ds, willBlock ? "block" : "unblock");
+        const serverDates = Array.isArray(result.dates) ? result.dates : next;
+        this.manualBlocks = { ...this.manualBlocks, [villaId]: serverDates };
+        writeAdminBlockedDates(villa, serverDates);
+        // Perbarui cache publik di browser ini agar filter ikut melihat perubahan.
+        this.$forceUpdate();
+      } catch (e) {
+        // Gagal simpan: kembalikan kondisi sebelumnya.
+        this.manualBlocks = { ...this.manualBlocks, [villaId]: previous };
+        writeAdminBlockedDates(villa, previous);
+        this.manualNotice = "Gagal menyimpan blokir manual ke sheet: " + (e.message || "koneksi gagal") + ". Perubahan dibatalkan.";
+        this.$forceUpdate();
+      }
     },
     fetchAllSchedules() {
       if (!this.villas.length) return;
@@ -314,12 +329,43 @@ export default {
       this.sheetFailed = [];
       this._sheetPending = this.villas.length;
       this.villas.forEach((v) => this.fetchSchedule(v));
+      this.refreshManualBlocks();
+    },
+    async refreshManualBlocks() {
+      this.manualLoading = true;
+      this.manualNotice = "";
+      try {
+        const blocks = await fetchManualBlocksApi();
+        const grouped = {};
+        blocks.forEach((b) => {
+          const target = this.villas.find(
+            (v) => normalizeVillaName(scheduleName(v)) === normalizeVillaName(b.villa)
+          );
+          if (!target) return;
+          if (!grouped[target.id]) grouped[target.id] = new Set();
+          grouped[target.id].add(b.date);
+        });
+
+        const next = {};
+        this.villas.forEach((v) => {
+          next[v.id] = grouped[v.id] ? Array.from(grouped[v.id]).sort() : [];
+          writeAdminBlockedDates(v, next[v.id]);
+        });
+        this.manualBlocks = next;
+      } catch (e) {
+        // Jangan hapus data lama: panel tetap memakai cache terakhir.
+        this.manualNotice =
+          "Blokir manual gagal dimuat dari sheet — memakai data terakhir. " +
+          "Pastikan Apps Script sudah di-deploy versi baru.";
+      } finally {
+        this.manualLoading = false;
+      }
     },
     fetchSchedule(villa) {
       const url =
         SPREADSHEET_API_URL +
-        "?villa=" + encodeURIComponent(villa.scheduleName || villa.name) +
-        "&_=" + Date.now();
+        "?villa=" + encodeURIComponent(scheduleName(villa)) +
+        "&manual=0&_=" + Date.now();
       const self = this;
       fetch(url, { redirect: "follow", cache: "no-store" })
         .then((res) => res.json())
@@ -339,8 +385,8 @@ export default {
       const self = this;
       const url =
         SPREADSHEET_API_URL +
-        "?villa=" + encodeURIComponent(villa.scheduleName || villa.name) +
-        "&_=" + Date.now();
+        "?villa=" + encodeURIComponent(scheduleName(villa)) +
+        "&manual=0&_=" + Date.now();
       const cb = "trvAdminSched_" + villa.id + "_" + Date.now();
       window[cb] = (data) => {
         delete window[cb];
@@ -1267,6 +1313,12 @@ export default {
   border: 1px solid #fde68a;
   border-radius: 10px;
   padding: 10px 14px;
+}
+
+.dashboard__schedule-notice--warn {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
 }
 
 /* ===== CALENDAR (same as before) ===== */

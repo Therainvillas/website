@@ -26,6 +26,8 @@ const filterData = villas.map(v => ({
   bathrooms: v.bathrooms,
   parking: v.parking,
   amenities: v.amenities,
+  scheduleName: v.scheduleName,
+  unavailable: v.unavailable,
 }));
 
 const firstCover = villaCovers[villas[0].name] ?? villas[0].image;

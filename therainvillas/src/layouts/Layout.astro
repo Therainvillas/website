@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import FlashSalePopup from '../components/FlashSalePopup.vue';
 
 export interface Props {
   title?: string;
@@ -26,6 +27,7 @@ const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 const isHome = Astro.url.pathname === '/';
+const isAdminRoute = /^\/admin(\/|$)/.test(Astro.url.pathname);
 
 // Satu gtag.js saja (milik Google Ads). GA4 dikirim lewat config tambahan di
 // blok yang sama, jadi tidak ada permintaan kedua ke googletagmanager.com.
@@ -192,5 +194,6 @@ const gaBootstrap = `
     <script>
       import '../scripts/analytics.js';
     </script>
+    {!isAdminRoute && <FlashSalePopup client:idle />}
   </body>
 </html>

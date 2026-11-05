@@ -36,6 +36,13 @@ const promoHref = `/promo?villa=${villa.slug}#klaim`;
 const orderLink = hasPromo ? promoHref : waLink;
 const originalPriceLabel = hasPromo ? `Rp ${villa.originalPrice.toLocaleString('id-ID')}` : '';
 
+const instagramReelUrl = villa.instagramReel ?? '';
+const instagramReelMatch = String(instagramReelUrl).match(/instagram\.com\/(?:reel|reels|p|tv)\/([A-Za-z0-9_-]+)/);
+const instagramReelCode = instagramReelMatch ? instagramReelMatch[1] : '';
+const instagramEmbedUrl = instagramReelCode
+  ? `https://www.instagram.com/reel/${instagramReelCode}/embed/`
+  : '';
+
 const localGalleries = {
   'Villa 4D': ['/4D/4d%20(1).webp', '/4D/4d%20(2).webp', '/4D/4d%20(3).webp', '/4D/4d%20(4).webp', '/4D/4d%20(5).webp', '/4D/4d%20(6).webp', '/4D/4d%20(7).webp', '/4D/4d%20(8).webp', '/4D/4d%20(9).webp', '/4D/4d%20(10).webp', '/4D/4d%20(11).webp', '/4D/4d%20(12).webp', '/4D/4d%20(13).webp', '/4D/4d%20(14).webp', '/4D/4d%20(15).webp'],
   'Villa Agave': ['/Agave/agave%20(1).webp', '/Agave/agave%20(2).webp', '/Agave/agave%20(3).webp', '/Agave/agave%20(4).webp', '/Agave/agave%20(5).webp', '/Agave/agave%20(6).webp', '/Agave/agave%20(7).webp', '/Agave/agave%20(8).webp', '/Agave/agave%20(9).webp', '/Agave/agave%20(10).webp', '/Agave/agave%20(11).webp', '/Agave/agave%20(12).webp', '/Agave/agave%20(13).webp', '/Agave/agave%20(14).webp', '/Agave/agave%20(15).webp', '/Agave/agave%20(16).webp', '/Agave/agave%20(18).webp', '/Agave/agave%20(19).webp'],
@@ -53,7 +60,7 @@ const localGalleries = {
   'Villa De Summit': ['/De%20Summit/De%20Summit%20(1).webp', '/De%20Summit/De%20Summit%20(2).webp', '/De%20Summit/De%20Summit%20(3).webp', '/De%20Summit/De%20Summit%20(4).webp', '/De%20Summit/De%20Summit%20(5).webp', '/De%20Summit/De%20Summit%20(6).webp', '/De%20Summit/De%20Summit%20(8).webp', '/De%20Summit/De%20Summit%20(9).webp', '/De%20Summit/De%20Summit%20(10).webp'],
   'Echa Village': ['/Echa%20Village/Echa%20Village%20(1).webp', '/Echa%20Village/Echa%20Village%20(2).webp', '/Echa%20Village/Echa%20Village%20(3).webp', '/Echa%20Village/Echa%20Village%20(4).webp', '/Echa%20Village/Echa%20Village%20(5).webp', '/Echa%20Village/Echa%20Village%20(6).webp', '/Echa%20Village/Echa%20Village%20(7).webp', '/Echa%20Village/Echa%20Village%20(8).webp', '/Echa%20Village/Echa%20Village%20(10).webp', '/Echa%20Village/Echa%20Village%20(11).webp', '/Echa%20Village/Echa%20Village%20(12).webp', '/Echa%20Village/Echa%20Village%20(13).webp'],
   'Villa Hala': ['/Hala/Hala%20(1).webp', '/Hala/Hala%20(2).webp', '/Hala/Hala%20(3).webp', '/Hala/Hala%20(4).webp', '/Hala/Hala%20(5).webp', '/Hala/Hala%20(6).webp', '/Hala/Hala%20(7).webp', '/Hala/Hala%20(9).webp', '/Hala/Hala%20(10).webp', '/Hala/Hala%20(11).webp', '/Hala/Hala%20(12).webp', '/Hala/Hala%20(13).webp', '/Hala/Hala%20(14).webp'],
-  'Villa Hariza': ['/Hariza/Hariza%20(1).webp', '/Hariza/Hariza%20(2).webp', '/Hariza/Hariza%20(4).webp', '/Hariza/Hariza%20(5).webp', '/Hariza/Hariza%20(6).webp', '/Hariza/Hariza%20(7).webp', '/Hariza/Hariza%20(8).webp', '/Hariza/Hariza%20(9).webp', '/Hariza/Hariza%20(10).webp', '/Hariza/Hariza%20(11).webp', '/Hariza/Hariza%20(12).webp', '/Hariza/Hariza%20(13).webp', '/Hariza/Hariza%20(14).webp', '/Hariza/Hariza%20(15).webp', '/Hariza/Hariza%20(16).webp', '/Hariza/Hariza%20(17).webp', '/Hariza/Hariza%20(18).webp'],
+  'Villa Elora': ['/Elora/elora%20(1).webp', '/Elora/elora%20(2).webp', '/Elora/elora%20(3).webp', '/Elora/elora%20(4).webp', '/Elora/elora%20(5).webp', '/Elora/elora%20(6).webp', '/Elora/elora%20(7).webp', '/Elora/elora%20(8).webp', '/Elora/elora%20(9).webp', '/Elora/elora%20(10).webp', '/Elora/elora%20(11).webp', '/Elora/elora%20(12).webp', '/Elora/elora%20(13).webp', '/Elora/elora%20(14).webp', '/Elora/elora%20(15).webp', '/Elora/elora%20(16).webp', '/Elora/elora%20(17).webp'],
   'Villa Kaca 1': ['/Kaca%201/Kaca%201%20(1).webp', '/Kaca%201/Kaca%201%20(2).webp', '/Kaca%201/Kaca%201%20(3).webp', '/Kaca%201/Kaca%201%20(4).webp', '/Kaca%201/Kaca%201%20(6).webp', '/Kaca%201/Kaca%201%20(7).webp', '/Kaca%201/Kaca%201%20(8).webp', '/Kaca%201/Kaca%201%20(9).webp', '/Kaca%201/Kaca%201%20(10).webp', '/Kaca%201/Kaca%201%20(11).webp', '/Kaca%201/Kaca%201%20(12).webp', '/Kaca%201/Kaca%201%20(13).webp', '/Kaca%201/Kaca%201%20(14).webp', '/Kaca%201/Kaca%201%20(15).webp', '/Kaca%201/Kaca%201%20(16).webp', '/Kaca%201/Kaca%201%20(17).webp', '/Kaca%201/Kaca%201%20(18).webp'],
   'Villa Kaca 2': ['/Kaca%202/Kaca%202%20(1).webp', '/Kaca%202/Kaca%202%20(2).webp', '/Kaca%202/Kaca%202%20(3).webp', '/Kaca%202/Kaca%202%20(5).webp', '/Kaca%202/Kaca%202%20(6).webp', '/Kaca%202/Kaca%202%20(7).webp', '/Kaca%202/Kaca%202%20(8).webp', '/Kaca%202/Kaca%202%20(9).webp', '/Kaca%202/Kaca%202%20(10).webp', '/Kaca%202/Kaca%202%20(11).webp', '/Kaca%202/Kaca%202%20(12).webp'],
   'Villa Opung': ['/Opung/Opung%20(1).webp', '/Opung/Opung%20(2).webp', '/Opung/Opung%20(3).webp', '/Opung/Opung%20(4).webp', '/Opung/Opung%20(5).webp', '/Opung/Opung%20(6).webp', '/Opung/Opung%20(7).webp', '/Opung/Opung%20(8).webp', '/Opung/Opung%20(9).webp', '/Opung/Opung%20(10).webp', '/Opung/Opung%20(11).webp', '/Opung/Opung%20(12).webp', '/Opung/Opung%20(13).webp', '/Opung/Opung%20(14).webp', '/Opung/Opung%20(15).webp', '/Opung/Opung%20(16).webp', '/Opung/Opung%20(17).webp', '/Opung/Opung%20(18).webp'],
@@ -237,6 +244,7 @@ const villaDetailDesc = makeDescription(
           <a href="/" class="vd-nav__pill vd-nav__pill--active">Beranda</a>
           <a href="/our-villas/" class="vd-nav__pill">Villa</a>
           <a href="#gallery" class="vd-nav__pill">Foto</a>
+          {instagramEmbedUrl && <a href="#reel" class="vd-nav__pill">Reel</a>}
           <a href="#facilities" class="vd-nav__pill">Fasilitas</a>
           <a href="#booking" class="vd-nav__pill" data-track="booking_click" data-villa={villa.name}>Booking</a>
         </div>
@@ -525,6 +533,35 @@ const villaDetailDesc = makeDescription(
         </div>
       </div>
     </section>
+
+    {instagramEmbedUrl && (
+      <section class="vd-reel-section section" id="reel">
+        <div class="container">
+          <div class="vd-reel">
+            <div class="vd-reel__copy reveal">
+              <p class="vd-section-label">Video Reels</p>
+              <h2>Suasana {villa.name}</h2>
+              <p class="vd-reel__desc">Lihat langsung momen dan sudut terbaik {villa.name} lewat video singkat dari Instagram kami.</p>
+              <a class="vd-reel__link" href={instagramReelUrl} target="_blank" rel="noopener">
+                Buka di Instagram <span aria-hidden="true">&#8599;</span>
+              </a>
+            </div>
+            <div class="vd-reel__frame reveal reveal--delay-1">
+              <iframe
+                src={instagramEmbedUrl}
+                title={`Reels Instagram ${villa.name}`}
+                loading="lazy"
+                allow="encrypted-media; clipboard-write; picture-in-picture; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"
+                frameborder="0"
+                scrolling="no"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
 
     <FaqSection variant="dark" title={`FAQ ${villa.name}`} subtitle={`Pertanyaan umum tentang ${villa.name}`} faq={villaFaq} />
 
@@ -1083,6 +1120,7 @@ const villaDetailDesc = makeDescription(
 
   .vd-overview__title,
   .vd-gallery-head h2,
+  .vd-reel__copy h2,
   .vd-more__head h2 {
     font-family: var(--font-display);
     font-size: 3.4rem;
@@ -1601,6 +1639,64 @@ const villaDetailDesc = makeDescription(
     transform: scale(1.045);
   }
 
+  .vd-reel-section {
+    background: #11120f;
+    color: #f4ede3;
+    padding-top: 0;
+  }
+
+  .vd-reel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    align-items: center;
+    gap: clamp(28px, 6vw, 72px);
+  }
+
+  .vd-reel__desc {
+    max-width: 46ch;
+    margin: 18px 0 26px;
+    color: rgba(244, 237, 227, 0.72);
+    font-size: 1.02rem;
+    line-height: 1.8;
+  }
+
+  .vd-reel__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border: 1px solid rgba(244, 237, 227, 0.35);
+    border-radius: 999px;
+    color: #f4ede3;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+
+  .vd-reel__link:hover {
+    background: #f4ede3;
+    border-color: #f4ede3;
+    color: #11120f;
+  }
+
+  .vd-reel__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #000;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  }
+
+  .vd-reel__frame iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
   .vd-more {
     background: #ebe4d9;
     color: #171813;
@@ -1725,6 +1821,15 @@ const villaDetailDesc = makeDescription(
 
     .vd-gallery {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vd-reel {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .vd-reel__frame {
+      width: min(100%, 340px);
+      margin-inline: auto;
     }
 
     .vd-more__grid {
@@ -1868,6 +1973,7 @@ const villaDetailDesc = makeDescription(
 
     .vd-overview__title,
     .vd-gallery-head h2,
+    .vd-reel__copy h2,
     .vd-more__head h2 {
       font-size: 2.35rem;
     }

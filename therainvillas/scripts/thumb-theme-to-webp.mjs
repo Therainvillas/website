@@ -24,7 +24,7 @@ const MAP = {
   'echa.webp': ['Echa Village Thumb.webp'],
   'griya arsy.webp': ['Griya Arsy Thumb.webp'],
   'hala.webp': ['Hala Thumb.webp'],
-  'hariza.webp': ['Hariza Thumb.webp'],
+  'elora.webp': ['Elora Thumb.webp'],
   'herlina.webp': ['The Herlina Thumb.webp'],
   'kaca 1.webp': ['Kaca 1 Thumb.webp'],
   'kaca 2.webp': ['Kaca 2 Thumb.webp'],

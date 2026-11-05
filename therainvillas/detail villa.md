@@ -814,7 +814,7 @@ Check in : 14.00
 Checkout : 12.00
 https://maps.app.goo.gl/WnhJM2TAJNp88JWR7?g_st=ic
 
-31. Villa Hariza
+31. Villa Elora
 harga awal Rp 1.100.000
 harga baru Rp 1.000.000
 Kapasitas 20-25 orang

@@ -110,6 +110,7 @@ export const villas = [
     bathrooms: 3,
     parking: 4,
     image: "/thumbnail/4D%20Thumb.webp",
+    instagramReel: "https://www.instagram.com/reel/Dc03mWGsrIy/",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Gazebo", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1800000, 3000000],
     pricingLabels: [
@@ -736,7 +737,7 @@ export const villas = [
   },
   {
     id: 31,
-    name: "Villa Hariza",
+    name: "Villa Elora",
     description: "Villa compact dengan karaoke, billiard, dan chill space. Cocok untuk staycation santai bersama teman.",
     originalPrice: 1100000,
     price: 1000000,
@@ -746,7 +747,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 2,
     parking: 4,
-    image: "/thumbnail/Hariza%20Thumb.webp",
+    image: "/thumbnail/Elora%20Thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Chill Space", "BBQ Space", "Kitchen Set"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1600000, 2700000],
     pricingLabels: [

@@ -9,7 +9,7 @@ Villa Arisyfa : 17 Mnt
 Villa Cemara : 15 Mnt
 Villa Arsy : 18 Mnt
 Villa Echa : 20 Mnt
-Villa hariza : 20 Mnt
+Villa Elora : 20 Mnt
 Villa Ranna : 17 Mnt
 Villa Bodas : 20 Mnt
 Villa Baduo : 18 Mnt

@@ -30,8 +30,10 @@
   RewriteRule ^villas/28/?$ /villa-ranna [R=301,L]
   RewriteRule ^villas/29/?$ /villa-rio-5 [R=301,L]
   RewriteRule ^villas/30/?$ /the-herlina [R=301,L]
-  RewriteRule ^villas/31/?$ /villa-hariza [R=301,L]
-  RewriteRule ^villas/(villa-agave|villa-wanela|villa-cemara|villa-aleia|villa-4d|villa-calmora|villa-twins|villa-cyrena|villa-arisyfa|villa-cempaka|villa-arsy|villa-rayya|villa-opung|rjs-cottage-1|rjs-cottage-2|rjs-cottage-3|villa-kaca-1|villa-kaca-2|villa-de-summit|villa-bodas|villa-thymi|villa-albi|villa-valora|echa-village|villa-awan|villa-baduo|villa-hala|villa-ranna|villa-rio-5|the-herlina|villa-hariza)/?$ /$1 [R=301,L]
+  RewriteRule ^villas/31/?$ /villa-elora [R=301,L]
+  RewriteRule ^villa-hariza/?$ /villa-elora [R=301,L]
+  RewriteRule ^villas/villa-hariza/?$ /villa-elora [R=301,L]
+  RewriteRule ^villas/(villa-agave|villa-wanela|villa-cemara|villa-aleia|villa-4d|villa-calmora|villa-twins|villa-cyrena|villa-arisyfa|villa-cempaka|villa-arsy|villa-rayya|villa-opung|rjs-cottage-1|rjs-cottage-2|rjs-cottage-3|villa-kaca-1|villa-kaca-2|villa-de-summit|villa-bodas|villa-thymi|villa-albi|villa-valora|echa-village|villa-awan|villa-baduo|villa-hala|villa-ranna|villa-rio-5|the-herlina|villa-elora)/?$ /$1 [R=301,L]
 </IfModule>
 
 <IfModule mod_headers.c>

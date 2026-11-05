@@ -35,5 +35,5 @@ export const DRIVE_MINUTES = {
   "28": 17, // Villa Ranna
   "29": 18, // Villa Rio 5
   "30": 23, // The Herlina
-  "31": 20, // Villa Hariza
+  "31": 20, // Villa Elora
 };

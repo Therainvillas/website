@@ -78,7 +78,7 @@ Echa Village
 - https://maps.app.goo.gl/DSbsfNPLcRQ7v2iW8
 koordinat : -6.660838546765414, 106.92411914039627
 
-Villa Hariza
+Villa Elora
 - https://maps.app.goo.gl/VKCL77QvgBWYMmBi9
 koordinat : -6.6625425040113235, 106.92399322501966
 

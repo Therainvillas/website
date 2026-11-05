@@ -47,5 +47,5 @@ export const locations = [
   { id: 28, name: 'Villa Ranna', lat: -6.672362294662724, lng: 106.92289315200537, href: '/villa-ranna', mapsUrl: 'https://maps.app.goo.gl/DeJrBjuW1UEwj4xh8' },
   { id: 29, name: 'Villa Rio 5', lat: -6.687706348661518, lng: 106.9280156858721, href: '/villa-rio-5', mapsUrl: 'https://maps.app.goo.gl/EkZBSKzMgtteRFCB8' },
   { id: 30, name: 'The Herlina', lat: -6.648271486314955, lng: 106.91512615200512, href: '/the-herlina', mapsUrl: 'https://maps.app.goo.gl/zbdPUju4BcZatyi3A' },
-  { id: 31, name: 'Villa Hariza', lat: -6.6625425040113235, lng: 106.92399322501966, href: '/villa-hariza', mapsUrl: 'https://maps.app.goo.gl/VKCL77QvgBWYMmBi9' },
+  { id: 31, name: 'Villa Elora', lat: -6.6625425040113235, lng: 106.92399322501966, href: '/villa-elora', mapsUrl: 'https://maps.app.goo.gl/VKCL77QvgBWYMmBi9' },
 ];

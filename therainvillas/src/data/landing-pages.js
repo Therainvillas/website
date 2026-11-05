@@ -9,7 +9,7 @@ export const landingPages = [
     description: `Pilih villa Puncak untuk 20-25 orang dengan private pool, starting Rp1.000.000. Cocok untuk gathering keluarga.`,
     intro: `Dari 7 pilihan villa di kawasan Puncak, kami rekomendasikan unit dengan kapasitas 20 sampai 25 orang untuk keepgroup yang lebih intim. Harga weekday mulai Rp1,000,000 sampai Rp2,000,000, dilengkapi private pool, billiard, karaoke, dan area BBQ. Semua villa berada di Cisarua, Bogor, dengan akses mudah dari Jakarta via tol Ciawi. Booking mudah: pilih villa, tentukan tanggal, lalu konfirmasi via WhatsApp untuk memastikan ketersediaan dan aturan check-in. Untuk acara spesifik seperti ulang tahun atau reunion, pastikan juga memilih villa dengan halaman luas agar area makan dan activities nyaman.`,
     faqs: [
-      { q: `Berapa harga sewa villa Puncak untuk 20 orang?`, a: `Harga weekday mulai Rp1.000.000 hingga Rp2.000.000 depending pada villa yang dipilih. Villa Wanela dan Villa Hariza adalah opsi paling ekonomis.` },
+      { q: `Berapa harga sewa villa Puncak untuk 20 orang?`, a: `Harga weekday mulai Rp1.000.000 hingga Rp2.000.000 depending pada villa yang dipilih. Villa Wanela dan Villa Elora adalah opsi paling ekonomis.` },
       { q: `Apakah semua villa untuk 20 orang memiliki private pool?`, a: `Ya, semua villa dalam daftar ini dilengkapi private pool.` },
       { q: `Bagaimana cara booking villa untuk 20 orang?`, a: `Pilih villa, tentukan tanggal, lalu hubungi admin via WhatsApp untuk konfirmasi ketersediaan dan DP.` },
     ],

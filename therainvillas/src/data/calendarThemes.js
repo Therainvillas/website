@@ -38,7 +38,7 @@ export const CALENDAR_THEME = {
   "Villa Ranna": "ranna",
   "Villa Rio 5": "rio",
   "The Herlina": "herlina",
-  "Villa Hariza": "hariza",
+  "Villa Elora": "elora",
 };
 
 /** URL background tema kalender untuk sebuah villa. */

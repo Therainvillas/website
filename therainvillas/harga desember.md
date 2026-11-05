@@ -14,7 +14,7 @@ Villa Wanela
 26 : Rp. 2.800.000
 27,28,29 : 1.500.000
 30,31: paket 2 malam Rp.6.000.000
-Villa Hariza
+Villa Elora
 20,22,23:Rp. 1.450.000
 24 : Rp. 1.800.000
 25 : Rp. 2.100.000 

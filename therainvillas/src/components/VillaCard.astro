@@ -32,13 +32,26 @@ const {
   parking = 0,
 } = Astro.props;
 
+function parsePriceValue(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
+    const digits = value.replace(/[^\d]/g, '');
+    return digits ? Number(digits) : null;
+  }
+  return null;
+}
+
 const priceText = typeof price === 'number'
   ? formatPrice(price)
   : (price ?? priceLabel ?? 'Cek harga');
-const priceNumber = typeof price === 'number' ? price : null;
+const priceNumber = parsePriceValue(price) ?? parsePriceValue(priceLabel);
 const showOriginal = typeof originalPrice === 'number'
   && (!priceNumber || originalPrice > priceNumber);
 const originalPriceText = showOriginal ? formatPrice(originalPrice) : '';
+const discountPercent = showOriginal && priceNumber && originalPrice > priceNumber
+  ? Math.round((1 - priceNumber / originalPrice) * 100)
+  : 0;
+const showDiscount = discountPercent >= 1 && discountPercent <= 99;
 const link = `/${slugify(name)}`;
 ---
 
@@ -46,6 +59,12 @@ const link = `/${slugify(name)}`;
   <a href={link} class="villa-card__media" aria-hidden="true" tabindex="-1">
     <img src={image} alt={name} width="1200" height="675" loading="lazy" decoding="async" />
     {badge && <span class="villa-card__badge">{badge}</span>}
+    {showDiscount && (
+      <span class="villa-card__discount" aria-label={`Diskon ${discountPercent} persen`}>
+        <strong>-{discountPercent}%</strong>
+        <small>Hemat</small>
+      </span>
+    )}
     <span class="villa-card__price">
       {originalPriceText && <s class="villa-card__price-old">{originalPriceText}</s>}
       <span>{priceText}</span>
@@ -154,6 +173,43 @@ const link = `/${slugify(name)}`;
     letter-spacing: 0.2px;
   }
 
+  .villa-card__discount {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 2;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+    padding: 6px 10px 7px;
+    border-radius: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
+    box-shadow: 0 8px 20px rgba(255, 61, 110, 0.45);
+    transform: rotate(-3deg);
+    transition: transform 0.35s ease;
+  }
+
+  .villa-card__discount strong {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.2px;
+  }
+
+  .villa-card__discount small {
+    margin-top: 2px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.92;
+  }
+
+  .villa-card:hover .villa-card__discount {
+    transform: rotate(-3deg) scale(1.06);
+  }
+
   .villa-card__badge--flash {
     display: inline-flex;
     align-items: center;
@@ -171,25 +227,7 @@ const link = `/${slugify(name)}`;
 
   @media (prefers-reduced-motion: reduce) {
     .villa-card__badge--flash { animation: none; }
-  }
-
-  .villa-card__badge--flash {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: #fff;
-    background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
-    box-shadow: 0 6px 18px rgba(255, 61, 110, 0.45);
-    animation: villa-flash-pulse 1.8s ease-in-out infinite;
-  }
-
-  @keyframes villa-flash-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .villa-card__badge--flash { animation: none; }
+    .villa-card__discount { transition: none; }
   }
 
   .villa-card__body {

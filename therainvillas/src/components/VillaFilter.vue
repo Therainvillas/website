@@ -104,6 +104,14 @@
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
             <span v-if="checkIn && isVillaAvailable(villa, checkIn)" class="vf-card__available">Tersedia</span>
+            <span
+              v-if="discountPercent(villa) > 0"
+              class="vf-card__discount"
+              :aria-label="`Diskon ${discountPercent(villa)} persen`"
+            >
+              <strong>-{{ discountPercent(villa) }}%</strong>
+              <small>Hemat</small>
+            </span>
             <span class="vf-card__price">
               <s v-if="villa.originalPrice && villa.originalPrice > villa.price" class="vf-card__price-old">{{ formatPrice(villa.originalPrice) }}</s>
               <span>{{ villa.priceLabel || formatPrice(villa.price) }}</span>
@@ -294,6 +302,12 @@ export default {
     formatPrice(n) {
       if (!n) return 'Cek harga';
       return 'Rp ' + Number(n).toLocaleString('id-ID');
+    },
+    discountPercent(villa) {
+      const original = Number(villa && villa.originalPrice) || 0;
+      const current = Number(villa && villa.price) || 0;
+      if (!original || !current || original <= current) return 0;
+      return Math.round((1 - current / original) * 100);
     },
     slugify(s) {
       return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -778,6 +792,49 @@ export default {
   background: rgba(22, 163, 74, 0.95);
   box-shadow: 0 6px 18px rgba(22, 163, 74, 0.35);
   letter-spacing: 0.2px;
+}
+
+.vf-card__discount {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  padding: 6px 10px 7px;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #ff3d6e 0%, #ff7a18 100%);
+  box-shadow: 0 8px 20px rgba(255, 61, 110, 0.45);
+  transform: rotate(-3deg);
+  transition: transform 0.35s ease;
+}
+
+.vf-card__discount strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.vf-card__discount small {
+  margin-top: 2px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.92;
+}
+
+.vf-card:hover .vf-card__discount {
+  transform: rotate(-3deg) scale(1.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vf-card__discount {
+    transition: none;
+  }
 }
 
 .vf-card__body {

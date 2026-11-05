@@ -326,34 +326,74 @@ export default {
 
 .flash-popup__rain {
   position: absolute;
-  inset: -20% -10%;
+  inset: -30% -18%;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0.68;
   mix-blend-mode: screen;
-  background-image:
-    repeating-linear-gradient(
-      106deg,
-      transparent 0 15px,
-      rgba(166, 214, 255, 0.16) 15px 16px,
-      transparent 16px 40px
-    ),
-    repeating-linear-gradient(
-      106deg,
-      transparent 0 32px,
-      rgba(255, 255, 255, 0.07) 32px 33px,
-      transparent 33px 74px
-    );
-  background-size: 150px 240px, 240px 320px;
-  animation: flash-rain 1.15s linear infinite;
+  background-image: repeating-linear-gradient(
+    104deg,
+    transparent 0 11px,
+    rgba(166, 214, 255, 0.24) 11px 12px,
+    transparent 12px 28px
+  );
+  background-size: 118px 190px;
+  animation: flash-rain 0.62s linear infinite;
+}
+
+.flash-popup__rain::before,
+.flash-popup__rain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.flash-popup__rain::before {
+  background-image: repeating-linear-gradient(
+    102deg,
+    transparent 0 19px,
+    rgba(255, 255, 255, 0.13) 19px 20px,
+    transparent 20px 43px
+  );
+  background-size: 176px 250px;
+  animation: flash-rain-slow 0.92s linear infinite;
+}
+
+.flash-popup__rain::after {
+  background-image: repeating-linear-gradient(
+    100deg,
+    transparent 0 27px,
+    rgba(120, 190, 255, 0.18) 27px 28.5px,
+    transparent 28.5px 58px
+  );
+  background-size: 248px 320px;
+  animation: flash-rain-fast 0.42s linear infinite;
 }
 
 @keyframes flash-rain {
   from {
-    background-position: 0 0, 0 0;
+    background-position: 0 0;
   }
   to {
-    background-position: -130px 240px, -210px 320px;
+    background-position: -110px 190px;
+  }
+}
+
+@keyframes flash-rain-slow {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -170px 250px;
+  }
+}
+
+@keyframes flash-rain-fast {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -80px 150px;
   }
 }
 
@@ -545,6 +585,8 @@ export default {
 
 @media (prefers-reduced-motion: reduce) {
   .flash-popup__rain,
+  .flash-popup__rain::before,
+  .flash-popup__rain::after,
   .flash-popup__dot {
     animation: none;
   }

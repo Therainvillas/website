@@ -169,7 +169,7 @@
                 </div>
               </div>
 
-              <p class="bf__cal-legend">Tanggal yang dicoret sudah terbooking dan tidak dapat dipilih sebagai check-in.</p>
+              <p class="bf__cal-legend">Tanggal yang dicoret sudah terbooking dan tidak dapat dipilih sebagai check-in. Tanggal 30–31 Des bisa dipilih 1 malam; pilih 30 Des–1 Jan untuk paket 2 malam.</p>
             </div>
 
             <p v-if="nightCount === 0 && (promoStatus === 'invalid' || promoStatus === 'expired')" class="bf__promo-msg bf__promo-msg--err">{{ promoMessage }}</p>
@@ -180,8 +180,14 @@
                 <strong>{{ totalPrice === 'TBA' ? 'TBA' : 'Rp ' + totalPrice }}</strong>
               </div>
               <div class="bf__price-note">Harga dihitung otomatis berdasarkan hari menginap</div>
-              <div v-if="selectedHasPackage" class="bf__package-note">
-                🎁 Paket 2 malam 30–31 Desember{{ packageTba ? ' — harga menyusul (TBA)' : '' }}
+              <div v-if="stayQuote.packageApplied" class="bf__package-note">
+                🎁 Harga paket 2 malam 30–31 Desember otomatis diterapkan (lebih hemat).
+              </div>
+              <div v-else-if="selectedHasPackage && packageTba" class="bf__package-note">
+                🎁 Paket 2 malam 30–31 Desember — harga menyusul (TBA).
+              </div>
+              <div v-if="isPeakSingleNight" class="bf__package-note">
+                💡 30–31 Des bisa dipesan 1 malam. Pilih 30 Des–1 Jan untuk harga paket 2 malam yang lebih hemat.
               </div>
               <div v-if="showTbaNote" class="bf__package-note">
                 Harga tanggal ini belum pasti (TBA) — akan dikonfirmasi admin via WhatsApp.
@@ -410,15 +416,12 @@
 <script>
 import { getPromo, isPromoActive, isPromoBlockedForVilla, stayRequiresPromoClaim } from '../data/promos.js';
 import {
-  getNightPrice,
-  decPackageRangeError,
+  getStayTotal,
   decPackageTotal,
   hasDecPackage,
   isDecPackageNight,
-  toDateStr,
   DEC_PACKAGE_CHECKIN,
   DEC_PACKAGE_CHECKOUT,
-  DEC_PACKAGE_DATES,
 } from '../data/seasonPrices.js';
 
 const BOOKING_API = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
@@ -560,39 +563,31 @@ export default {
       const diff = Math.round((b - a) / (1000 * 60 * 60 * 24));
       return diff > 0 ? diff : 0;
     },
-    totalPriceRaw() {
-      if (!this.nightCount) return 0;
-      const villa = this.selectedVilla;
-      if (!villa) return 0;
-      let total = 0;
-      const start = new Date(this.form.checkIn + 'T00:00:00');
-      for (let i = 0; i < this.nightCount; i++) {
-        const d = new Date(start);
-        d.setDate(d.getDate() + i);
-        const p = getNightPrice(villa, d);
-        total += p == null ? 0 : p;
+    stayQuote() {
+      if (!this.nightCount || !this.selectedVilla) {
+        return { total: 0, tba: false, packageApplied: false, nights: 0 };
       }
-      return total;
+      return getStayTotal(this.selectedVilla, this.form.checkIn, this.form.checkOut);
+    },
+    totalPriceRaw() {
+      return this.stayQuote.total;
     },
     selectedHasPackage() {
-      if (!this.form.checkIn || !this.form.checkOut) return false;
+      if (!this.form.checkIn || !this.form.checkOut || !hasDecPackage(this.selectedVilla)) return false;
       return this.form.checkIn <= DEC_PACKAGE_CHECKIN && this.form.checkOut >= DEC_PACKAGE_CHECKOUT;
     },
     packageTba() {
       return this.selectedHasPackage && !!this.selectedVilla && decPackageTotal(this.selectedVilla) == null;
     },
     hasTbaNight() {
-      if (!this.nightCount || !this.selectedVilla) return false;
-      const start = new Date(this.form.checkIn + 'T00:00:00');
-      for (let i = 0; i < this.nightCount; i++) {
-        const d = new Date(start);
-        d.setDate(d.getDate() + i);
-        if (getNightPrice(this.selectedVilla, d) == null) return true;
-      }
-      return false;
+      return this.stayQuote.tba;
     },
     showTbaNote() {
       return this.hasTbaNight && !this.selectedHasPackage;
+    },
+    isPeakSingleNight() {
+      if (this.nightCount !== 1 || !hasDecPackage(this.selectedVilla)) return false;
+      return isDecPackageNight(this.form.checkIn);
     },
 
     totalPrice() {
@@ -656,12 +651,17 @@ export default {
             '',
           ]
           : []),
-        ...(this.selectedHasPackage
+        ...(this.stayQuote.packageApplied
           ? [
-            l('Paket', this.packageTba ? 'Paket 2 malam 30–31 Des (harga TBA, menyusul)' : 'Paket 2 malam 30–31 Des'),
+            l('Paket', 'Paket 2 malam 30–31 Des'),
             '',
           ]
-          : []),
+          : this.selectedHasPackage && this.packageTba
+            ? [
+              l('Paket', 'Paket 2 malam 30–31 Des (harga TBA, menyusul)'),
+              '',
+            ]
+            : []),
         'Penyediaan lainya',
         l('Sewa ps', this.form.rentPs),
         '',
@@ -696,11 +696,6 @@ export default {
     }
     if (qCheckIn) this.form.checkIn = qCheckIn;
     if (qCheckOut) this.form.checkOut = qCheckOut;
-    // Perbaiki rentang paket 30–31 Des yang tidak lengkap (dari link lama).
-    if (this.form.checkIn && this.form.checkOut && decPackageRangeError(this.selectedVilla, this.form.checkIn, this.form.checkOut)) {
-      this.form.checkIn = DEC_PACKAGE_CHECKIN;
-      this.form.checkOut = DEC_PACKAGE_CHECKOUT;
-    }
     if (qPromo) {
       this._promoInit = true;
       this.form.promo = qPromo;
@@ -817,24 +812,17 @@ export default {
 
       if (!this.form.checkIn || (this.form.checkIn && this.form.checkOut)) {
         if (this.calUnavailable(cell)) return;
-        if (this.isPackageCell(cell)) { this.applyPackageRange(); return; }
         this.form.checkIn = s;
         this.form.checkOut = '';
         this.error = '';
       } else {
         if (d.getTime() <= this.calCheckInDate.getTime()) {
           if (this.calUnavailable(cell)) return;
-          if (this.isPackageCell(cell)) { this.applyPackageRange(); return; }
           this.form.checkIn = s;
           this.error = '';
         } else {
           if (this.hasBlockedNight(this.form.checkIn, s)) {
             this.error = `Villa ${this.form.villa} sudah terbooking pada salah satu tanggal antara check-in dan check-out tersebut. Silakan pilih check-out sebelum tanggal terbooking.`;
-            return;
-          }
-          const rangeErr = decPackageRangeError(this.selectedVilla, this.form.checkIn, s);
-          if (rangeErr) {
-            this.error = rangeErr;
             return;
           }
           this.form.checkOut = s;
@@ -844,15 +832,6 @@ export default {
     },
     isPackageCell(cell) {
       return isDecPackageNight(this.calStr(cell)) && hasDecPackage(this.selectedVilla);
-    },
-    applyPackageRange() {
-      if (this.blockedSet.has(DEC_PACKAGE_CHECKIN) || this.blockedSet.has(DEC_PACKAGE_DATES[1])) {
-        this.error = 'Paket 30–31 Des tidak tersedia karena salah satu tanggal sudah terbooking.';
-        return;
-      }
-      this.form.checkIn = DEC_PACKAGE_CHECKIN;
-      this.form.checkOut = DEC_PACKAGE_CHECKOUT;
-      this.error = '';
     },
     fetchBlockedDates() {
       if (!this.form.villa) return;

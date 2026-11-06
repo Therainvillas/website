@@ -15,7 +15,7 @@
       <div class="avail__dec-notice-title">📢 Pemberitahuan Desember 2026</div>
       <ul class="avail__dec-notice-list">
         <li>Harga sewa villa <strong>naik (high season)</strong> sepanjang libur Desember 2026 — lihat harga per tanggal di setiap villa.</li>
-        <li>Tanggal <strong>30–31 Desember 2026</strong> wajib <strong>Paket 2 Malam</strong> (opsi: check-in 30 Des &amp; check-out 1 Jan, atau check-in 31 Des &amp; check-out 2 Jan).</li>
+        <li>Tanggal <strong>30–31 Desember 2026</strong> bisa dipesan <strong>1 malam</strong> dengan harga per malam, atau <strong>paket hemat 2 malam</strong> (30 Des–1 Jan). Harga paket otomatis dipakai bila kedua malam dipilih.</li>
         <li>Harga villa tertentu bisa berstatus <strong>TBA</strong> (menyusul) dan dikonfirmasi admin via WhatsApp.</li>
       </ul>
     </div>
@@ -66,7 +66,7 @@
                 >
                   <span class="avail-cell__num">{{ cell.day }}</span>
                   <span class="avail-cell__price">{{ cellPrice(v, cell) }}</span>
-                  <span v-if="isPackageCell(v, cell)" class="avail-cell__pkg">Paket</span>
+                  <span v-if="isPackageCell(v, cell)" class="avail-cell__pkg">High</span>
                 </a>
                 <span
                   v-else
@@ -91,7 +91,7 @@
         <i class="avail__swatch avail__swatch--off"></i> Terbooking / tidak tersedia
       </span>
       <span class="avail__legend-item">
-        <i class="avail__swatch avail__swatch--package"></i> Tanggal paket 2 malam (30–31 Des)
+        <i class="avail__swatch avail__swatch--package"></i> High season 30–31 Des (bisa 1 malam / paket 2 malam)
       </span>
     </div>
   </div>
@@ -187,7 +187,7 @@ export default {
     cellTitle(v, cell) {
       const base = 'Booking ' + v.name + ' mulai ' + this.dateStr(cell);
       if (this.isPackageCell(v, cell)) {
-        return base + ' (masuk paket 2 malam 30–31 Des)';
+        return base + ' (high season 30–31 Des; bisa 1 malam atau paket 2 malam 30 Des–1 Jan)';
       }
       return base;
     },
@@ -197,10 +197,7 @@ export default {
     dateHref(v, cell) {
       const p2 = (n) => String(n).padStart(2, "0");
       const fmt = (d) => `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
-      // Tanggal paket 30–31 Des: arahkan ke rentang 2 malam penuh.
-      if (this.isPackageCell(v, cell)) {
-        return `/booking?villa=${encodeURIComponent(v.name)}&checkIn=2026-12-30&checkOut=2027-01-01`;
-      }
+      // 30 & 31 Des bisa dipesan 1 malam; paket 2 malam dipilih dari halaman booking.
       const ci = new Date(cell.year, cell.month, cell.day);
       const co = new Date(cell.year, cell.month, cell.day + 1);
       return `/booking?villa=${encodeURIComponent(v.name)}&checkIn=${fmt(ci)}&checkOut=${fmt(co)}`;

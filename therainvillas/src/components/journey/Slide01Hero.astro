@@ -79,15 +79,22 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
 
     <div class="journey-hero__stats reveal reveal--delay-4">
       <div class="journey-hero__stat">
-        <span class="journey-hero__stat-number">31</span>
+        <span class="journey-hero__stat-number">
+          <span class="journey-hero__stat-value" data-count-to="31">31</span>
+        </span>
         <span class="journey-hero__stat-label">Pilihan Villa</span>
       </div>
       <div class="journey-hero__stat">
-        <span class="journey-hero__stat-number">5000+</span>
+        <span class="journey-hero__stat-number">
+          <span class="journey-hero__stat-value" data-count-to="10000" data-count-suffix="+">10.000+</span>
+        </span>
         <span class="journey-hero__stat-label">Tamu Terlayani</span>
       </div>
       <div class="journey-hero__stat">
-        <span class="journey-hero__stat-number">4.9 <svg class="journey-hero__stat-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.94 6.26 6.87.87-5.06 4.73 1.3 6.79L12 17.27l-6.05 3.38 1.3-6.79L2.19 9.13l6.87-.87z" /></svg></span>
+        <span class="journey-hero__stat-number">
+          <span class="journey-hero__stat-value" data-count-to="4.9" data-count-decimals="1">4.9</span>
+          <svg class="journey-hero__stat-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.94 6.26 6.87.87-5.06 4.73 1.3 6.79L12 17.27l-6.05 3.38 1.3-6.79L2.19 9.13l6.87-.87z" /></svg>
+        </span>
         <span class="journey-hero__stat-label">Rating Bintang</span>
       </div>
     </div>
@@ -474,6 +481,10 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
     line-height: 1;
   }
 
+  .journey-hero__stat-value {
+    font-variant-numeric: tabular-nums;
+  }
+
   .journey-hero__stat-star {
     width: 20px;
     height: 20px;
@@ -617,5 +628,111 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
     } else {
       init();
     }
+  })();
+</script>
+
+<script>
+  // Animasi hitung naik untuk statistik hero: 0 → angka tujuan saat terlihat.
+  (() => {
+    const counters = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-count-to]')
+    );
+    if (!counters.length) return;
+
+    const motionQuery =
+      typeof window.matchMedia === 'function'
+        ? window.matchMedia('(prefers-reduced-motion: reduce)')
+        : null;
+
+    const format = (el: HTMLElement, value: number) => {
+      const decimals = Number(el.dataset.countDecimals || 0);
+      const suffix = el.dataset.countSuffix || '';
+      const fixed = value.toFixed(decimals);
+      const [whole = '0', fraction] = fixed.split('.');
+      const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return (fraction === undefined ? grouped : grouped + '.' + fraction) + suffix;
+    };
+
+    let started = false;
+    let cancelled = false;
+
+    const settle = () => {
+      cancelled = true;
+      counters.forEach((el) => {
+        const target = Number(el.dataset.countTo);
+        if (Number.isFinite(target)) el.textContent = format(el, target);
+      });
+    };
+
+    if (motionQuery && motionQuery.matches) {
+      settle();
+      return;
+    }
+
+    const DURATION = 1500;
+    const STAGGER = 120;
+
+    const run = () => {
+      if (started || cancelled) return;
+      started = true;
+
+      counters.forEach((el) => {
+        el.textContent = format(el, 0);
+      });
+
+      const startedAt = performance.now();
+
+      const frame = (now: number) => {
+        if (cancelled) return;
+        let done = true;
+
+        counters.forEach((el, index) => {
+          const target = Number(el.dataset.countTo);
+          if (!Number.isFinite(target)) return;
+
+          const elapsed = now - startedAt - index * STAGGER;
+          const progress = Math.min(Math.max(elapsed / DURATION, 0), 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+
+          el.textContent = format(el, target * eased);
+          if (progress < 1) done = false;
+        });
+
+        if (!done) requestAnimationFrame(frame);
+        else settle();
+      };
+
+      requestAnimationFrame(frame);
+    };
+
+    if (motionQuery) {
+      const onChange = (event: MediaQueryListEvent) => {
+        if (event.matches) settle();
+      };
+      if (typeof motionQuery.addEventListener === 'function') {
+        motionQuery.addEventListener('change', onChange);
+      } else if (typeof motionQuery.addListener === 'function') {
+        motionQuery.addListener(onChange);
+      }
+    }
+
+    const stats =
+      counters[0].closest('.journey-hero__stats') || counters[0].parentElement;
+
+    if (!stats || !('IntersectionObserver' in window)) {
+      run();
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          run();
+        }
+      },
+      { threshold: 0.35 }
+    );
+    observer.observe(stats);
   })();
 </script>

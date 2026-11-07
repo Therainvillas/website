@@ -706,22 +706,68 @@ export default {
 }
 
 .vf-card {
+  --tilt-rx: 0deg;
+  --tilt-ry: 0deg;
+  --tilt-gx: 50%;
+  --tilt-gy: 50%;
+  --tilt-glare: 0;
+  --card-radius: 20px;
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   background: var(--color-panel, #fff);
   border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 20px;
+  border-radius: var(--card-radius);
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  transform: none;
+  transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.vf-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 22px 44px rgba(91, 141, 239, 0.18);
+/* Kilau tipis mengikuti kursor, hanya tampil saat hover. */
+.vf-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--tilt-glare);
+  background: radial-gradient(
+    circle 190px at var(--tilt-gx) var(--tilt-gy),
+    rgba(255, 255, 255, 0.24),
+    rgba(255, 255, 255, 0) 70%
+  );
+  transition: opacity 0.3s ease;
+}
+
+/* Pengguna keyboard: kartu terangkat halus saat difokus. */
+.vf-card:focus-visible {
+  transform: translateY(-4px);
+}
+
+.vf-card.is-tilting {
+  --tilt-glare: 1;
+  z-index: 1;
+  transform: perspective(700px) rotateX(var(--tilt-rx)) rotateY(var(--tilt-ry)) translateY(-6px);
+  transition: transform 0.18s ease-out;
+  will-change: transform;
+}
+
+/* Pastikan sudut tetap membulat penuh saat kartu diputar 3D,
+   termasuk ketika kartu sedang kembali ke posisi semula. */
+.vf-card.is-tilting,
+.vf-card.is-resetting {
+  clip-path: inset(0 round var(--card-radius));
+}
+
+/* Umpan balik tap di layar sentuh (tanpa tilt). */
+.vf-card.is-pressed {
+  transform: translateY(1px) scale(0.985);
+  transition: transform 0.15s ease-out;
 }
 
 .vf-card__media {
@@ -729,17 +775,13 @@ export default {
   display: block;
   height: 220px;
   overflow: hidden;
+  border-radius: var(--card-radius) var(--card-radius) 0 0;
 }
 
 .vf-card__media > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
-}
-
-.vf-card:hover .vf-card__media > img {
-  transform: scale(1.06);
 }
 
 .vf-card__price {
@@ -828,12 +870,24 @@ export default {
 }
 
 .vf-card:hover .vf-card__discount {
-  transform: rotate(-3deg) scale(1.06);
+  transform: rotate(-3deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vf-card__discount {
     transition: none;
+  }
+
+  .vf-card,
+  .vf-card.is-tilting,
+  .vf-card.is-pressed,
+  .vf-card:focus-visible {
+    transform: none;
+    transition: none;
+  }
+
+  .vf-card::after {
+    display: none;
   }
 }
 

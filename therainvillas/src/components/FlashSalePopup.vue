@@ -42,7 +42,7 @@
             <span id="flash-sale-title">Flash Sale 11.11 · November Rain</span>
           </p>
 
-          <p class="flash-popup__ends">Berakhir dalam</p>
+          <p class="flash-popup__ends">Di mulai dalam</p>
 
           <div class="flash-popup__countdown" role="timer" aria-label="Hitung mundur Flash Sale 11.11">
             <div v-for="item in countdownItems" :key="item.label" class="flash-popup__unit">

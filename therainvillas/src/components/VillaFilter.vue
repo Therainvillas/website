@@ -8,6 +8,24 @@
         placeholder="Cari nama villa..."
       />
 
+      <div class="vf__dropdown" ref="areaDrop">
+        <button class="vf__drop-btn" @click="toggleDrop('area')">
+          <span>Daerah</span>
+          <span v-if="areaLabel" class="vf__drop-active">{{ areaLabel }}</span>
+          <svg class="vf__chevron" :class="{ 'vf__chevron--open': openDrop === 'area' }" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="vf__drop-menu" v-show="openDrop === 'area'">
+          <label class="vf__drop-item">
+            <input type="radio" value="" v-model="area" @change="openDrop = null" />
+            <span>Semua Daerah</span>
+          </label>
+          <label v-for="o in areaOptions" :key="o.value" class="vf__drop-item">
+            <input type="radio" :value="o.value" v-model="area" @change="openDrop = null" />
+            <span>{{ o.label }}</span>
+          </label>
+        </div>
+      </div>
+
       <div class="vf__dropdown" ref="priceDrop">
         <button class="vf__drop-btn" @click="toggleDrop('price')">
           <span>Harga</span>
@@ -119,6 +137,10 @@
           </div>
           <div class="vf-card__body">
             <h3 class="vf-card__title">{{ villa.name }}</h3>
+            <p v-if="villa.area" class="vf-card__area">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+              {{ villa.area }}<template v-if="villa.region">, {{ villa.region }}</template>
+            </p>
             <p class="vf-card__desc">{{ villa.description }}</p>
             <ul class="vf-card__stats">
               <li><span class="vf-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" /></span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
@@ -127,7 +149,8 @@
               <li><span class="vf-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/parking.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" /></span> <strong>{{ villa.parking }}</strong> parkir</li>
             </ul>
             <div class="vf-card__tags">
-              <span v-for="tag in villaAmenities(villa).slice(0, 4)" :key="tag" class="vf-card__tag">{{ tag }}</span>
+              <span v-if="villa.busAccess" class="vf-card__tag vf-card__tag--bus">Bus 3/4</span>
+              <span v-for="tag in villaAmenities(villa).slice(0, villa.busAccess ? 3 : 4)" :key="tag" class="vf-card__tag">{{ tag }}</span>
             </div>
             <span class="vf-card__btn">Lihat Detail</span>
           </div>
@@ -183,27 +206,16 @@ const BED_OPTIONS = [
 ];
 
 const AMENITY_OPTIONS = [
-  { label: 'Private Pool', value: 'pool' },
-  { label: 'Billiard', value: 'billiard' },
-  { label: 'Karaoke', value: 'karaoke' },
-  { label: 'BBQ', value: 'bbq' },
-  { label: 'Kitchen Set', value: 'kitchen' },
   { label: 'Gazebo', value: 'gazebo' },
   { label: 'Playground', value: 'playground' },
   { label: 'Mountain View', value: 'mountain' },
-  { label: 'WiFi & TV', value: 'wifi' },
+  { label: 'Bus 3/4', value: 'bus' },
 ];
 
 const AMENITY_KEYWORDS = {
-  pool: ['private pool', 'pool'],
-  billiard: ['billiard'],
-  karaoke: ['karaoke'],
-  bbq: ['bbq', 'api unggun'],
-  kitchen: ['kitchen'],
   gazebo: ['gazebo'],
   playground: ['playground'],
   mountain: ['mountain', 'pegunungan', 'view'],
-  wifi: ['wifi', 'smart tv'],
 };
 
 const PAGE_SIZE = 12;
@@ -215,6 +227,7 @@ export default {
   data() {
     return {
       search: '',
+      area: '',
       priceRange: '',
       capMin: 0,
       bedMin: 0,
@@ -234,6 +247,19 @@ export default {
     };
   },
   computed: {
+    areaLabel() {
+      const o = this.areaOptions.find(o => o.value === this.area);
+      return o ? o.label : '';
+    },
+    areaOptions() {
+      const seen = new Map();
+      this.villas.forEach((v) => {
+        if (!v.area || seen.has(v.area)) return;
+        seen.set(v.area, v.region ? `${v.area}, ${v.region}` : v.area);
+      });
+      return Array.from(seen, ([value, label]) => ({ value, label }))
+        .sort((a, b) => a.label.localeCompare(b.label, 'id'));
+    },
     priceLabel() {
       const o = PRICE_OPTIONS.find(o => o.value === this.priceRange);
       return o && o.value ? o.label : '';
@@ -247,7 +273,7 @@ export default {
       return o && o.value ? o.label : '';
     },
     hasFilter() {
-      return this.search || this.priceRange || this.capMin || this.bedMin || this.selectedAmenities.length || this.checkIn;
+      return this.search || this.area || this.priceRange || this.capMin || this.bedMin || this.selectedAmenities.length || this.checkIn;
     },
     todayStr() {
       const d = new Date();
@@ -258,6 +284,9 @@ export default {
       if (this.search) {
         const q = this.search.toLowerCase();
         list = list.filter(v => v.name.toLowerCase().includes(q));
+      }
+      if (this.area) {
+        list = list.filter(v => v.area === this.area);
       }
       if (this.priceRange) {
         const [min, max] = this.priceRange.split('-').map(Number);
@@ -272,9 +301,10 @@ export default {
       if (this.selectedAmenities.length) {
         list = list.filter(v => {
           const text = v.amenities.join(' ').toLowerCase();
-          return this.selectedAmenities.every(key =>
-            AMENITY_KEYWORDS[key].some(kw => text.includes(kw))
-          );
+          return this.selectedAmenities.every(key => {
+            if (key === 'bus') return v.busAccess === true;
+            return AMENITY_KEYWORDS[key].some(kw => text.includes(kw));
+          });
         });
       }
       if (this.checkIn) {
@@ -290,8 +320,26 @@ export default {
     },
   },
   watch: {
-    hasFilter() {
+    search() {
       this.visibleCount = PAGE_SIZE;
+    },
+    area() {
+      this.visibleCount = PAGE_SIZE;
+    },
+    priceRange() {
+      this.visibleCount = PAGE_SIZE;
+    },
+    capMin() {
+      this.visibleCount = PAGE_SIZE;
+    },
+    bedMin() {
+      this.visibleCount = PAGE_SIZE;
+    },
+    selectedAmenities: {
+      deep: true,
+      handler() {
+        this.visibleCount = PAGE_SIZE;
+      },
     },
     checkIn(value) {
       this.visibleCount = PAGE_SIZE;
@@ -322,6 +370,7 @@ export default {
     },
     clearAll() {
       this.search = '';
+      this.area = '';
       this.priceRange = '';
       this.capMin = 0;
       this.bedMin = 0;
@@ -901,8 +950,22 @@ export default {
 .vf-card__title {
   font-size: 1.25rem;
   font-weight: 700;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: var(--color-dark, #0f172a);
+}
+
+.vf-card__area {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5b8def;
+}
+
+.vf-card__area svg {
+  flex: none;
 }
 
 .vf-card__desc {
@@ -962,6 +1025,11 @@ export default {
   font-weight: 600;
   background: rgba(91, 141, 239, 0.08);
   color: #5b8def;
+}
+
+.vf-card__tag--bus {
+  background: rgba(16, 185, 129, 0.12);
+  color: #0f9f6e;
 }
 
 .vf-card__btn {

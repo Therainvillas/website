@@ -5,6 +5,8 @@ import { formatPrice } from '../data/villas.js';
 interface Props {
   id: number;
   name: string;
+  area?: string;
+  region?: string;
   description: string;
   image: string;
   price?: string | number;
@@ -20,6 +22,8 @@ interface Props {
 const {
   id,
   name,
+  area,
+  region,
   description,
   image,
   priceLabel,
@@ -75,6 +79,12 @@ const link = `/${slugify(name)}`;
     <h3 class="villa-card__title">
       <a href={link}>{name}</a>
     </h3>
+    {area && (
+      <p class="villa-card__area">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+        {area}{region && `, ${region}`}
+      </p>
+    )}
     <p class="villa-card__desc">{description}</p>
 
     <ul class="villa-card__stats">
@@ -294,7 +304,21 @@ const link = `/${slugify(name)}`;
   .villa-card__title {
     font-size: 1.25rem;
     font-weight: 700;
-    margin: 0 0 8px;
+    margin: 0 0 6px;
+  }
+
+  .villa-card__area {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5b8def;
+  }
+
+  .villa-card__area svg {
+    flex: none;
   }
 
   .villa-card__title a {

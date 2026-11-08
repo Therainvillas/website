@@ -4,6 +4,8 @@ export const villas = [
   {
     id: 1,
     name: "Villa Agave",
+    area: "Batulayang",
+    region: "Cisarua",
     description: "Villa luas dengan 3 bangunan, private pool, dan area billiard. Cocok untuk acara besar dan gathering.",
     originalPrice: 1700000,
     price: 1500000,
@@ -28,6 +30,8 @@ export const villas = [
   {
     id: 2,
     name: "Villa Wanela",
+    area: "Sukagalih",
+    region: "Megamendung",
     description: "Villa cozy dengan private pool dan billiard. Cocok untuk staycation santai bersama teman atau keluarga.",
     price: 1000000,
     priceLabel: "Rp 1.000.000/malam",
@@ -52,6 +56,8 @@ export const villas = [
   {
     id: 3,
     name: "Villa Cemara",
+    area: "Cibeureum",
+    region: "Cisarua",
     description: "Villa asri dengan private pool, balkon, dan halaman luas. Cocok untuk healing dan quality time.",
     originalPrice: 1300000,
     price: 1100000,
@@ -61,6 +67,7 @@ export const villas = [
     bedrooms: 5,
     bathrooms: 4,
     parking: 7,
+    busAccess: true,
     image: "/thumbnail/Cemara%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "2 Smart TV & WiFi", "Billiard", "Karaoke", "Halaman Luas", "Private Pool", "BBQ Space", "Balkon", "Kitchen Set"],
     dayPrices: [1100000, 1100000, 1100000, 1100000, 1100000, 1800000, 3500000],
@@ -76,6 +83,8 @@ export const villas = [
   {
     id: 4,
     name: "Villa Aleia",
+    area: "Tugu Selatan",
+    region: "Cisarua",
     description: "Villa cozy dengan private pool, gazebo, dan kitchen set lengkap. Cocok untuk liburan santai bersama keluarga.",
     originalPrice: 1400000,
     price: 1100000,
@@ -100,6 +109,8 @@ export const villas = [
   {
     id: 5,
     name: "Villa 4D",
+    area: "Tugu Selatan",
+    region: "Cisarua",
     description: "Villa dengan konsep ala cafe, private pool, gazebo, dan area billiard. Cocok untuk nongkrong santai bersama teman.",
     originalPrice: 1200000,
     price: 1000000,
@@ -125,6 +136,8 @@ export const villas = [
   {
     id: 6,
     name: "Villa Calmora",
+    area: "Tugu Utara",
+    region: "Cisarua",
     badge: "⭐ Best Seller",
     scheduleName: "calmora",
     description: "Villa dengan best view pegunungan dan citylight, private pool, dan gazebo. Cocok untuk liburan santai.",
@@ -151,6 +164,8 @@ export const villas = [
   {
     id: 7,
     name: "Villa Twins",
+    area: "Batulayang",
+    region: "Cisarua",
     description: "Villa twin dengan lapangan basket, playground, dan free 2 glamping. Cocok untuk gathering dan acara keluarga.",
     originalPrice: 1500000,
     price: 1200000,
@@ -160,6 +175,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 15,
+    busAccess: true,
     image: "/thumbnail/Twins%20Thumb.webp",
     amenities: ["Lapangan Basket", "Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Halaman Luas", "Playground", "Private Pool", "BBQ Space", "Kitchen Set", "Gazebo", "Free 2 Glamping"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 2000000, 3500000],
@@ -175,6 +191,8 @@ export const villas = [
   {
     id: 8,
     name: "Villa Cyrena",
+    area: "Cibeureum",
+    region: "Cisarua",
     description: "Villa elegan dengan private pool dan area bersantai. Cocok untuk liburan keluarga atau kumpul teman.",
     originalPrice: 1200000,
     price: 1000000,
@@ -199,6 +217,8 @@ export const villas = [
   {
     id: 9,
     name: "Villa Arisyfa",
+    area: "Cibeureum",
+    region: "Cisarua",
     description: "Villa luas 3 lantai dengan lapangan badminton dan private pool. Cocok untuk gathering keluarga besar.",
     originalPrice: 1500000,
     price: 1200000,
@@ -209,6 +229,7 @@ export const villas = [
     bedroomsNote: "7 tempat tidur",
     bathrooms: 5,
     parking: 7,
+    busAccess: true,
     image: "/thumbnail/Arisyfa%20Thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard Area", "Karaoke", "Chill Area", "Halaman Luas", "Lapangan Badminton", "Private Pool", "Gazebo", "BBQ Space", "Kitchen Set"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 1800000, 3500000],
@@ -224,6 +245,8 @@ export const villas = [
   {
     id: 10,
     name: "Villa Cempaka",
+    area: "Tugu Utara",
+    region: "Cisarua",
     description: "Villa bergaya Eropa dengan arsitektur klasik elegan dan private pool. Cocok untuk quality time bersama keluarga.",
     originalPrice: 1200000,
     price: 1000000,
@@ -249,6 +272,8 @@ export const villas = [
   {
     id: 11,
     name: "Villa Arsy",
+    area: "Leuwimalang",
+    region: "Cisarua",
     description: "Villa dengan private pool, mushola, dan suasana nyaman. Cocok untuk liburan keluarga yang tenang.",
     originalPrice: 1700000,
     price: 1500000,
@@ -274,6 +299,8 @@ export const villas = [
   {
     id: 12,
     name: "Villa Rayya",
+    area: "Batulayang",
+    region: "Cisarua",
     description: "Villa 2 lantai dengan api unggun space, playground, dan private pool. Cocok untuk gathering keluarga.",
     originalPrice: 1800000,
     price: 1350000,
@@ -299,6 +326,8 @@ export const villas = [
   {
     id: 13,
     name: "Villa Opung",
+    area: "Sukaresmi",
+    region: "Megamendung",
     description: "Villa asri dengan private pool, billiard, dan halaman luas. Cocok untuk staycation santai bersama teman.",
     price: 1700000,
     priceLabel: "Rp 1.700.000/malam",
@@ -323,6 +352,8 @@ export const villas = [
   {
     id: 14,
     name: "Rjs Cottage 1",
+    area: "Kuta",
+    region: "Megamendung",
     description: "Cottage cozy dengan private pool, gazebo, dan halaman luas. Cocok untuk family getaway yang santai.",
     price: 1800000,
     priceLabel: "Rp 1.800.000/malam",
@@ -346,6 +377,8 @@ export const villas = [
   {
     id: 15,
     name: "Rjs Cottage 2",
+    area: "Kuta",
+    region: "Megamendung",
     description: "Cottage nyaman dengan private pool dan chill space. Cocok untuk vila cozy getaway bersama keluarga.",
     price: 2000000,
     priceLabel: "Rp 2.000.000/malam",
@@ -369,6 +402,8 @@ export const villas = [
   {
     id: 16,
     name: "Rjs Cottage 3",
+    area: "Kuta",
+    region: "Megamendung",
     description: "Cottage nyaman dengan private pool dan chill space. Cocok untuk vila cozy getaway bersama keluarga.",
     price: 2000000,
     priceLabel: "Rp 2.000.000/malam",
@@ -392,6 +427,8 @@ export const villas = [
   {
     id: 17,
     name: "Villa Kaca 1",
+    area: "Tugu Utara",
+    region: "Cisarua",
     badge: "New",
     scheduleName: "kaca 1",
     description: "Villa mega dengan gazebo, halaman, dan private pool. Cocok untuk acara besar dan gathering.",
@@ -417,6 +454,8 @@ export const villas = [
   {
     id: 18,
     name: "Villa Kaca 2",
+    area: "Tugu Utara",
+    region: "Cisarua",
     badge: "New",
     scheduleName: "kaca 2",
     description: "Villa compact dengan karaoke, billiard, dan chill space. Cocok untuk staycation santai bersama teman.",
@@ -442,6 +481,8 @@ export const villas = [
   {
     id: 19,
     name: "Villa De Summit",
+    area: "Cibeureum",
+    region: "Cisarua",
     description: "Villa dengan pendopo view 360, private pool, dan space api unggun. Cocok untuk gathering eksklusif.",
     price: 2000000,
     priceLabel: "Rp 2.000.000/malam",
@@ -450,7 +491,8 @@ export const villas = [
     bedrooms: 4,
     bedroomsNote: "5 queen bed, 3 single bed (slide out)",
     bathrooms: 4,
-    parking: 0,
+    parking: 10,
+    busAccess: true,
     image: "/thumbnail/De%20Summit%20Thumb.webp",
     amenities: ["2 Smart TV", "Karaoke", "WiFi", "Space Api Unggun", "Private Pool", "Billiard", "Pendopo View 360"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 4500000],
@@ -466,6 +508,8 @@ export const villas = [
   {
     id: 20,
     name: "Villa Bodas",
+    area: "Kopo",
+    region: "Cisarua",
     description: "Villa luas dengan mushola, private pool, dan halaman luas. Cocok untuk acara dan gathering keluarga besar.",
     originalPrice: 2000000,
     price: 1700000,
@@ -491,6 +535,8 @@ export const villas = [
   {
     id: 21,
     name: "Villa Thymi",
+    area: "Tugu Utara",
+    region: "Cisarua",
     description: "Villa dengan mountain view, playground, gazebo, dan private pool. Cocok untuk liburan keluarga besar.",
     originalPrice: 1600000,
     price: 1300000,
@@ -515,6 +561,8 @@ export const villas = [
   {
     id: 22,
     name: "Villa Albi",
+    area: "Cipayung Datar",
+    region: "Megamendung",
     description: "Villa dengan pagi pegunungan, private pool, dan chill space. Cocok untuk quality time bersama keluarga.",
     price: 1300000,
     priceLabel: "Rp 1.300.000/malam",
@@ -538,6 +586,8 @@ export const villas = [
   {
     id: 23,
     name: "Villa Valora",
+    area: "Sukagalih",
+    region: "Megamendung",
     description: "Villa compact dengan mountain view, karaoke, dan billiard. Cocok untuk budget-friendly getaway.",
     price: 1000000,
     priceLabel: "Rp 1.000.000/malam",
@@ -562,6 +612,8 @@ export const villas = [
   {
     id: 24,
     name: "Echa Village",
+    area: "Jogjogan",
+    region: "Cisarua",
     description: "Village 3 lantai dengan rooftop, karaoke, dan private pool. Cocok untuk staycation santai bersama teman.",
     originalPrice: 1500000,
     price: 1300000,
@@ -586,6 +638,8 @@ export const villas = [
   {
     id: 25,
     name: "Villa Awan",
+    area: "Citeko",
+    region: "Cisarua",
     description: "Villa cozy dengan private pool, karaoke, dan halaman luas. Cocok untuk liburan keluarga yang tenang.",
     originalPrice: 1350000,
     price: 1100000,
@@ -612,6 +666,8 @@ export const villas = [
   {
     id: 26,
     name: "Villa Baduo",
+    area: "Jogjogan",
+    region: "Cisarua",
     description: "Villa dengan mushola, playground, karaoke, dan private pool. Cocok untuk family gathering besar.",
     originalPrice: 1350000,
     price: 1100000,
@@ -637,6 +693,8 @@ export const villas = [
   {
     id: 27,
     name: "Villa Hala",
+    area: "Tugu Utara",
+    region: "Cisarua",
     scheduleName: "halla",
     description: "Villa 3 lantai dengan mountain view, tennis meja, balkon, dan private pool. Cocok untuk gathering premium.",
     price: 2000000,
@@ -646,6 +704,7 @@ export const villas = [
     bedrooms: 5,
     bathrooms: 7,
     parking: 5,
+    busAccess: true,
     image: "/thumbnail/Hala%20Thumb.webp",
     amenities: ["Mountain View", "Billiard", "Tennis Meja", "Balkon", "Water Heater", "Living Room", "Smart TV & WiFi", "Karaoke & Mini Bar", "Halaman Luas", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 4500000],
@@ -661,6 +720,8 @@ export const villas = [
   {
     id: 28,
     name: "Villa Ranna",
+    area: "Kopo",
+    region: "Cisarua",
     description: "Villa cozy dengan queen bed, private pool, karaoke, dan chill space. Cocok untuk staycation romantis.",
     originalPrice: 1200000,
     price: 1000000,
@@ -686,6 +747,8 @@ export const villas = [
   {
     id: 29,
     name: "Villa Rio 5",
+    area: "Citeko",
+    region: "Cisarua",
     badge: "New",
     scheduleName: "rio",
     description: "Villa dengan lapang bola mini soccer, gazebo, dan halaman luas. Cocok untuk gathering sportif keluarga.",
@@ -697,6 +760,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 5,
     parking: 4,
+    busAccess: true,
     image: "/thumbnail/Rio%205%20Thumb.webp",
     amenities: ["Lapang Bola (Mini Soccer)", "Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Halaman Luas", "Gazebo"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1700000, 3000000],
@@ -712,6 +776,8 @@ export const villas = [
   {
     id: 30,
     name: "The Herlina",
+    area: "Cilember",
+    region: "Cisarua",
     scheduleName: "the helina",
     description: "Villa luas dengan billiard, private pool, dan halaman luas. Cocok untuk gathering keluarga besar.",
     originalPrice: 2000000,
@@ -738,6 +804,8 @@ export const villas = [
   {
     id: 31,
     name: "Villa Elora",
+    area: "Leuwimalang",
+    region: "Cisarua",
     description: "Villa compact dengan karaoke, billiard, dan chill space. Cocok untuk staycation santai bersama teman.",
     originalPrice: 1100000,
     price: 1000000,

@@ -105,10 +105,16 @@ const villaJsonLd = [
       "longitude": villa.coords[1],
     },
     "numberOfRooms": villa.bedrooms,
-    "amenityFeature": villa.amenities.map((a) => ({
-      "@type": "LocationFeatureSpecification",
-      "name": a,
-    })),
+    "amenityFeature": [
+      ...villa.amenities.map((a) => ({
+        "@type": "LocationFeatureSpecification",
+        "name": a,
+      })),
+      ...(villa.busAccess === true ? [{
+        "@type": "LocationFeatureSpecification",
+        "name": "Akses Bus 3/4",
+      }] : []),
+    ],
     "sameAs": [
       "https://www.instagram.com/therainvillas",
       "https://www.tiktok.com/@therainvillas",
@@ -142,6 +148,9 @@ const villaMeta = {
 };
 
 const meta = villaMeta[villa.name] ?? { area: '350 m2', year: '2024', tone: 'Private Villa', location: 'Puncak, Bogor' };
+const locationLabel = villa.area
+  ? `${villa.area}, ${villa.region || 'Bogor'}`
+  : meta.location;
 const shortName = villa.name.replace('Villa ', '');
 const heroWord = shortName.toUpperCase();
 const scriptWord = 'Villa';
@@ -156,6 +165,8 @@ const priceDetail = (villa.pricingLabels ?? [])
   .map((row) => `${row.label} Rp ${row.price.toLocaleString('id-ID')}`)
   .join(', ');
 
+const hasBusAccess = villa.busAccess === true;
+
 const villaFaq = [
   {
     q: `Berapa tarif sewa ${villa.name} per malam?`,
@@ -169,13 +180,17 @@ const villaFaq = [
     q: `Fasilitas apa saja yang tersedia di ${villa.name}?`,
     a: `${villa.amenities.join(', ')}.`,
   },
+  ...(hasBusAccess ? [{
+    q: `Apakah bus 3/4 bisa masuk ke ${villa.name}?`,
+    a: `Bisa. Area ${villa.name} dapat dilalui dan digunakan untuk parkir bus 3/4, sehingga cocok untuk rombongan besar.`,
+  }] : []),
   {
     q: 'Bagaimana cara booking dan kebijakan DP?',
     a: 'Hubungi admin via WhatsApp 0821-2549-2037, isi formulir booking, lalu bayar DP minimal 30%. Pelunasan wajib H-3 sebelum check-in dan reschedule maksimal H-7 dengan penambahan DP. DP tidak bisa di-refund dalam kondisi apapun.',
   },
   {
     q: `Di mana lokasi ${villa.name} dan bagaimana aksesnya?`,
-    a: `Berlokasi di ${meta.location}, kawasan Cisarua–Puncak, Bogor, Jawa Barat pada ketinggian ±800 mdpl. Hanya sekitar 90 menit dari Jakarta melalui tol Ciawi.`,
+    a: `Berlokasi di ${locationLabel}, kawasan Cisarua–Puncak, Bogor, Jawa Barat pada ketinggian ±800 mdpl. Hanya sekitar 90 menit dari Jakarta melalui tol Ciawi.`,
   },
   {
     q: 'Berapa jam check-out?',
@@ -274,7 +289,7 @@ const villaDetailDesc = makeDescription(
         <div class="vd-hero__sub">
           <p>{meta.tone}</p>
           <span aria-hidden="true"></span>
-          <p>{meta.location}</p>
+          <p>{locationLabel}</p>
         </div>
       </div>
 
@@ -284,7 +299,7 @@ const villaDetailDesc = makeDescription(
             <h4>{villa.name}</h4>
             <span class="vd-property__addr">
               <svg class="icon" viewBox="0 0 24 24"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
-              {meta.location} • {meta.area}
+              {locationLabel} • {meta.area}
             </span>
           </div>
           <a href={orderLink} target={hasPromo ? undefined : '_blank'} rel={hasPromo ? undefined : 'nofollow'} class="vd-property__round" aria-label="Pesan sekarang" data-track="booking_click" data-villa={villa.name}>
@@ -409,6 +424,7 @@ const villaDetailDesc = makeDescription(
               {villa.amenities.map((amenity) => (
                 <span>{amenity}</span>
               ))}
+              {hasBusAccess && <span>Akses Bus 3/4</span>}
             </div>
           </div>
 
@@ -441,6 +457,15 @@ const villaDetailDesc = makeDescription(
                     <p>Udara sejuk & pemandangan indah</p>
                   </div>
                 </div>
+                {hasBusAccess && (
+                  <div class="vd-location__item">
+                    <span class="vd-location__item-icon">🚌</span>
+                    <div>
+                      <h4>Bus 3/4 bisa masuk</h4>
+                      <p>Area villa dapat dilalui dan diparkir bus 3/4.</p>
+                    </div>
+                  </div>
+                )}
                 {mapsUrl && (
                   <a href={mapsUrl} target="_blank" rel="nofollow" class="vd-location__btn">
                     Buka Google Maps

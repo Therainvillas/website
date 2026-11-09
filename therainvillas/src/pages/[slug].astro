@@ -437,21 +437,27 @@ const villaDetailDesc = makeDescription(
               </div>
               <div class="vd-location__info">
                 <div class="vd-location__item">
-                  <span class="vd-location__item-icon">📍</span>
+                  <span class="vd-location__item-icon">
+                    <img class="ti ti--light" src="/icon/icon%20light/location%20light_.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/location.png" alt="" loading="lazy" decoding="async" />
+                  </span>
                   <div>
                     <h4>Kp. Ciburial, Cisarua, Puncak</h4>
                     <p>Desa Tugu Utara, Kec. Cisarua, Kab. Bogor, Jawa Barat 16750</p>
                   </div>
                 </div>
                 <div class="vd-location__item">
-                  <span class="vd-location__item-icon">🚗</span>
+                  <span class="vd-location__item-icon">
+                    <img class="ti ti--light" src="/icon/icon%20light/car.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/car.png" alt="" loading="lazy" decoding="async" />
+                  </span>
                   <div>
                     <h4>~90 menit dari Jakarta</h4>
                     <p>Akses tol via Ciawi</p>
                   </div>
                 </div>
                 <div class="vd-location__item">
-                  <span class="vd-location__item-icon">⛰️</span>
+                  <span class="vd-location__item-icon">
+                    <img class="ti ti--light" src="/icon/icon%20light/altitude.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/altitude.png" alt="" loading="lazy" decoding="async" />
+                  </span>
                   <div>
                     <h4>Ketinggian ~800 mdpl</h4>
                     <p>Udara sejuk & pemandangan indah</p>
@@ -459,7 +465,9 @@ const villaDetailDesc = makeDescription(
                 </div>
                 {hasBusAccess && (
                   <div class="vd-location__item">
-                    <span class="vd-location__item-icon">🚌</span>
+                    <span class="vd-location__item-icon">
+                      <img class="ti ti--light" src="/icon/icon%20light/bus.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/bus.png" alt="" loading="lazy" decoding="async" />
+                    </span>
                     <div>
                       <h4>Bus 3/4 bisa masuk</h4>
                       <p>Area villa dapat dilalui dan diparkir bus 3/4.</p>
@@ -1410,8 +1418,17 @@ const villaDetailDesc = makeDescription(
   }
 
   .vd-location__item-icon {
-    font-size: 1.4rem;
+    display: inline-flex;
+    align-items: center;
     flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  .vd-location__item-icon img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    display: block;
   }
 
   .vd-location__item h4 {

@@ -12,6 +12,8 @@ import Seo from '../components/Seo.astro';
 import { makeTitle, makeDescription, formatIdr } from '../lib/seo.js';
 import { villas } from '../data/villas';
 import { locations } from '../data/locations';
+import { DRIVE_MINUTES } from '../data/driveTimes';
+import { ALTITUDE_METERS } from '../data/altitudes';
 import { villaCovers, villaHeroSm } from '../data/covers';
 import { isVillaPromoEligible } from '../data/promos';
 
@@ -93,6 +95,14 @@ const villaPostalCode =
   VILLA_POSTAL_CODES[villaArea] ?? VILLA_POSTAL_CODES[villaRegion] ?? '16750';
 const villaAddress = `Desa ${villaArea}, Kec. ${villaRegion}`;
 const villaAddressDetail = `Kab. Bogor, Jawa Barat ${villaPostalCode}`;
+
+// Estimasi perjalanan dari Jakarta = baseline Jakarta → kantor (90 menit)
+// + durasi kantor → villa (src/data/driveTimes.js), dibulatkan ke 5 menit.
+const villaDriveMinutes =
+  Math.round((90 + (DRIVE_MINUTES[String(villa.id)] ?? 0)) / 5) * 5;
+// Ketinggian dari elevasi SRTM tiap villa, dibulatkan ke 10 mdpl.
+const villaElevation =
+  Math.round((ALTITUDE_METERS[String(villa.id)] ?? 800) / 10) * 10;
 
 const villaJsonLd = [
   {
@@ -204,7 +214,7 @@ const villaFaq = [
   },
   {
     q: `Di mana lokasi ${villa.name} dan bagaimana aksesnya?`,
-    a: `Berlokasi di ${locationLabel}, kawasan Cisarua–Puncak, Bogor, Jawa Barat pada ketinggian ±800 mdpl. Hanya sekitar 90 menit dari Jakarta melalui tol Ciawi.`,
+    a: `Berlokasi di ${locationLabel}, kawasan Cisarua–Puncak, Bogor, Jawa Barat pada ketinggian ~${villaElevation} mdpl. Hanya sekitar ${villaDriveMinutes} menit dari Jakarta melalui tol Ciawi.`,
   },
   {
     q: 'Berapa jam check-out?',
@@ -464,7 +474,7 @@ const villaDetailDesc = makeDescription(
                     <img class="ti ti--light" src="/icon/icon%20light/car.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/car.png" alt="" loading="lazy" decoding="async" />
                   </span>
                   <div>
-                    <h4>~90 menit dari Jakarta</h4>
+                    <h4>~{villaDriveMinutes} menit dari Jakarta</h4>
                     <p>Akses tol via Ciawi</p>
                   </div>
                 </div>
@@ -473,7 +483,7 @@ const villaDetailDesc = makeDescription(
                     <img class="ti ti--light" src="/icon/icon%20light/altitude.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/altitude.png" alt="" loading="lazy" decoding="async" />
                   </span>
                   <div>
-                    <h4>Ketinggian ~800 mdpl</h4>
+                    <h4>Ketinggian ~{villaElevation} mdpl</h4>
                     <p>Udara sejuk & pemandangan indah</p>
                   </div>
                 </div>

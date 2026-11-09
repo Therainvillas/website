@@ -86,10 +86,8 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   .reviews-marquee {
     position: relative;
     overflow: hidden;
-    /* Gradient #0f1b3d → #ffffff, tanpa aksen hijau. */
-    background: linear-gradient(160deg, #0f1b3d 0%, #0f1b3d 52%, #ffffff 100%);
-    -webkit-backdrop-filter: blur(20px) saturate(120%);
-    backdrop-filter: blur(20px) saturate(120%);
+    /* Circle gradient #0f1b3d → #ffffff. */
+    background: radial-gradient(circle at 50% 40%, #0f1b3d 0%, #0f1b3d 45%, #ffffff 100%);
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     border-bottom: 1px solid rgba(15, 27, 61, 0.08);
     padding: 108px 0 76px;

@@ -89,15 +89,16 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   .reviews-marquee {
     position: relative;
     overflow: hidden;
-    /* Glassmorphism transparan — mengikuti latar halaman di belakangnya. */
+    /* Glassmorphism kontras: kaca hijau brand yang pekat di atas latar halaman. */
     background:
-      radial-gradient(900px 420px at 12% 0%, rgba(var(--color-accent-rgb), 0.1), transparent 70%),
-      radial-gradient(800px 400px at 88% 100%, rgba(var(--color-primary-rgb), 0.1), transparent 70%),
-      linear-gradient(160deg, var(--glass), rgba(255, 255, 255, 0) 55%, var(--glass));
-    -webkit-backdrop-filter: blur(22px) saturate(140%);
-    backdrop-filter: blur(22px) saturate(140%);
-    border-top: 1px solid var(--glass-line);
-    border-bottom: 1px solid var(--glass-line);
+      radial-gradient(900px 460px at 10% 0%, rgba(var(--color-accent-rgb), 0.22), transparent 68%),
+      radial-gradient(760px 420px at 90% 100%, rgba(143, 208, 189, 0.16), transparent 70%),
+      linear-gradient(160deg, rgba(9, 32, 28, 0.97) 0%, rgba(23, 68, 60, 0.92) 55%, rgba(9, 32, 28, 0.97) 100%);
+    -webkit-backdrop-filter: blur(20px) saturate(135%);
+    backdrop-filter: blur(20px) saturate(135%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     padding: 108px 0 76px;
     isolation: isolate;
   }
@@ -116,14 +117,14 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     height: 520px;
     top: -180px;
     left: -120px;
-    background: radial-gradient(circle, rgba(var(--color-accent-rgb), 0.28), transparent 70%);
+    background: radial-gradient(circle, rgba(217, 161, 95, 0.34), transparent 70%);
   }
   .reviews-marquee__orb--primary {
     width: 620px;
     height: 620px;
     bottom: -260px;
     right: -160px;
-    background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.22), transparent 70%);
+    background: radial-gradient(circle, rgba(143, 208, 189, 0.22), transparent 70%);
   }
 
   .reviews-marquee__header {
@@ -141,13 +142,13 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     font-weight: 600;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--color-primary);
-    background: rgba(var(--color-primary-rgb), 0.1);
-    border: 1px solid rgba(var(--color-primary-rgb), 0.22);
+    color: #f2c98f;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(242, 201, 143, 0.42);
     border-radius: 999px;
     padding: 9px 20px;
     margin-bottom: 20px;
-    box-shadow: 0 0 24px rgba(var(--color-primary-rgb), 0.1) inset;
+    box-shadow: 0 0 24px rgba(217, 161, 95, 0.16) inset;
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
   }
@@ -155,13 +156,14 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   .reviews-marquee__title {
     font-size: clamp(1.9rem, 4.5vw, 2.8rem);
     font-weight: 700;
-    color: var(--color-dark);
+    color: #ffffff;
     line-height: 1.15;
     margin-bottom: 18px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
   }
 
   .reviews-marquee__title-accent {
-    background: linear-gradient(90deg, var(--color-accent-dark), var(--color-accent));
+    background: linear-gradient(90deg, #f6d7a8, #d9a15f);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -178,21 +180,21 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   .reviews-marquee__line {
     width: 56px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(var(--color-accent-rgb), 0.7));
+    background: linear-gradient(90deg, transparent, rgba(242, 201, 143, 0.8));
   }
   .reviews-marquee__line:last-child {
-    background: linear-gradient(90deg, rgba(var(--color-accent-rgb), 0.7), transparent);
+    background: linear-gradient(90deg, rgba(242, 201, 143, 0.8), transparent);
   }
   .reviews-marquee__dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--color-accent);
-    box-shadow: 0 0 12px rgba(var(--color-accent-rgb), 0.6);
+    background: #d9a15f;
+    box-shadow: 0 0 12px rgba(217, 161, 95, 0.85);
   }
 
   .reviews-marquee__subtitle {
-    color: var(--color-gray);
+    color: rgba(236, 244, 240, 0.8);
     font-size: 1.05rem;
     line-height: 1.7;
   }
@@ -228,13 +230,14 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     width: 400px;
     max-width: 86vw;
     flex-shrink: 0;
-    background: var(--glass);
-    border: 1px solid var(--glass-line);
+    /* Kartu kaca terang di atas panel hijau gelap → kontras tinggi. */
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.97), rgba(244, 248, 245, 0.93));
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: 28px;
     padding: 30px 30px 26px;
-    -webkit-backdrop-filter: blur(14px) saturate(130%);
-    backdrop-filter: blur(14px) saturate(130%);
-    box-shadow: 0 20px 50px rgba(21, 35, 30, 0.12);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    backdrop-filter: blur(14px) saturate(120%);
+    box-shadow: 0 20px 46px rgba(3, 16, 13, 0.32);
     transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
   }
 
@@ -244,7 +247,7 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     inset: 0;
     border-radius: 28px;
     padding: 2px;
-    background: linear-gradient(135deg, rgba(var(--color-accent-rgb), 0.65), transparent 40%, transparent 70%, rgba(var(--color-primary-rgb), 0.4));
+    background: linear-gradient(135deg, rgba(184, 110, 47, 0.75), transparent 40%, transparent 70%, rgba(23, 68, 60, 0.45));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -256,8 +259,8 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
 
   .reviews-marquee__card:hover {
     transform: translateY(-6px);
-    border-color: rgba(var(--color-accent-rgb), 0.5);
-    box-shadow: 0 28px 60px rgba(21, 35, 30, 0.18);
+    border-color: rgba(217, 161, 95, 0.75);
+    box-shadow: 0 28px 58px rgba(3, 16, 13, 0.42);
   }
 
   .reviews-marquee__card:hover::before {
@@ -271,25 +274,25 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     font-family: Georgia, "Times New Roman", serif;
     font-size: 5.5rem;
     line-height: 1;
-    color: rgba(var(--color-accent-rgb), 0.22);
+    color: rgba(184, 110, 47, 0.18);
     user-select: none;
   }
 
   .reviews-marquee__rect {
     position: relative;
-    background: var(--glass);
-    border: 1px solid rgba(var(--color-primary-rgb), 0.16);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(23, 68, 60, 0.14);
     border-radius: 18px;
     padding: 18px 20px;
     margin-bottom: 18px;
-    box-shadow: 0 6px 16px rgba(21, 35, 30, 0.06);
+    box-shadow: 0 6px 16px rgba(23, 68, 60, 0.06);
   }
 
   .reviews-marquee__stars {
     position: relative;
     display: inline-flex;
     gap: 3px;
-    color: var(--color-accent);
+    color: #b86e2f;
     font-size: 1.05rem;
     letter-spacing: 2px;
     margin-bottom: 16px;
@@ -297,7 +300,7 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
 
   .reviews-marquee__text {
     position: relative;
-    color: var(--color-gray-dark);
+    color: #2b3734;
     font-size: 0.97rem;
     line-height: 1.75;
     margin: 0 0 26px;
@@ -313,7 +316,7 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     align-items: center;
     gap: 14px;
     padding-top: 20px;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid rgba(23, 68, 60, 0.12);
   }
 
   .reviews-marquee__avatar {
@@ -322,8 +325,8 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     border-radius: 50%;
     flex-shrink: 0;
     padding: 2px;
-    background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
-    box-shadow: 0 4px 14px rgba(var(--color-accent-rgb), 0.25);
+    background: linear-gradient(135deg, #c98a3c, #17443c);
+    box-shadow: 0 4px 14px rgba(23, 68, 60, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -333,8 +336,8 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: var(--color-panel);
-    color: var(--color-primary);
+    background: #ffffff;
+    color: #17443c;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -359,7 +362,7 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   .reviews-marquee__name {
     font-size: 0.98rem;
     font-weight: 600;
-    color: var(--color-dark);
+    color: #16211e;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -386,9 +389,9 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     font-size: 0.76rem;
     font-weight: 600;
     letter-spacing: 0.3px;
-    color: var(--color-accent-dark);
-    background: rgba(var(--color-accent-rgb), 0.1);
-    border: 1px solid rgba(var(--color-accent-rgb), 0.28);
+    color: #8e4f23;
+    background: #fdf3e7;
+    border: 1px solid #ecc79a;
     border-radius: 999px;
     padding: 4px 12px;
     white-space: nowrap;

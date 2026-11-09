@@ -80,6 +80,20 @@ const localGalleries = {
 const heroImage = villaCovers[villa.name] ?? villa.image;
 const galleryImages = Array.from(new Set([heroImage, ...(localGalleries[villa.name] ?? [])]));
 const villaShareImage = new URL(heroImage, Astro.site ?? 'https://therainvillas.com/').href;
+
+// Alamat mengikuti desa & kecamatan masing-masing villa (lihat src/data/villas.js).
+const VILLA_POSTAL_CODES = {
+  Cisarua: '16750',
+  Megamendung: '16770',
+  'Cipayung Datar': '16772',
+};
+const villaArea = villa.area || 'Cisarua';
+const villaRegion = villa.region || 'Cisarua';
+const villaPostalCode =
+  VILLA_POSTAL_CODES[villaArea] ?? VILLA_POSTAL_CODES[villaRegion] ?? '16750';
+const villaAddress = `Desa ${villaArea}, Kec. ${villaRegion}`;
+const villaAddressDetail = `Kab. Bogor, Jawa Barat ${villaPostalCode}`;
+
 const villaJsonLd = [
   {
     "@context": "https://schema.org",
@@ -93,10 +107,10 @@ const villaJsonLd = [
     "priceRange": villa.priceLabel,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Kp. Ciburial Cibarengkok, RT.01 RW.05, Tugu Utara",
-      "addressLocality": "Cisarua",
+      "streetAddress": villaAddress,
+      "addressLocality": `Kec. ${villaRegion}, Kab. Bogor`,
       "addressRegion": "Jawa Barat",
-      "postalCode": "16750",
+      "postalCode": villaPostalCode,
       "addressCountry": "ID",
     },
     "geo": {
@@ -441,8 +455,8 @@ const villaDetailDesc = makeDescription(
                     <img class="ti ti--light" src="/icon/icon%20light/location%20light_.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/location.png" alt="" loading="lazy" decoding="async" />
                   </span>
                   <div>
-                    <h4>Kp. Ciburial, Cisarua, Puncak</h4>
-                    <p>Desa Tugu Utara, Kec. Cisarua, Kab. Bogor, Jawa Barat 16750</p>
+                    <h4>{villaAddress}</h4>
+                    <p>{villaAddressDetail}</p>
                   </div>
                 </div>
                 <div class="vd-location__item">

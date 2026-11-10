@@ -2,279 +2,1899 @@
 import { villas } from '../../data/villas';
 import { slugify } from '../../lib/slugify.js';
 
-const thumbMap = {
-  'Villa Cyrena': 'Cyrena Thumb.webp',
-  'Villa Cempaka': 'Cempaka Thumb.webp',
-  'Villa Agave': 'Agave Thumb.webp',
-  'Villa Arsy': 'Griya Arsy Thumb.webp',
-  'Villa Aleia': 'Aleia Thumb.webp',
-  'Villa Arisyfa': 'Arisyfa Thumb.webp',
-  'Villa Cemara': 'Cemara Thumb.webp',
-  'Villa 4D': '4D Thumb.webp',
-  'Villa Twins': 'Twins Thumb.webp',
-};
-
-function getVillaImage(name, fallback) {
-  const file = thumbMap[name];
-  return file ? `/thumbnail/${encodeURIComponent(file)}` : fallback;
-}
+const total = villas.length;
+const stepDeg = 360 / total;
+const zones = [...new Set(villas.map((villa) => villa.area))];
+const first = villas[0];
+const pad = (value) => String(value).padStart(2, '0');
 ---
 
-<section class="evening" id="malam">
-  <div class="evening__slider" id="eveningSlider">
-    {villas.map((villa, i) => (
-      <div class="evening__slide" data-index={i}>
-        <div class="evening__slide-bg" data-bg={getVillaImage(villa.name, villa.image)}>
-          <div class="evening__slide-overlay"></div>
+<section class="wheel" id="malam" aria-labelledby="wheelTitle" style={`--step:${stepDeg}deg`}>
+  <div class="container wheel__inner">
+    <header class="wheel__head">
+      <span class="wheel__eyebrow">Koleksi Lengkap</span>
+      <h2 class="wheel__title" id="wheelTitle">Putar Roda Villa</h2>
+      <p class="wheel__sub">
+        31 villa private pool di Puncak dalam satu roda. Geser, ketuk, atau pakai panah
+        untuk berkeliling — setiap kartu membuka detail dan harga terbarunya.
+      </p>
+    </header>
+
+    <div class="wheel__tools">
+      <div class="wheel__search">
+        <label class="wheel__search-label" for="wheelSearch">Cari nama villa</label>
+        <div class="wheel__search-box">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-3.6-3.6"></path>
+          </svg>
+          <input
+            id="wheelSearch"
+            data-wheel-search
+            type="search"
+            placeholder="Contoh: Agave, Cyrena, atau 07"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button type="button" class="wheel__search-clear" data-wheel-clear aria-label="Hapus pencarian" hidden>✕</button>
         </div>
-        <div class="evening__slide-content">
-          <h3 class="evening__slide-name">{villa.name}</h3>
-          <p class="evening__slide-desc">{villa.description}</p>
-          <div class="evening__slide-meta">
-            <span><img src="/icon/icon%20light/bed.png" alt="" class="evening__slide-meta-icon ti ti--light" loading="lazy" /><img src="/icon/icon%20dark/bedroom.png" alt="" class="evening__slide-meta-icon ti ti--dark" loading="lazy" /> {villa.bedrooms} kamar</span>
-            <span><img src="/icon/icon%20light/groupp.png" alt="" class="evening__slide-meta-icon ti ti--light" loading="lazy" /><img src="/icon/icon%20dark/grup.png" alt="" class="evening__slide-meta-icon ti ti--dark" loading="lazy" /> {villa.capacity} tamu</span>
-            <span>
-              {villa.originalPrice && <s class="evening__slide-price-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>}
-              {villa.priceLabel}
-            </span>
-          </div>
-          <a href={`/${slugify(villa.name)}`} class="evening__slide-cta">Lihat Detail</a>
+        <p class="wheel__results" data-wheel-results aria-live="polite">{total} villa siap dijelajahi</p>
+        <p class="wheel__sr-only" data-wheel-announce aria-live="polite"></p>
+      </div>
+
+      <div class="wheel__zones" role="group" aria-label="Lompat ke zona villa">
+        <span class="wheel__zones-label">Zona</span>
+        <div class="wheel__chips">
+          {zones.map((zone) => (
+            <button type="button" class="wheel__chip" data-zone={zone} aria-pressed="false">{zone}</button>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
+    </div>
 
-  <div class="evening__dots" id="eveningDots">
-    {villas.map((_, i) => (
-      <button class="evening__dot" data-index={i} aria-label={`Slide ${i + 1}`}></button>
-    ))}
+    <div class="wheel__viewport">
+      <div
+        class="wheel__stage"
+        data-wheel-stage
+        tabindex="0"
+        role="group"
+        aria-roledescription="carousel"
+        aria-label={`Roda ${total} villa The Rain Villas`}
+      >
+        <div class="wheel__ring" data-wheel-ring>
+          <div class="wheel__floor" aria-hidden="true"></div>
+
+          {villas.map((villa, i) => (
+            <article
+              class="wheel__card"
+              data-wheel-card
+              data-index={i}
+              data-number={i + 1}
+              data-name={villa.name}
+              data-area={villa.area}
+              data-region={villa.region}
+              data-bedrooms={villa.bedrooms}
+              data-capacity={villa.capacity}
+              data-price={villa.priceLabel}
+              data-price-old={villa.originalPrice ? `Rp ${villa.originalPrice.toLocaleString('id-ID')}` : ''}
+              data-desc={villa.description}
+              data-amenities={villa.amenities.slice(0, 7).join(' · ')}
+              data-href={`/${slugify(villa.name)}/`}
+              data-book={`/booking/?villa=${encodeURIComponent(villa.name)}`}
+              data-search={`${villa.name} ${i + 1} ${pad(i + 1)}`}
+              style={`--i:${i}`}
+              aria-label={`${villa.name}, villa ${i + 1} dari ${total}`}
+            >
+              <span class="wheel__card-shadow" aria-hidden="true"></span>
+              <div class="wheel__card-lift">
+                <div class="wheel__card-tilt">
+                  {[0, 1, 2, 3, 4, 5, 6, 7].map((k) => (
+                    <span class="wheel__card-layer" style={`--k:${k}`} aria-hidden="true"></span>
+                  ))}
+                  <div class="wheel__card-face">
+                    <div class="wheel__card-media">
+                      <img src={villa.image} alt="" width="190" height="290" loading="lazy" decoding="async" />
+                    </div>
+                    <span class="wheel__card-number">{pad(i + 1)}</span>
+                    <span class="wheel__card-zone">{villa.area}</span>
+                    <div class="wheel__card-info">
+                      <h3 class="wheel__card-name">{villa.name}</h3>
+                      <p class="wheel__card-meta">{villa.bedrooms} kamar · {villa.capacity} tamu</p>
+                      <p class="wheel__card-price">{villa.priceLabel}</p>
+                    </div>
+                    <span class="wheel__card-shade" aria-hidden="true"></span>
+                    <span class="wheel__card-fog" aria-hidden="true"></span>
+                    <span class="wheel__card-dim" aria-hidden="true"></span>
+                    <span class="wheel__card-glare" aria-hidden="true"></span>
+                    <span class="wheel__card-hover" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="wheel__controls">
+      <button type="button" class="wheel__nav" data-wheel-prev aria-label="Villa sebelumnya">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M15 5 8 12l7 7"></path>
+        </svg>
+      </button>
+      <p class="wheel__counter" aria-hidden="true">
+        <span data-wheel-current>01</span><span class="wheel__counter-total"> / {pad(total)}</span>
+      </p>
+      <button type="button" class="wheel__nav" data-wheel-next aria-label="Villa berikutnya">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m9 5 7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="wheel__range-wrap">
+      <label class="wheel__sr-only" for="wheelRange">Pilih villa berdasarkan nomor</label>
+      <input id="wheelRange" class="wheel__range" data-wheel-range type="range" min="1" max={total} step="1" value="1" />
+      <div class="wheel__range-marks" aria-hidden="true"><span>01</span><span>{pad(total)}</span></div>
+    </div>
+
+    <div class="wheel__detail" data-wheel-detail aria-live="polite">
+      <div class="wheel__detail-main">
+        <div class="wheel__detail-top">
+          <span class="wheel__detail-num" data-detail-num>01</span>
+          <span class="wheel__detail-zone" data-detail-zone>{first.area} · {first.region}</span>
+        </div>
+        <h3 class="wheel__detail-name" data-detail-name>{first.name}</h3>
+        <p class="wheel__detail-desc" data-detail-desc>{first.description}</p>
+        <dl class="wheel__detail-facts">
+          <div>
+            <dt>Kamar</dt>
+            <dd data-detail-rooms>{first.bedrooms} kamar</dd>
+          </div>
+          <div>
+            <dt>Kapasitas</dt>
+            <dd data-detail-guests>{first.capacity} tamu</dd>
+          </div>
+          <div>
+            <dt>Harga / malam</dt>
+            <dd class="wheel__detail-price">
+              <s class="wheel__detail-old" data-detail-old hidden={!first.originalPrice}>
+                {first.originalPrice ? `Rp ${first.originalPrice.toLocaleString('id-ID')}` : ''}
+              </s>
+              <span data-detail-price>{first.priceLabel}</span>
+            </dd>
+          </div>
+        </dl>
+        <div class="wheel__detail-actions">
+          <a class="wheel__cta wheel__cta--primary" data-detail-link href={`/${slugify(first.name)}/`}>Lihat Villa</a>
+          <a class="wheel__cta wheel__cta--ghost" data-detail-book href={`/booking/?villa=${encodeURIComponent(first.name)}`}>Booking</a>
+          <button type="button" class="wheel__detail-more" data-wheel-more aria-expanded="false" aria-controls="wheelDetailExtra">Detail lengkap</button>
+          <button type="button" class="wheel__detail-close" data-wheel-close aria-label="Tutup detail" hidden>✕</button>
+        </div>
+      </div>
+      <div class="wheel__detail-extra" id="wheelDetailExtra">
+        <div class="wheel__detail-extra-inner">
+          <p class="wheel__detail-extra-label">Fasilitas pilihan</p>
+          <p class="wheel__detail-amenities" data-detail-amenities>{first.amenities.slice(0, 7).join(' · ')}</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('eveningSlider');
-    const dots = document.querySelectorAll('.evening__dot');
-    if (!slider || !dots.length) return;
+  (() => {
+    const root = document.getElementById('malam');
+    if (!root) return;
 
-    const slides = slider.querySelectorAll('.evening__slide');
-    let current = 0;
-    const total = slides.length;
-    let interval: ReturnType<typeof setInterval> | undefined;
+    const stage = root.querySelector('[data-wheel-stage]');
+    const ring = root.querySelector('[data-wheel-ring]');
+    const cards = Array.from(root.querySelectorAll('[data-wheel-card]'));
+    const total = cards.length;
+    if (!stage || !ring || !total) return;
 
-    // Gambar slide dimuat saat slide itu tampil saja (bukan 31 sekaligus di awal).
-    function ensureBg(slide: Element | undefined) {
-      if (!slide) return;
-      const bg = slide.querySelector('.evening__slide-bg') as HTMLElement | null;
-      if (bg && bg.dataset.bg && !bg.dataset.loaded) {
-        bg.style.backgroundImage = `url(${bg.dataset.bg})`;
-        bg.dataset.loaded = '1';
+    const searchInput = root.querySelector('[data-wheel-search]');
+    const clearBtn = root.querySelector('[data-wheel-clear]');
+    const resultsEl = root.querySelector('[data-wheel-results]');
+    const announceEl = root.querySelector('[data-wheel-announce]');
+    const prevBtn = root.querySelector('[data-wheel-prev]');
+    const nextBtn = root.querySelector('[data-wheel-next]');
+    const currentEl = root.querySelector('[data-wheel-current]');
+    const range = root.querySelector('[data-wheel-range]');
+    const chips = Array.from(root.querySelectorAll('[data-zone]'));
+    const detail = root.querySelector('[data-wheel-detail]');
+    const detailNum = root.querySelector('[data-detail-num]');
+    const detailZone = root.querySelector('[data-detail-zone]');
+    const detailName = root.querySelector('[data-detail-name]');
+    const detailDesc = root.querySelector('[data-detail-desc]');
+    const detailRooms = root.querySelector('[data-detail-rooms]');
+    const detailGuests = root.querySelector('[data-detail-guests]');
+    const detailPrice = root.querySelector('[data-detail-price]');
+    const detailOld = root.querySelector('[data-detail-old]');
+    const detailAmenities = root.querySelector('[data-detail-amenities]');
+    const detailLink = root.querySelector('[data-detail-link]');
+    const detailBook = root.querySelector('[data-detail-book]');
+    const moreBtn = root.querySelector('[data-wheel-more]');
+    const closeBtn = root.querySelector('[data-wheel-close]');
+
+    const DEG = 360 / total;
+    const mobileMQ = window.matchMedia('(max-width: 720px)');
+    const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const hoverMQ = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    let reduced = reduceMQ.matches;
+    let canHover = hoverMQ.matches;
+    let cardW = 190;
+    let cardH = 290;
+    let radius = 1074;
+    let stepPx = 118;
+    let pos = reduced ? 0 : -10;
+    let target = 0;
+    let rate = 7.5;
+    let running = false;
+    let prevT = 0;
+    let speed = 0;
+    let intro = !reduced;
+    let active = -1;
+    let shown = -1;
+    let enabled = new Set(cards.map((_, i) => i));
+
+    let pointerId = null;
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startY = 0;
+    let startPos = 0;
+    let lastMoveX = 0;
+    let lastMoveT = 0;
+    let velocity = 0;
+    let suppressClick = false;
+    let wheelTimer = 0;
+    let resizeRaf = 0;
+
+    const hovered = { el: null };
+    const lastPointer = { x: 0, y: 0, active: false };
+
+    const mod = (value) => ((value % total) + total) % total;
+    const pad = (value) => String(value).padStart(2, '0');
+
+    function shortDelta(index, from) {
+      let delta = ((index - from) % total + total) % total;
+      if (delta > total / 2) delta -= total;
+      return delta;
+    }
+
+    function measure() {
+      const mobile = mobileMQ.matches;
+      cardW = mobile ? 140 : 190;
+      cardH = mobile ? 215 : 290;
+      radius = (1.15 * (cardW / 2)) / Math.tan(Math.PI / total);
+      stepPx = Math.max(62, cardW * 0.62);
+      root.style.setProperty('--card-w', `${cardW}px`);
+      root.style.setProperty('--card-h', `${cardH}px`);
+      root.style.setProperty('--radius', `${radius.toFixed(2)}px`);
+      root.style.setProperty('--floor-size', `${(radius * 2.5).toFixed(2)}px`);
+      root.style.setProperty('--perspective', `${(radius * 1.35).toFixed(2)}px`);
+      root.style.setProperty('--step', `${DEG}deg`);
+    }
+
+    function applyRing() {
+      ring.style.setProperty('--rot', `${(-pos * DEG).toFixed(3)}deg`);
+    }
+
+    function render() {
+      applyRing();
+      const motion = Math.min(0.5, Math.abs(speed) / 9);
+      const shift = reduced ? 0 : Math.max(-14, Math.min(14, velocity * 2.6));
+
+      for (let i = 0; i < total; i++) {
+        const card = cards[i];
+        const delta = shortDelta(i, pos);
+        const distance = Math.abs(delta);
+        const visible = distance <= 6.6;
+
+        if (card._hidden !== !visible) {
+          card.style.visibility = visible ? 'visible' : 'hidden';
+          card._hidden = !visible;
+        }
+        if (!visible) continue;
+
+        const angle = delta * DEG;
+        const shade = 0.6 * Math.abs(Math.sin((angle * Math.PI) / 180));
+        const fog = Math.min(1, Math.pow(distance / 6.2, 1.6));
+        const lift = Math.pow(Math.max(0, 1 - distance), 1.7) * cardW * 0.5;
+        const isMatch = enabled.has(i);
+
+        card.style.setProperty('--shade', shade.toFixed(3));
+        card.style.setProperty('--fog', fog.toFixed(3));
+        card.style.setProperty('--lift', lift.toFixed(1));
+        card.style.setProperty('--dim', isMatch ? '0' : '0.72');
+        card.style.setProperty('--side', isMatch ? '1' : '0.12');
+        card.style.setProperty('--motion', motion.toFixed(3));
+        card.style.setProperty('--px', (shift + delta * 0.55).toFixed(1));
+      }
+
+      const index = mod(Math.round(pos));
+      if (index !== active) setActive(index);
+    }
+
+    function setActive(index) {
+      active = index;
+      for (let i = 0; i < total; i++) {
+        cards[i].classList.toggle('wheel__card--active', i === index);
+      }
+      if (currentEl) currentEl.textContent = pad(index + 1);
+      if (range) range.value = String(index + 1);
+      const zone = cards[index].dataset.area || '';
+      chips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.zone === zone)));
+      if (!running && !intro) updateDetail(index);
+    }
+
+    function nearestMatch(from) {
+      let best = null;
+      enabled.forEach((index) => {
+        const delta = shortDelta(index, from);
+        if (!best || Math.abs(delta) < Math.abs(best.delta) - 1e-9) {
+          best = { index, delta };
+        }
+      });
+      return best;
+    }
+
+    function nearestIndexTo(index) {
+      let best = null;
+      let bestDistance = Infinity;
+      enabled.forEach((candidate) => {
+        const distance = Math.abs(shortDelta(candidate, index));
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          best = candidate;
+        }
+      });
+      return best;
+    }
+
+    function settle(from) {
+      const match = nearestMatch(from);
+      target = match ? from + match.delta : Math.round(from);
+      startLoop(7.5);
+    }
+
+    function startLoop(nextRate) {
+      if (typeof nextRate === 'number') rate = nextRate;
+      clearTilt();
+      if (running) return;
+      running = true;
+      prevT = 0;
+      requestAnimationFrame(frame);
+    }
+
+    function frame(now) {
+      const dt = prevT ? Math.min(0.05, Math.max(0.004, (now - prevT) / 1000)) : 0.016;
+      prevT = now;
+      const ratio = 1 - Math.exp(-(dragging ? 20 : rate) * dt);
+      const step = (target - pos) * ratio;
+      speed = step / dt;
+      pos += step;
+
+      if (Math.abs(target - pos) < 0.0008) pos = target;
+      render();
+
+      if (pos !== target) {
+        requestAnimationFrame(frame);
+        return;
+      }
+
+      running = false;
+      prevT = 0;
+      speed = 0;
+      velocity = 0;
+      render();
+      onSettled();
+    }
+
+    function onSettled() {
+      intro = false;
+      updateDetail(active);
+      if (canHover && !reduced && lastPointer.active) {
+        updateHover(lastPointer.x, lastPointer.y);
       }
     }
 
-    function goTo(index) {
-      ensureBg(slides[index]);
-      ensureBg(slides[(index + 1) % total]);
-      slides.forEach((s, i) => {
-        s.classList.toggle('evening__slide--active', i === index);
-      });
-      dots.forEach((d, i) => {
-        d.classList.toggle('evening__dot--active', i === index);
-      });
-      current = index;
+    function goToIndex(index, nextRate) {
+      let destination = index;
+      if (!enabled.has(destination)) {
+        const near = nearestIndexTo(destination);
+        if (near === null) return;
+        destination = near;
+      }
+      target += shortDelta(destination, target);
+      startLoop(typeof nextRate === 'number' ? nextRate : 8.5);
     }
 
-    function next() { goTo((current + 1) % total); }
+    function stepBy(direction) {
+      if (enabled.size < 2) return;
+      let bestDelta = null;
+      enabled.forEach((index) => {
+        const delta = shortDelta(index, target);
+        if (direction > 0 && delta > 0.05) {
+          if (bestDelta === null || delta < bestDelta) bestDelta = delta;
+        } else if (direction < 0 && delta < -0.05) {
+          if (bestDelta === null || delta > bestDelta) bestDelta = delta;
+        }
+      });
+      if (bestDelta === null) {
+        enabled.forEach((index) => {
+          let delta = shortDelta(index, target);
+          if (direction > 0) {
+            if (delta <= 0.05) delta += total;
+            if (bestDelta === null || delta < bestDelta) bestDelta = delta;
+          } else {
+            if (delta >= -0.05) delta -= total;
+            if (bestDelta === null || delta > bestDelta) bestDelta = delta;
+          }
+        });
+      }
+      if (bestDelta === null) return;
+      target += bestDelta;
+      startLoop(7.5);
+    }
 
-    dots.forEach((dot) => {
-      dot.addEventListener('click', () => {
-        clearInterval(interval);
-        goTo(parseInt(dot.dataset.index));
-        interval = setInterval(next, 4000);
+    function pageBy(direction) {
+      if (!enabled.size) return;
+      const wanted = target + direction * 5;
+      const match = nearestMatch(wanted);
+      if (!match) return;
+      target = wanted + match.delta;
+      startLoop(9);
+    }
+
+    function jumpEdge(first) {
+      const list = Array.from(enabled).sort((a, b) => a - b);
+      if (!list.length) return;
+      goToIndex(first ? list[0] : list[list.length - 1], 10);
+    }
+
+    function applyFilter(value) {
+      const raw = String(value || '').trim();
+      const words = raw.toLowerCase().split(/\s+/).filter(Boolean);
+      const next = new Set();
+
+      cards.forEach((card, i) => {
+        const haystack = (card.dataset.search || '').toLowerCase();
+        if (words.every((word) => haystack.includes(word))) next.add(i);
+      });
+      enabled = next;
+
+      cards.forEach((card, i) => {
+        const isMatch = enabled.has(i);
+        card.classList.toggle('wheel__card--dim', !isMatch);
+        card.style.setProperty('--dim', isMatch ? '0' : '0.72');
+        card.style.setProperty('--side', isMatch ? '1' : '0.12');
+      });
+
+      if (clearBtn) clearBtn.hidden = raw.length === 0;
+      if (resultsEl) {
+        if (!raw) {
+          resultsEl.textContent = `${total} villa siap dijelajahi`;
+        } else if (enabled.size) {
+          resultsEl.textContent = `${enabled.size} villa cocok dengan “${raw}”`;
+        } else {
+          resultsEl.textContent = `Tidak ada villa cocok dengan “${raw}”. Coba kata lain, hapus pencarian, atau tekan Escape.`;
+        }
+      }
+
+      if (range) range.disabled = enabled.size === 0;
+      if (prevBtn) prevBtn.disabled = enabled.size < 2;
+      if (nextBtn) nextBtn.disabled = enabled.size < 2;
+
+      if (!enabled.size) {
+        chips.forEach((chip) => chip.setAttribute('aria-pressed', 'false'));
+      } else if (active >= 0 && !enabled.has(active)) {
+        const match = nearestMatch(target);
+        if (match) {
+          target += match.delta;
+          startLoop(9);
+        }
+      }
+    }
+
+    function updateDetail(index) {
+      if (!detail || !detailName || index < 0 || index >= total) return;
+      if (shown === index) return;
+      shown = index;
+      const data = cards[index].dataset;
+
+      detailNum.textContent = pad(index + 1);
+      detailZone.textContent = `${data.area} · ${data.region}`;
+      detailName.textContent = data.name;
+      detailDesc.textContent = data.desc || '';
+      detailRooms.textContent = `${data.bedrooms} kamar`;
+      detailGuests.textContent = `${data.capacity} tamu`;
+      detailPrice.textContent = data.price || '';
+      if (detailOld) {
+        if (data.priceOld) {
+          detailOld.hidden = false;
+          detailOld.textContent = data.priceOld;
+        } else {
+          detailOld.hidden = true;
+          detailOld.textContent = '';
+        }
+      }
+      detailLink.href = data.href || '/our-villas/';
+      detailBook.href = data.book || '/booking/';
+      detailAmenities.textContent = data.amenities || '';
+
+      detail.classList.remove('wheel__detail--in');
+      void detail.offsetWidth;
+      detail.classList.add('wheel__detail--in');
+    }
+
+    function setDetailOpen(open) {
+      if (!detail) return;
+      detail.classList.toggle('wheel__detail--open', open);
+      if (moreBtn) {
+        moreBtn.setAttribute('aria-expanded', String(open));
+        moreBtn.textContent = open ? 'Tutup detail' : 'Detail lengkap';
+      }
+      if (closeBtn) closeBtn.hidden = !open;
+      if (open) {
+        updateDetail(active);
+        if (typeof detail.scrollIntoView === 'function') {
+          detail.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest' });
+        }
+      }
+    }
+
+    function announce(message) {
+      if (!announceEl) return;
+      announceEl.textContent = '';
+      window.setTimeout(() => {
+        announceEl.textContent = message;
+      }, 30);
+    }
+
+    function clearTilt() {
+      if (!hovered.el) return;
+      const card = hovered.el;
+      hovered.el = null;
+      card.classList.remove('wheel__card--tilt');
+      card.style.setProperty('--rx', '0deg');
+      card.style.setProperty('--ry', '0deg');
+      card.style.setProperty('--hover-z', '0px');
+      card.style.setProperty('--shadow-x', '0px');
+    }
+
+    function applyTilt(card, clientX, clientY) {
+      if (!canHover || reduced) return;
+      const rect = card.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      if (hovered.el && hovered.el !== card) clearTilt();
+      hovered.el = card;
+
+      const x = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+      const y = Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
+
+      card.classList.add('wheel__card--tilt');
+      card.style.setProperty('--rx', `${((0.5 - y) * 18).toFixed(2)}deg`);
+      card.style.setProperty('--ry', `${((x - 0.5) * 24).toFixed(2)}deg`);
+      card.style.setProperty('--hover-z', '28px');
+      card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`);
+      card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`);
+      card.style.setProperty('--shadow-x', `${((0.5 - x) * 18).toFixed(1)}px`);
+    }
+
+    function updateHover(clientX, clientY) {
+      if (!canHover || reduced || dragging || running) return;
+      const element = document.elementFromPoint(clientX, clientY);
+      const card = element && element.closest ? element.closest('[data-wheel-card]') : null;
+      if (!card || !stage.contains(card)) {
+        clearTilt();
+        return;
+      }
+      const index = Number(card.dataset.index);
+      if (!enabled.has(index)) {
+        clearTilt();
+        return;
+      }
+      applyTilt(card, clientX, clientY);
+    }
+
+    function onPointerMove(event) {
+      if (event.pointerId !== pointerId) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+
+      if (!dragging) {
+        if (Math.abs(dx) <= 6 || Math.abs(dx) <= Math.abs(dy)) return;
+        dragging = true;
+        moved = true;
+        startPos = pos;
+        try {
+          stage.setPointerCapture(event.pointerId);
+        } catch (error) {
+          /* pointer capture is best-effort */
+        }
+        root.classList.add('wheel--dragging');
+        clearTilt();
+      }
+
+      const now = performance.now();
+      const dt = Math.max(8, now - lastMoveT) / 1000;
+      const instant = (-(event.clientX - lastMoveX) / stepPx) / dt;
+      velocity = velocity * 0.72 + instant * 0.28;
+      lastMoveX = event.clientX;
+      lastMoveT = now;
+
+      target = startPos - dx / stepPx;
+      startLoop(20);
+    }
+
+    function endPointer(event) {
+      if (pointerId === null) return;
+      if (event && event.pointerId !== pointerId) return;
+      const wasDragging = dragging;
+      const id = pointerId;
+      pointerId = null;
+      dragging = false;
+      root.classList.remove('wheel--dragging');
+
+      try {
+        if (stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
+      } catch (error) {
+        /* ignore */
+      }
+
+      if (wasDragging) {
+        suppressClick = true;
+        window.setTimeout(() => {
+          suppressClick = false;
+        }, 90);
+        const momentum = reduced ? 0 : Math.max(-5, Math.min(5, velocity * 0.2));
+        settle(pos + momentum);
+      } else if (Math.abs(pos - Math.round(pos)) > 0.02) {
+        settle(pos);
+      }
+    }
+
+    /* ---------- events ---------- */
+
+    stage.addEventListener('pointerdown', (event) => {
+      if (pointerId !== null) return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      pointerId = event.pointerId;
+      dragging = false;
+      moved = false;
+      startX = event.clientX;
+      startY = event.clientY;
+      startPos = pos;
+      lastMoveX = event.clientX;
+      lastMoveT = performance.now();
+      velocity = 0;
+      lastPointer.x = event.clientX;
+      lastPointer.y = event.clientY;
+      lastPointer.active = true;
+      intro = false;
+      target = pos;
+      clearTilt();
+      try {
+        stage.focus({ preventScroll: true });
+      } catch (error) {
+        /* ignore */
+      }
+    });
+
+    stage.addEventListener('pointermove', (event) => {
+      lastPointer.x = event.clientX;
+      lastPointer.y = event.clientY;
+      lastPointer.active = true;
+      if (pointerId !== null) {
+        onPointerMove(event);
+        return;
+      }
+      if (event.pointerType && event.pointerType !== 'mouse') return;
+      updateHover(event.clientX, event.clientY);
+    }, { passive: true });
+
+    window.addEventListener('pointerup', endPointer);
+    window.addEventListener('pointercancel', endPointer);
+
+    stage.addEventListener('pointerleave', () => {
+      lastPointer.active = false;
+      clearTilt();
+    });
+
+    stage.addEventListener('click', (event) => {
+      if (suppressClick) return;
+      const card = event.target.closest ? event.target.closest('[data-wheel-card]') : null;
+      if (!card) return;
+      const index = Number(card.dataset.index);
+      if (!enabled.has(index)) return;
+      if (index === active) {
+        setDetailOpen(true);
+      } else {
+        goToIndex(index, 9);
+      }
+    });
+
+    stage.addEventListener('keydown', (event) => {
+      const key = event.key;
+      if (key === 'ArrowRight') {
+        event.preventDefault();
+        stepBy(1);
+      } else if (key === 'ArrowLeft') {
+        event.preventDefault();
+        stepBy(-1);
+      } else if (key === 'PageDown') {
+        event.preventDefault();
+        pageBy(1);
+      } else if (key === 'PageUp') {
+        event.preventDefault();
+        pageBy(-1);
+      } else if (key === 'Home') {
+        event.preventDefault();
+        jumpEdge(true);
+      } else if (key === 'End') {
+        event.preventDefault();
+        jumpEdge(false);
+      }
+    });
+
+    stage.addEventListener('wheel', (event) => {
+      if (event.ctrlKey) return;
+      if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
+      event.preventDefault();
+      const amount = event.deltaMode === 1 ? event.deltaX * 16 : event.deltaX;
+      intro = false;
+      clearTilt();
+      target += amount / stepPx;
+      startLoop(18);
+      window.clearTimeout(wheelTimer);
+      wheelTimer = window.setTimeout(() => settle(pos), 130);
+    }, { passive: false });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', () => applyFilter(searchInput.value));
+      searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') event.preventDefault();
+      });
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        applyFilter('');
+        announce('Pencarian dihapus.');
+        searchInput.focus();
+      });
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const zone = chip.dataset.zone;
+        const inZone = [];
+        enabled.forEach((index) => {
+          if (cards[index].dataset.area === zone) inZone.push(index);
+        });
+        if (!inZone.length) {
+          announce(`Belum ada villa di zona ${zone} yang cocok dengan pencarian.`);
+          return;
+        }
+        let best = null;
+        let bestDistance = Infinity;
+        inZone.forEach((index) => {
+          const distance = Math.abs(shortDelta(index, target));
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            best = index;
+          }
+        });
+        if (best !== null) goToIndex(best, 9);
       });
     });
 
-    // Mulai slideshow (dan muat gambar) hanya saat bagian ini mendekati layar.
-    const start = () => {
-      if (interval) return;
-      goTo(0);
-      interval = setInterval(next, 4000);
-    };
+    if (prevBtn) prevBtn.addEventListener('click', () => stepBy(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => stepBy(1));
 
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            start();
-            io.disconnect();
-          }
-        },
-        { rootMargin: '400px' }
-      );
-      io.observe(slider);
-    } else {
-      start();
+    if (range) {
+      range.addEventListener('input', () => {
+        const index = Number(range.value) - 1;
+        goToIndex(index, 16);
+      });
     }
-  });
+
+    if (moreBtn) {
+      moreBtn.addEventListener('click', () => {
+        setDetailOpen(!detail.classList.contains('wheel__detail--open'));
+      });
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => setDetailOpen(false));
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (searchInput && searchInput.value) {
+        searchInput.value = '';
+        applyFilter('');
+        announce('Pencarian dihapus.');
+      } else if (detail && detail.classList.contains('wheel__detail--open')) {
+        setDetailOpen(false);
+      }
+    });
+
+    if (reduceMQ.addEventListener) {
+      reduceMQ.addEventListener('change', (event) => {
+        reduced = event.matches;
+        clearTilt();
+      });
+    }
+    if (hoverMQ.addEventListener) {
+      hoverMQ.addEventListener('change', (event) => {
+        canHover = event.matches;
+        if (!canHover) clearTilt();
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (resizeRaf) return;
+      resizeRaf = requestAnimationFrame(() => {
+        resizeRaf = 0;
+        measure();
+        render();
+      });
+    });
+
+    /* ---------- boot ---------- */
+
+    measure();
+    pos = reduced ? 0 : -10;
+    target = 0;
+    applyFilter('');
+    render();
+    updateDetail(0);
+
+    if (reduced) {
+      intro = false;
+      pos = 0;
+      target = 0;
+      render();
+      updateDetail(0);
+    } else {
+      startLoop(3.2);
+    }
+  })();
 </script>
 
 <style>
-  .evening {
-    color: white;
-    padding: 80px 0 60px;
+  .wheel {
+    --card-w: 190px;
+    --card-h: 290px;
+    --radius: 1074px;
+    --floor-size: 2685px;
+    --perspective: 1450px;
+    --step: 11.6129deg;
+    --wheel-bg: #f1f6f2;
+    --wheel-bg-2: #e5eee8;
+    --wheel-ink: #14231f;
+    --wheel-sub: #5d6d66;
+    --wheel-accent: #2c7a68;
+    --wheel-accent-soft: rgba(44, 122, 104, 0.13);
+    --wheel-panel: rgba(255, 255, 255, 0.74);
+    --wheel-panel-line: rgba(23, 68, 60, 0.13);
+    --wheel-floor-line: rgba(23, 68, 60, 0.18);
+    --wheel-fog: 241, 246, 242;
     position: relative;
-    overflow: hidden;
+    padding: 92px 0 104px;
+    background:
+      radial-gradient(70% 52% at 50% 0%, rgba(44, 122, 104, 0.14), transparent 72%),
+      linear-gradient(180deg, var(--wheel-bg) 0%, var(--wheel-bg-2) 100%);
+    overflow-x: clip;
+    isolation: isolate;
   }
 
-  .evening__slider {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    aspect-ratio: 16 / 9;
-    min-height: 480px;
+  :global(html[data-theme="dark"]) .wheel {
+    --wheel-bg: #0a1311;
+    --wheel-bg-2: #0f1d19;
+    --wheel-ink: #e9f3ee;
+    --wheel-sub: #93a8a0;
+    --wheel-accent: #63c4a8;
+    --wheel-accent-soft: rgba(99, 196, 168, 0.16);
+    --wheel-panel: rgba(18, 31, 27, 0.7);
+    --wheel-panel-line: rgba(180, 220, 205, 0.15);
+    --wheel-floor-line: rgba(180, 220, 205, 0.2);
+    --wheel-fog: 10, 19, 17;
   }
 
-  .evening__slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.8s ease;
-    pointer-events: none;
-    border-radius: 20px;
-    overflow: hidden;
+  .wheel__inner {
+    position: relative;
+  }
+
+  .wheel__head {
+    max-width: 660px;
+    margin: 0 auto 36px;
+    text-align: center;
+  }
+
+  .wheel__eyebrow {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: var(--wheel-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 3.4px;
+    text-transform: uppercase;
+  }
+
+  .wheel__title {
+    margin: 0 0 12px;
+    color: var(--wheel-ink);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.6vw, 3.05rem);
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .wheel__sub {
+    margin: 0;
+    color: var(--wheel-sub);
+    font-size: 0.98rem;
+    line-height: 1.75;
+  }
+
+  .wheel__tools {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 30px;
+    max-width: 1010px;
+    margin: 0 auto 8px;
   }
 
-  .evening__slide--active {
-    opacity: 1;
-    pointer-events: auto;
+  .wheel__search {
+    flex: 1 1 280px;
+    min-width: 0;
+    max-width: 430px;
   }
 
-  .evening__slide-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+  .wheel__search-label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--wheel-sub);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .wheel__search-box {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid var(--wheel-panel-line);
+    border-radius: 999px;
+    background: var(--wheel-panel);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .wheel__search-box:focus-within {
+    border-color: var(--wheel-accent);
+    box-shadow: 0 0 0 4px var(--wheel-accent-soft);
+  }
+
+  .wheel__search-box svg {
+    flex-shrink: 0;
+    color: var(--wheel-sub);
+  }
+
+  .wheel__search-box input {
+    flex: 1;
+    min-width: 0;
     height: 100%;
-    background-size: cover;
-    background-position: center;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--wheel-ink);
+    font: inherit;
+    font-size: 0.9rem;
   }
 
-  .evening__slide-overlay {
+  .wheel__search-box input::placeholder {
+    color: var(--wheel-sub);
+    opacity: 0.8;
+  }
+
+  .wheel__search-box input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
+
+  .wheel__search-clear {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--wheel-sub);
+    font-size: 0.76rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .wheel__search-clear:hover {
+    background: var(--wheel-accent-soft);
+    color: var(--wheel-ink);
+  }
+
+  .wheel__results {
+    min-height: 1.2em;
+    margin: 8px 2px 0;
+    color: var(--wheel-sub);
+    font-size: 0.74rem;
+    line-height: 1.45;
+  }
+
+  .wheel__zones {
+    display: flex;
+    flex: 1 1 100%;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .wheel__zones-label {
+    flex-shrink: 0;
+    color: var(--wheel-sub);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .wheel__chips {
+    display: flex;
+    gap: 8px;
+    padding: 4px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .wheel__chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wheel__chip {
+    flex: 0 0 auto;
+    padding: 7px 13px;
+    border: 1px solid var(--wheel-panel-line);
+    border-radius: 999px;
+    background: var(--wheel-panel);
+    color: var(--wheel-sub);
+    font: inherit;
+    font-size: 0.73rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .wheel__chip:hover {
+    border-color: var(--wheel-accent);
+    color: var(--wheel-ink);
+  }
+
+  .wheel__chip[aria-pressed="true"] {
+    border-color: var(--wheel-accent);
+    background: var(--wheel-accent);
+    color: #ffffff;
+  }
+
+  :global(html[data-theme="dark"]) .wheel__chip[aria-pressed="true"] {
+    color: #07130f;
+  }
+
+  .wheel__viewport {
+    position: relative;
+    margin-top: 8px;
+    opacity: 0;
+    animation: wheel-fade-in 1s ease 0.08s forwards;
+  }
+
+  @keyframes wheel-fade-in {
+    to {
+      opacity: 1;
+    }
+  }
+
+  .wheel__stage {
+    position: relative;
+    height: 540px;
+    perspective: var(--perspective);
+    perspective-origin: 50% 22%;
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  }
+
+  .wheel__stage:active {
+    cursor: grabbing;
+  }
+
+  .wheel__stage:focus-visible {
+    border-radius: 26px;
+    outline: 3px solid var(--wheel-accent);
+    outline-offset: 2px;
+  }
+
+  .wheel--dragging {
+    cursor: grabbing;
+  }
+
+  .wheel__ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--radius) * -1)) rotateY(var(--rot, 0deg));
+  }
+
+  .wheel__floor {
+    position: absolute;
+    top: calc(var(--card-h) / 2 - var(--floor-size) / 2);
+    left: calc(var(--floor-size) / -2);
+    width: var(--floor-size);
+    height: var(--floor-size);
+    border-radius: 50%;
+    transform: rotateX(90deg);
+    pointer-events: none;
+    background-image:
+      repeating-conic-gradient(
+        from calc(180deg - 0.45deg),
+        var(--wheel-floor-line) 0deg 0.9deg,
+        transparent 0.9deg var(--step)
+      ),
+      radial-gradient(circle closest-side, transparent calc(49% - 1px), var(--wheel-floor-line) calc(49% - 1px) calc(49% + 1px), transparent calc(49% + 1px)),
+      radial-gradient(circle closest-side, transparent calc(79% - 1px), var(--wheel-floor-line) calc(79% - 1px) calc(79% + 1px), transparent calc(79% + 1px)),
+      radial-gradient(circle closest-side, var(--wheel-accent-soft) 0 18%, transparent 34%);
+    -webkit-mask-image:
+      radial-gradient(circle closest-side, #000 0 76%, rgba(0, 0, 0, 0.55) 90%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 36%, #000 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(circle closest-side, #000 0 76%, rgba(0, 0, 0, 0.55) 90%, transparent 100%),
+      linear-gradient(180deg, transparent 0%, #000 36%, #000 100%);
+    mask-composite: intersect;
+  }
+
+  .wheel__card {
+    position: absolute;
+    top: calc(var(--card-h) / -2);
+    left: calc(var(--card-w) / -2);
+    width: var(--card-w);
+    height: var(--card-h);
+    transform: rotateY(calc(var(--i) * var(--step))) translateZ(var(--radius));
+    transform-style: preserve-3d;
+  }
+
+  .wheel__card-lift {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.15) 60%);
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--lift, 0) * 1px));
   }
 
-  .evening__slide-content {
-    position: relative;
+  .wheel__card-tilt {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(var(--hover-z, 0px));
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .wheel__card--tilt .wheel__card-tilt {
+    transition-duration: 0.18s;
+  }
+
+  .wheel__stage:focus-visible .wheel__card--active .wheel__card-tilt {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(calc(var(--hover-z, 0px) + 16px));
+  }
+
+  .wheel__card-layer {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    transform: translateZ(calc(var(--k) * -2px));
+    background: hsl(calc(176 - var(--k) * 2.2), 38%, calc(36% - var(--k) * 2.6%));
+    opacity: var(--side, 1);
+    transition: opacity 0.25s ease;
+  }
+
+  .wheel__card-face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 18px;
+    background: linear-gradient(160deg, #1b554a, #0a2621 72%);
+    transform: translateZ(0.5px);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 0 0 1px rgba(7, 28, 23, 0.4);
+  }
+
+  .wheel__card-face::before {
+    content: "";
+    position: absolute;
+    inset: 0;
     z-index: 1;
-    padding: 48px 40px;
-    max-width: 600px;
+    background: linear-gradient(
+      180deg,
+      rgba(4, 16, 13, 0) 0%,
+      rgba(4, 16, 13, 0) 38%,
+      rgba(4, 16, 13, 0.7) 74%,
+      rgba(4, 16, 13, 0.95) 100%
+    );
+    pointer-events: none;
   }
 
-  .evening__slide-name {
-    font-size: 2rem;
+  .wheel__card-face::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    pointer-events: none;
+  }
+
+  .wheel__card--active .wheel__card-face {
+    box-shadow:
+      0 0 0 2px rgba(168, 235, 216, 0.8),
+      0 0 34px rgba(80, 200, 168, 0.3);
+  }
+
+  .wheel__card-media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .wheel__card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate3d(calc(var(--px, 0) * 1px), 0, 0) scale(1.14);
+    transform-origin: center;
+  }
+
+  .wheel__card-number,
+  .wheel__card-zone {
+    position: absolute;
+    top: 10px;
+    z-index: 3;
+    padding: 4px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    background: rgba(5, 22, 18, 0.52);
+    color: #f1fbf7;
+    font-size: 0.59rem;
     font-weight: 700;
-    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+    line-height: 1;
   }
 
-  .evening__slide-desc {
-    font-size: 0.95rem;
-    opacity: 0.8;
-    line-height: 1.7;
-    margin-bottom: 16px;
+  .wheel__card-number {
+    left: 10px;
   }
 
-  .evening__slide-meta {
+  .wheel__card-zone {
+    right: 10px;
+    max-width: 104px;
+    overflow: hidden;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .wheel__card-info {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    padding: 12px 13px 14px;
+    color: #f4fbf8;
+  }
+
+  .wheel__card-name {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0 0 3px;
+    font-size: 0.92rem;
+    font-weight: 700;
+    line-height: 1.2;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .wheel__card-meta {
+    margin: 0;
+    color: rgba(226, 245, 238, 0.8);
+    font-size: 0.65rem;
+    line-height: 1.35;
+  }
+
+  .wheel__card-price {
+    margin: 4px 0 0;
+    color: #a9e6d2;
+    font-size: 0.69rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .wheel__card-shade,
+  .wheel__card-fog,
+  .wheel__card-dim,
+  .wheel__card-glare,
+  .wheel__card-hover {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .wheel__card-shade {
+    background: #03120f;
+    opacity: var(--shade, 0);
+  }
+
+  .wheel__card-fog {
+    background: rgb(var(--wheel-fog));
+    opacity: var(--fog, 0);
+  }
+
+  .wheel__card-dim {
+    z-index: 5;
+    background: rgb(var(--wheel-fog));
+    opacity: var(--dim, 0);
+  }
+
+  .wheel__card-glare {
+    z-index: 6;
+    background: linear-gradient(
+      118deg,
+      transparent 28%,
+      rgba(255, 255, 255, 0.14) 44%,
+      rgba(255, 255, 255, 0.26) 50%,
+      transparent 64%
+    );
+    opacity: var(--motion, 0);
+  }
+
+  .wheel__card-hover {
+    z-index: 7;
+    background: radial-gradient(
+      circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, 0.36),
+      rgba(255, 255, 255, 0.08) 32%,
+      transparent 62%
+    );
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+
+  .wheel__card--tilt .wheel__card-hover {
+    opacity: 0.85;
+  }
+
+  .wheel__card-shadow {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 50%;
+    width: 150%;
+    height: 64px;
+    transform: translate(-50%, -50%) rotateX(90deg) scale(calc(1 + var(--lift, 0) * 0.0022));
+    transform-origin: 50% 50%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(6, 24, 19, 0.48) 0%,
+      rgba(6, 24, 19, 0.22) 42%,
+      transparent 70%
+    );
+    opacity: calc((1 - var(--fog, 0)) * (1 - var(--dim, 0) * 0.55));
+    pointer-events: none;
+  }
+
+  .wheel__card--tilt .wheel__card-shadow {
+    transform: translate(calc(-50% + var(--shadow-x, 0px)), -50%) rotateX(90deg) scale(1.18);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .wheel__card--dim {
+    pointer-events: none;
+  }
+
+  .wheel__card--dim .wheel__card-number,
+  .wheel__card--dim .wheel__card-zone,
+  .wheel__card--dim .wheel__card-name,
+  .wheel__card--dim .wheel__card-meta,
+  .wheel__card--dim .wheel__card-price {
+    opacity: 0.5;
+    transition: opacity 0.25s ease;
+  }
+</style>
+
+<style>
+  .wheel__controls {
     display: flex;
-    gap: 20px;
-    font-size: 0.85rem;
-    opacity: 0.7;
-    margin-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 10px;
+  }
+
+  .wheel__nav {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 1px solid var(--wheel-panel-line);
+    border-radius: 50%;
+    background: var(--wheel-panel);
+    color: var(--wheel-ink);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .wheel__nav:hover:not(:disabled) {
+    border-color: var(--wheel-accent);
+    transform: translateY(-2px);
+  }
+
+  .wheel__nav:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .wheel__counter {
+    min-width: 92px;
+    margin: 0;
+    color: var(--wheel-ink);
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-align: center;
+  }
+
+  .wheel__counter-total {
+    color: var(--wheel-sub);
+    font-weight: 500;
+  }
+
+  .wheel__range-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-width: 520px;
+    margin: 16px auto 0;
+  }
+
+  .wheel__range {
+    width: 100%;
+    height: 22px;
+    accent-color: var(--wheel-accent);
+    cursor: pointer;
+  }
+
+  .wheel__range:disabled {
+    opacity: 0.4;
+  }
+
+  .wheel__range-marks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+    color: var(--wheel-sub);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+  }
+
+  .wheel__detail {
+    position: relative;
+    max-width: 800px;
+    margin: 30px auto 0;
+    padding: 22px 26px;
+    border: 1px solid var(--wheel-panel-line);
+    border-radius: 24px;
+    background: var(--wheel-panel);
+    box-shadow: 0 20px 54px rgba(10, 30, 24, 0.09);
+  }
+
+  .wheel__detail--in .wheel__detail-main {
+    animation: wheel-detail-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes wheel-detail-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .wheel__detail-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .wheel__detail-num {
+    color: var(--wheel-accent);
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .wheel__detail-zone {
+    color: var(--wheel-sub);
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+  }
+
+  .wheel__detail-name {
+    margin: 6px 0 6px;
+    color: var(--wheel-ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.6vw, 1.8rem);
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  .wheel__detail-desc {
+    max-width: 64ch;
+    margin: 0;
+    color: var(--wheel-sub);
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+
+  .wheel__detail-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 30px;
+    margin: 16px 0 0;
+  }
+
+  .wheel__detail-facts div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .wheel__detail-facts dt {
+    color: var(--wheel-sub);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+  }
+
+  .wheel__detail-facts dd {
+    margin: 0;
+    color: var(--wheel-ink);
+    font-size: 0.86rem;
+    font-weight: 600;
+  }
+
+  .wheel__detail-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 7px;
+  }
+
+  .wheel__detail-old {
+    color: var(--wheel-sub);
+    font-size: 0.74rem;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+
+  .wheel__detail-actions {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
+    gap: 9px;
+    margin-top: 18px;
   }
 
-  .evening__slide-meta-icon {
-    width: 15px;
-    height: 15px;
-    vertical-align: -2px;
-  }
-
-  .evening__slide-price-old {
-    margin-right: 5px;
-    font-size: 0.85em;
-    opacity: 0.75;
-    text-decoration: line-through;
-  }
-
-  .evening__slide-cta {
-    display: inline-block;
-    padding: 12px 28px;
-    background: linear-gradient(135deg, #5b8def, #7c9bf7);
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: transform 0.2s;
-  }
-
-  .evening__slide-cta:hover { transform: translateY(-2px); }
-
-  .evening__dots {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
+  .wheel__cta {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    gap: 10px;
-    max-width: 100%;
-    margin: 28px 16px 0;
-    padding: 0 8px;
+    min-height: 40px;
+    padding: 9px 18px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   }
 
-  .evening__dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.25);
+  .wheel__cta:hover {
+    transform: translateY(-1px);
+  }
+
+  .wheel__cta--primary {
+    background: var(--wheel-accent);
+    color: #ffffff;
+  }
+
+  :global(html[data-theme="dark"]) .wheel__cta--primary {
+    color: #07130f;
+  }
+
+  .wheel__cta--ghost {
+    border-color: var(--wheel-panel-line);
+    background: transparent;
+    color: var(--wheel-ink);
+  }
+
+  .wheel__cta--ghost:hover {
+    border-color: var(--wheel-accent);
+  }
+
+  .wheel__detail-more {
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--wheel-sub);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
+    text-decoration: underline;
+    text-decoration-color: var(--wheel-panel-line);
+    text-underline-offset: 4px;
+  }
+
+  .wheel__detail-more:hover {
+    color: var(--wheel-ink);
+  }
+
+  .wheel__detail-close {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    margin-left: auto;
+    border: 1px solid var(--wheel-panel-line);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--wheel-sub);
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  .wheel__detail-close:hover {
+    border-color: var(--wheel-accent);
+    color: var(--wheel-ink);
+  }
+
+  .wheel__detail-extra {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+  }
+
+  .wheel__detail--open .wheel__detail-extra {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .wheel__detail-extra-inner {
+    overflow: hidden;
+  }
+
+  .wheel__detail--open .wheel__detail-extra-inner {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--wheel-panel-line);
+  }
+
+  .wheel__detail-extra-label {
+    margin: 0 0 5px;
+    color: var(--wheel-sub);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+  }
+
+  .wheel__detail-amenities {
+    margin: 0;
+    color: var(--wheel-ink);
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  .wheel__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
     padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .evening__dot--active {
-    background: #7c9bf7;
-    width: 28px;
-    border-radius: 5px;
+  @media (max-width: 900px) {
+    .wheel {
+      padding: 76px 0 88px;
+    }
+
+    .wheel__stage {
+      height: 470px;
+    }
+
+    .wheel__tools {
+      gap: 14px 20px;
+    }
+
+    .wheel__search {
+      max-width: none;
+    }
   }
 
-  @media (max-width: 768px) {
-    .evening { padding: 48px 0 40px; }
-    .evening__slider { min-height: 420px; margin: 0 16px; }
-    .evening__slide-content { padding: 32px 24px; }
-    .evening__slide-name { font-size: 1.4rem; }
-    .evening__slide-meta { gap: 12px; font-size: 0.8rem; }
-    .evening__dots { margin: 24px 16px 0; }
-    .evening__dot { width: 8px; height: 8px; }
-    .evening__dot--active { width: 20px; border-radius: 5px; }
+  @media (max-width: 720px) {
+    .wheel {
+      --card-w: 140px;
+      --card-h: 215px;
+      --radius: 791.62px;
+      --floor-size: 1979.06px;
+      --perspective: 1068.69px;
+      padding: 64px 0 78px;
+    }
+
+    .wheel__head {
+      margin-bottom: 28px;
+    }
+
+    .wheel__sub {
+      font-size: 0.9rem;
+    }
+
+    .wheel__stage {
+      height: 400px;
+    }
+
+    .wheel__zones {
+      align-items: flex-start;
+    }
+
+    .wheel__zones-label {
+      padding-top: 10px;
+    }
+
+    .wheel__detail {
+      padding: 18px 18px 20px;
+      border-radius: 20px;
+    }
+
+    .wheel__detail-facts {
+      gap: 10px 20px;
+    }
+
+    .wheel__detail-close {
+      width: 34px;
+      height: 34px;
+    }
   }
 
   @media (max-width: 480px) {
-    .evening__slider { min-height: 300px; margin: 0 12px; }
-    .evening__slide-content { padding: 26px 20px; }
-    .evening__slide-name { font-size: 1.25rem; }
-    .evening__slide-desc { font-size: 0.85rem; line-height: 1.55; }
-    .evening__slide-cta { padding: 11px 22px; font-size: 0.85rem; }
-    .evening__dots { gap: 8px; }
+    .wheel__stage {
+      height: 372px;
+    }
+
+    .wheel__title {
+      font-size: 1.78rem;
+    }
+
+    .wheel__tools {
+      gap: 12px;
+    }
+
+    .wheel__search-box {
+      height: 44px;
+    }
+
+    .wheel__chips {
+      gap: 6px;
+    }
+
+    .wheel__chip {
+      padding: 6px 11px;
+      font-size: 0.7rem;
+    }
+
+    .wheel__nav {
+      width: 42px;
+      height: 42px;
+    }
+
+    .wheel__counter {
+      min-width: 82px;
+      font-size: 0.82rem;
+    }
+
+    .wheel__detail-desc {
+      font-size: 0.84rem;
+    }
+
+    .wheel__detail-actions {
+      gap: 8px;
+    }
+
+    .wheel__cta {
+      min-height: 38px;
+      padding: 8px 15px;
+      font-size: 0.76rem;
+    }
+
+    .wheel__detail-more {
+      padding: 8px 4px;
+      font-size: 0.74rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wheel__viewport {
+      animation: none;
+      opacity: 1;
+    }
+
+    .wheel__card-tilt,
+    .wheel__card--tilt .wheel__card-tilt,
+    .wheel__card--tilt .wheel__card-shadow,
+    .wheel__card-hover,
+    .wheel__detail-extra,
+    .wheel__detail--in .wheel__detail-main {
+      animation: none;
+      transition: none;
+    }
+  }
+
+  /* Keep content clear of notches and rounded display corners. */
+  .wheel {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
   }
 </style>

@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import FlashSalePopup from '../components/FlashSalePopup.vue';
+import FlashSalePopup from '../components/FlashSalePopup.astro';
 
 export interface Props {
   title?: string;
@@ -195,6 +195,6 @@ const gaBootstrap = `
       import '../scripts/analytics.js';
       import '../scripts/cardTilt.js';
     </script>
-    {!isAdminRoute && <FlashSalePopup client:idle />}
+    {!isAdminRoute && <FlashSalePopup />}
   </body>
 </html>

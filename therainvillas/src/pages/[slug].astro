@@ -414,22 +414,22 @@ const villaDetailDesc = makeDescription(
 
           <div class="vd-specs reveal reveal--delay-3">
             <div class="vd-spec">
-              <img class="vd-spec__icon ti ti--light" src="/icon/icon%20light/groupp.png" alt="" /><img class="vd-spec__icon ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" />
+              <svg class="vd-spec__icon" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/groupp.svg#light"></use><use class="ti ti--dark" href="/icon/svg/groupp.svg#dark"></use></svg>
               <span class="vd-spec__label">Kapasitas</span>
               <strong>{villa.capacity} orang</strong>
             </div>
             <div class="vd-spec">
-              <img class="vd-spec__icon ti ti--light" src="/icon/icon%20light/bed.png" alt="" /><img class="vd-spec__icon ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" />
+              <svg class="vd-spec__icon" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bed.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bed.svg#dark"></use></svg>
               <span class="vd-spec__label">Kamar tidur</span>
               <strong>{villa.bedrooms} kamar{villa.bedroomsNote ? ` (${villa.bedroomsNote})` : ''}</strong>
             </div>
             <div class="vd-spec">
-              <img class="vd-spec__icon ti ti--light" src="/icon/icon%20light/bathroom.png" alt="" /><img class="vd-spec__icon ti ti--dark" src="/icon/icon%20dark/bathroom.png" alt="" />
+              <svg class="vd-spec__icon" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bathroom.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bathroom.svg#dark"></use></svg>
               <span class="vd-spec__label">Kamar mandi</span>
               <strong>{villa.bathrooms} kamar</strong>
             </div>
             <div class="vd-spec">
-              <img class="vd-spec__icon ti ti--light" src="/icon/icon%20light/parking.png" alt="" /><img class="vd-spec__icon ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" />
+              <svg class="vd-spec__icon" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/parking.svg#light"></use><use class="ti ti--dark" href="/icon/svg/parking.svg#dark"></use></svg>
               <span class="vd-spec__label">Parkir</span>
               <strong>{villa.parking} mobil</strong>
             </div>
@@ -462,7 +462,7 @@ const villaDetailDesc = makeDescription(
               <div class="vd-location__info">
                 <div class="vd-location__item">
                   <span class="vd-location__item-icon">
-                    <img class="ti ti--light" src="/icon/icon%20light/location%20light_.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/location.png" alt="" loading="lazy" decoding="async" />
+                    <svg viewBox="0 0 512 512" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/location.svg#light"></use><use class="ti ti--dark" href="/icon/svg/location.svg#dark"></use></svg>
                   </span>
                   <div>
                     <h4>{villaAddress}</h4>
@@ -471,7 +471,7 @@ const villaDetailDesc = makeDescription(
                 </div>
                 <div class="vd-location__item">
                   <span class="vd-location__item-icon">
-                    <img class="ti ti--light" src="/icon/icon%20light/car.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/car.png" alt="" loading="lazy" decoding="async" />
+                    <svg viewBox="0 0 512 512" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/car.svg#light"></use><use class="ti ti--dark" href="/icon/svg/car.svg#dark"></use></svg>
                   </span>
                   <div>
                     <h4>~{villaDriveMinutes} menit dari Jakarta</h4>
@@ -480,7 +480,7 @@ const villaDetailDesc = makeDescription(
                 </div>
                 <div class="vd-location__item">
                   <span class="vd-location__item-icon">
-                    <img class="ti ti--light" src="/icon/icon%20light/altitude.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/altitude.png" alt="" loading="lazy" decoding="async" />
+                    <svg viewBox="0 0 512 512" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/altitude.svg#light"></use><use class="ti ti--dark" href="/icon/svg/altitude.svg#dark"></use></svg>
                   </span>
                   <div>
                     <h4>Ketinggian ~{villaElevation} mdpl</h4>
@@ -490,7 +490,7 @@ const villaDetailDesc = makeDescription(
                 {hasBusAccess && (
                   <div class="vd-location__item">
                     <span class="vd-location__item-icon">
-                      <img class="ti ti--light" src="/icon/icon%20light/bus.png" alt="" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/bus.png" alt="" loading="lazy" decoding="async" />
+                      <svg viewBox="0 0 512 512" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bus.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bus.svg#dark"></use></svg>
                     </span>
                     <div>
                       <h4>Bus 3/4 bisa masuk</h4>
@@ -528,7 +528,7 @@ const villaDetailDesc = makeDescription(
             <span>{villa.capacity} tamu maksimal</span>
             <span>{villa.bedrooms} kamar tidur</span>
             <span>{villa.bathrooms} kamar mandi</span>
-            <span><img class="vd-booking__row-icon ti ti--light" src="/icon/icon%20light/parking.png" alt="" /><img class="vd-booking__row-icon ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" /> {villa.parking} parkir mobil</span>
+            <span><svg class="vd-booking__row-icon" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/parking.svg#light"></use><use class="ti ti--dark" href="/icon/svg/parking.svg#dark"></use></svg> {villa.parking} parkir mobil</span>
           </div>
 
           {villa.pricingLabels && (
@@ -1448,7 +1448,7 @@ const villaDetailDesc = makeDescription(
     padding-top: 2px;
   }
 
-  .vd-location__item-icon img {
+  .vd-location__item-icon svg {
     width: 26px;
     height: 26px;
     object-fit: contain;

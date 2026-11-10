@@ -143,10 +143,10 @@
             </p>
             <p class="vf-card__desc">{{ villa.description }}</p>
             <ul class="vf-card__stats">
-              <li><span class="vf-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" /></span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
-              <li><span class="vf-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bathroom.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/bathroom.png" alt="" /></span> <strong>{{ villa.bathrooms }}</strong> mandi</li>
-              <li><span class="vf-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/groupp.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" /></span> <strong>{{ villa.capacity }}</strong> tamu</li>
-              <li><span class="vf-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/parking.png" alt="" /><img class="ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" /></span> <strong>{{ villa.parking }}</strong> parkir</li>
+              <li><span class="vf-card__stat-icon"><svg viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bed.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bed.svg#dark"></use></svg></span> <strong>{{ villa.bedrooms }}</strong> kamar</li>
+              <li><span class="vf-card__stat-icon"><svg viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bathroom.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bathroom.svg#dark"></use></svg></span> <strong>{{ villa.bathrooms }}</strong> mandi</li>
+              <li><span class="vf-card__stat-icon"><svg viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/groupp.svg#light"></use><use class="ti ti--dark" href="/icon/svg/groupp.svg#dark"></use></svg></span> <strong>{{ villa.capacity }}</strong> tamu</li>
+              <li><span class="vf-card__stat-icon"><svg viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/parking.svg#light"></use><use class="ti ti--dark" href="/icon/svg/parking.svg#dark"></use></svg></span> <strong>{{ villa.parking }}</strong> parkir</li>
             </ul>
             <div class="vf-card__tags">
               <span v-if="villa.busAccess" class="vf-card__tag vf-card__tag--bus">Bus 3/4</span>
@@ -1005,7 +1005,7 @@ export default {
   flex-shrink: 0;
 }
 
-.vf-card__stat-icon img {
+.vf-card__stat-icon svg {
   width: 16px;
   height: 16px;
   display: block;

@@ -554,8 +554,9 @@ html[data-theme="dark"] .info-section {
 }
 
 /* ===== IKON DUAL VARIANT =====
-   .ti--light  -> /icon/icon light/  (ikon gelap, untuk light mode)
-   .ti--dark   -> /icon/icon dark/   (ikon terang, untuk dark mode)
+   Satu file SVG per ikon berisi dua simbol:
+   .ti--light  -> /icon/svg/*.svg#light  (ikon gelap, untuk light mode)
+   .ti--dark   -> /icon/svg/*.svg#dark   (ikon terang, untuk dark mode)
    Hanya varian yang tidak aktif disembunyikan; display ikon yang aktif
    dibiarkan apa adanya supaya aturan komponen (block/inline-flex) tidak kena. */
 html:not([data-theme="dark"]) .ti--dark,

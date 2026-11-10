@@ -89,19 +89,19 @@ const link = `/${slugify(name)}`;
 
     <ul class="villa-card__stats">
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
+        <span class="villa-card__stat-icon"><svg width="16" height="16" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bed.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bed.svg#dark"></use></svg></span>
         <strong>{bedrooms}</strong> kamar
       </li>
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/bathroom.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/bathroom.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
+        <span class="villa-card__stat-icon"><svg width="16" height="16" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bathroom.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bathroom.svg#dark"></use></svg></span>
         <strong>{bathrooms}</strong> kamar mandi
       </li>
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/groupp.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
+        <span class="villa-card__stat-icon"><svg width="16" height="16" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/groupp.svg#light"></use><use class="ti ti--dark" href="/icon/svg/groupp.svg#dark"></use></svg></span>
         <strong>{capacity}</strong> tamu
       </li>
       <li>
-        <span class="villa-card__stat-icon"><img class="ti ti--light" src="/icon/icon%20light/parking.png" alt="" width="16" height="16" loading="lazy" decoding="async" /><img class="ti ti--dark" src="/icon/icon%20dark/parking.png" alt="" width="16" height="16" loading="lazy" decoding="async" /></span>
+        <span class="villa-card__stat-icon"><svg width="16" height="16" viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/parking.svg#light"></use><use class="ti ti--dark" href="/icon/svg/parking.svg#dark"></use></svg></span>
         <strong>{parking}</strong> parkir
       </li>
     </ul>
@@ -362,7 +362,7 @@ const link = `/${slugify(name)}`;
     color: var(--color-dark);
   }
 
-  .villa-card__stat-icon img {
+  .villa-card__stat-icon svg {
     width: 16px;
     height: 16px;
     display: block;

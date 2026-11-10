@@ -50,8 +50,7 @@
           <div v-if="step === 1" key="step1" class="bf__section">
             <div class="bf__section-header">
               <div class="bf__section-icon">
-                <img class="ti ti--light" src="/icon/icon%20light/bed.png" alt="" />
-                <img class="ti ti--dark" src="/icon/icon%20dark/bedroom.png" alt="" />
+                <svg viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/bed.svg#light"></use><use class="ti ti--dark" href="/icon/svg/bed.svg#dark"></use></svg>
               </div>
               <div>
                 <h2 class="bf__title">Villa & Tanggal</h2>
@@ -250,8 +249,7 @@
           <div v-if="step === 2" key="step2" class="bf__section">
             <div class="bf__section-header">
               <div class="bf__section-icon">
-                <img class="ti ti--light" src="/icon/icon%20light/groupp.png" alt="" />
-                <img class="ti ti--dark" src="/icon/icon%20dark/grup.png" alt="" />
+                <svg viewBox="0 0 128 128" aria-hidden="true"><use class="ti ti--light" href="/icon/svg/groupp.svg#light"></use><use class="ti ti--dark" href="/icon/svg/groupp.svg#dark"></use></svg>
               </div>
               <div>
                 <h2 class="bf__title">Data Pembooking</h2>
@@ -1341,7 +1339,7 @@ export default {
   font-size: 1.4rem;
   flex-shrink: 0;
 }
-.bf__section-icon img {
+.bf__section-icon svg {
   width: 26px;
   height: 26px;
   object-fit: contain;

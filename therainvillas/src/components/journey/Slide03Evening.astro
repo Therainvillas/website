@@ -42,9 +42,10 @@ const pad = (value) => String(value).padStart(2, '0');
         <p class="wheel__sr-only" data-wheel-announce aria-live="polite"></p>
       </div>
 
-      <div class="wheel__zones" role="group" aria-label="Lompat ke zona villa">
+      <div class="wheel__zones" role="group" aria-label="Filter zona villa">
         <span class="wheel__zones-label">Zona</span>
         <div class="wheel__chips">
+          <button type="button" class="wheel__chip" data-zone="" aria-pressed="true">Semua</button>
           {zones.map((zone) => (
             <button type="button" class="wheel__chip" data-zone={zone} aria-pressed="false">{zone}</button>
           ))}
@@ -81,7 +82,7 @@ const pad = (value) => String(value).padStart(2, '0');
               data-amenities={villa.amenities.slice(0, 7).join(' · ')}
               data-href={`/${slugify(villa.name)}/`}
               data-book={`/booking/?villa=${encodeURIComponent(villa.name)}`}
-              data-search={`${villa.name} ${i + 1} ${pad(i + 1)}`}
+              data-search={`${villa.name} ${i + 1} ${pad(i + 1)} ${villa.area} ${villa.region}`}
               style={`--i:${i}`}
               aria-label={`${villa.name}, villa ${i + 1} dari ${total}`}
             >
@@ -238,6 +239,7 @@ const pad = (value) => String(value).padStart(2, '0');
     let active = -1;
     let shown = -1;
     let enabled = new Set(cards.map((_, i) => i));
+    let zoneFilter = '';
 
     let pointerId = null;
     let dragging = false;
@@ -325,8 +327,6 @@ const pad = (value) => String(value).padStart(2, '0');
       }
       if (currentEl) currentEl.textContent = pad(index + 1);
       if (range) range.value = String(index + 1);
-      const zone = cards[index].dataset.area || '';
-      chips.forEach((chip) => chip.setAttribute('aria-pressed', String(chip.dataset.zone === zone)));
       if (!running && !intro) updateDetail(index);
     }
 
@@ -462,7 +462,8 @@ const pad = (value) => String(value).padStart(2, '0');
 
       cards.forEach((card, i) => {
         const haystack = (card.dataset.search || '').toLowerCase();
-        if (words.every((word) => haystack.includes(word))) next.add(i);
+        const inZone = !zoneFilter || card.dataset.area === zoneFilter;
+        if (inZone && words.every((word) => haystack.includes(word))) next.add(i);
       });
       enabled = next;
 
@@ -473,12 +474,22 @@ const pad = (value) => String(value).padStart(2, '0');
         card.style.setProperty('--side', isMatch ? '1' : '0.12');
       });
 
+      chips.forEach((chip) => {
+        chip.setAttribute('aria-pressed', String((chip.dataset.zone || '') === zoneFilter));
+      });
+
       if (clearBtn) clearBtn.hidden = raw.length === 0;
       if (resultsEl) {
-        if (!raw) {
+        if (!raw && !zoneFilter) {
           resultsEl.textContent = `${total} villa siap dijelajahi`;
+        } else if (!raw) {
+          resultsEl.textContent = `Zona ${zoneFilter} · ${enabled.size} villa`;
         } else if (enabled.size) {
-          resultsEl.textContent = `${enabled.size} villa cocok dengan “${raw}”`;
+          resultsEl.textContent = zoneFilter
+            ? `Zona ${zoneFilter} · ${enabled.size} villa cocok dengan “${raw}”`
+            : `${enabled.size} villa cocok dengan “${raw}”`;
+        } else if (zoneFilter) {
+          resultsEl.textContent = `Tidak ada villa di zona ${zoneFilter} yang cocok dengan “${raw}”. Hapus pencarian atau pilih zona lain.`;
         } else {
           resultsEl.textContent = `Tidak ada villa cocok dengan “${raw}”. Coba kata lain, hapus pencarian, atau tekan Escape.`;
         }
@@ -488,9 +499,7 @@ const pad = (value) => String(value).padStart(2, '0');
       if (prevBtn) prevBtn.disabled = enabled.size < 2;
       if (nextBtn) nextBtn.disabled = enabled.size < 2;
 
-      if (!enabled.size) {
-        chips.forEach((chip) => chip.setAttribute('aria-pressed', 'false'));
-      } else if (active >= 0 && !enabled.has(active)) {
+      if (enabled.size && active >= 0 && !enabled.has(active)) {
         const match = nearestMatch(target);
         if (match) {
           target += match.delta;
@@ -771,25 +780,29 @@ const pad = (value) => String(value).padStart(2, '0');
 
     chips.forEach((chip) => {
       chip.addEventListener('click', () => {
-        const zone = chip.dataset.zone;
-        const inZone = [];
-        enabled.forEach((index) => {
-          if (cards[index].dataset.area === zone) inZone.push(index);
-        });
-        if (!inZone.length) {
-          announce(`Belum ada villa di zona ${zone} yang cocok dengan pencarian.`);
+        const zone = chip.dataset.zone || '';
+        zoneFilter = zoneFilter === zone ? '' : zone;
+        applyFilter(searchInput ? searchInput.value : '');
+
+        if (!enabled.size) {
+          announce(
+            zoneFilter
+              ? `Belum ada villa di zona ${zoneFilter} yang cocok dengan pencarian.`
+              : 'Tidak ada villa yang cocok dengan pencarian.'
+          );
           return;
         }
-        let best = null;
-        let bestDistance = Infinity;
-        inZone.forEach((index) => {
-          const distance = Math.abs(shortDelta(index, target));
-          if (distance < bestDistance) {
-            bestDistance = distance;
-            best = index;
+
+        if (zoneFilter) {
+          const match = nearestMatch(target);
+          if (match) {
+            target += match.delta;
+            startLoop(9);
           }
-        });
-        if (best !== null) goToIndex(best, 9);
+          announce(`Menampilkan ${enabled.size} villa di zona ${zoneFilter}.`);
+        } else {
+          announce(`Menampilkan semua ${total} villa.`);
+        }
       });
     });
 
@@ -819,6 +832,10 @@ const pad = (value) => String(value).padStart(2, '0');
         searchInput.value = '';
         applyFilter('');
         announce('Pencarian dihapus.');
+      } else if (zoneFilter) {
+        zoneFilter = '';
+        applyFilter('');
+        announce('Filter zona dihapus.');
       } else if (detail && detail.classList.contains('wheel__detail--open')) {
         setDetailOpen(false);
       }

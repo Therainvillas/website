@@ -6,7 +6,7 @@ export const promos = [
     description: 'Harga promo (harga awal dicoret) bisa diklaim dengan memberikan rating Google Maps dan mengirim bukti rating.',
     excluded: ['Rjs Cottage 1', 'Rjs Cottage 2', 'Rjs Cottage 3', 'Villa Kaca 1', 'Villa Kaca 2'],
     terms: [
-      'Berlaku untuk malam Minggu–Kamis pada villa dengan harga promo (harga awal dicoret). Malam Jumat, Sabtu, dan 20–31 Desember tidak wajib klaim kode.',
+      'Berlaku untuk malam Minggu–Kamis pada villa dengan harga promo (harga awal dicoret). Malam Jumat, Sabtu, dan 20–31 Desember memakai harga normal (tidak wajib klaim kode). Kode promo tidak dapat digunakan untuk menginap pada tanggal 20–31 Desember.',
       'Wajib memberi rating Google Maps dan mengirimkan bukti rating.',
       'Kode promo muncul secara acak setelah bukti terkirim dan hanya berlaku selama 2 menit.',
       'Kode promo hanya membuka akses ke harga promo, bukan potongan tambahan.',
@@ -90,6 +90,37 @@ export function isPromoBlockedForVilla(promo, villa) {
   if (!villa) return true;
   if (isPromoExcluded(promo, villa.name)) return true;
   return !isVillaPromoEligible(villa);
+}
+
+/** Label periode blackout promo (dipakai di teks UI). */
+export const PROMO_BLACKOUT_LABEL = '20–31 Desember';
+
+/**
+ * Tanggal promo blackout: setiap tahun pada 20–31 Desember.
+ * Kode promo tidak boleh dipakai untuk menginap pada malam-malam ini.
+ * Menerima Date atau string tanggal `YYYY-MM-DD`.
+ */
+export function isPromoBlackoutDate(value) {
+  if (!value) return false;
+  const d = value instanceof Date ? value : new Date(`${String(value).slice(0, 10)}T00:00:00`);
+  if (isNaN(d.getTime())) return false;
+  return d.getMonth() === 11 && d.getDate() >= 20;
+}
+
+/**
+ * True jika ada malam menginap pada rentang [checkIn, checkOut) yang
+ * masuk blackout promo 20–31 Desember. Check-out tanggal 20 Des tetap
+ * diperbolehkan karena malam 20 Des tidak termasuk.
+ */
+export function stayOverlapsPromoBlackout(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return false;
+  const start = new Date(`${checkIn}T00:00:00`);
+  const end = new Date(`${checkOut}T00:00:00`);
+  if (!(end > start)) return false;
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+    if (isPromoBlackoutDate(d)) return true;
+  }
+  return false;
 }
 
 export function getPromo(raw) {

@@ -170,6 +170,12 @@
               </div>
 
               <p class="bf__cal-legend">Tanggal yang dicoret sudah terbooking dan tidak dapat dipilih sebagai check-in. Tanggal 30–31 Des bisa dipilih 1 malam; pilih 30 Des–1 Jan untuk paket 2 malam.</p>
+              <p v-if="promoBlackoutActive" class="bf__cal-legend bf__cal-legend--promo">🔒 Kode promo aktif — malam 20–31 Desember otomatis tidak bisa dipilih.</p>
+              <div v-if="nightCount === 0 && promoBlackoutActive" class="bf__promo-only">
+                <span>🎟️ Kode promo aktif: <strong>{{ promoApplied.code }}</strong> — malam 20–31 Desember otomatis diblokir.</span>
+                <button type="button" class="bf__promo-only-remove" @click="clearPromo">Hapus kode</button>
+                <p v-if="promoMessage" class="bf__promo-only-msg">{{ promoMessage }}</p>
+              </div>
             </div>
 
             <p v-if="nightCount === 0 && (promoStatus === 'invalid' || promoStatus === 'expired')" class="bf__promo-msg bf__promo-msg--err">{{ promoMessage }}</p>
@@ -195,7 +201,7 @@
 
               <div v-if="promoGateOpen" class="bf__promo-gate">
                 <strong>🔒 Villa ini punya harga promo</strong>
-                <span>Harga promo berlaku untuk malam Minggu–Kamis. Klaim kode promo dulu lewat rating Google Maps. Malam Jumat, Sabtu, dan 20–31 Desember tidak wajib klaim kode.</span>
+                <span>Harga promo berlaku untuk malam Minggu–Kamis. Klaim kode promo dulu lewat rating Google Maps. Malam Jumat, Sabtu, dan 20–31 Desember memakai harga normal (tidak wajib klaim kode). Kode promo tidak berlaku untuk menginap 20–31 Desember.</span>
                 <a :href="promoHref" class="bf__promo-gate-link">Klaim kode promo &rarr;</a>
               </div>
 
@@ -218,6 +224,7 @@
                 <p v-else-if="promoStatus === 'valid'" class="bf__promo-msg bf__promo-msg--ok">{{ promoMessage }}</p>
                 <p v-else-if="promoStatus === 'invalid'" class="bf__promo-msg bf__promo-msg--err">{{ promoMessage }}</p>
                 <p v-else-if="promoStatus === 'expired'" class="bf__promo-msg bf__promo-msg--warn">{{ promoMessage }}</p>
+                <p v-if="promoBlackoutActive" class="bf__promo-blackout-note">🔒 Kode promo aktif — tanggal 20–31 Desember otomatis diblokir.</p>
 
                 <div v-if="promoApplied && discountRaw > 0" class="bf__price-detail">
                   <div class="bf__price-detail-row">
@@ -414,7 +421,15 @@
 </template>
 
 <script>
-import { getPromo, isPromoActive, isPromoBlockedForVilla, stayRequiresPromoClaim } from '../data/promos.js';
+import {
+  getPromo,
+  isPromoActive,
+  isPromoBlockedForVilla,
+  stayRequiresPromoClaim,
+  isPromoBlackoutDate,
+  stayOverlapsPromoBlackout,
+  PROMO_BLACKOUT_LABEL,
+} from '../data/promos.js';
 import {
   getStayTotal,
   decPackageTotal,
@@ -540,6 +555,10 @@ export default {
     promoBlockedVilla() {
       if (!this.promoApplied) return false;
       return isPromoBlockedForVilla(this.promoApplied, this.selectedVilla);
+    },
+    promoBlackoutActive() {
+      // Kode promo aktif & sah untuk villa ini → malam 20–31 Des otomatis diblokir.
+      return !!this.promoApplied && this.promoStatus === 'valid' && !this.promoBlockedVilla;
     },
     requiresPromo() {
       return stayRequiresPromoClaim(this.selectedVilla, this.form.checkIn, this.form.checkOut);
@@ -771,6 +790,8 @@ export default {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (d < today) return true;
+      // Kode promo aktif: malam 20–31 Des otomatis terblokir.
+      if (this.promoBlackoutActive && isPromoBlackoutDate(s)) return true;
       return this.blockedSet.has(s);
     },
     calCheckoutOnly(cell) {
@@ -780,10 +801,19 @@ export default {
       return d.getTime() > this.calCheckInDate.getTime();
     },
     calSelectable(cell) {
-      if (this.calUnavailable(cell)) return this.calCheckoutOnly(cell);
+      if (this.calUnavailable(cell)) {
+        if (!this.calCheckoutOnly(cell)) return false;
+        // Check-out hanya boleh sampai malam terakhir sebelum blackout promo.
+        if (this.promoBlackoutActive && this.form.checkIn
+          && stayOverlapsPromoBlackout(this.form.checkIn, this.calStr(cell))) return false;
+        return true;
+      }
       if (this.form.checkIn && !this.form.checkOut) {
         const s = this.calStr(cell);
-        if (s > this.form.checkIn && this.hasBlockedNight(this.form.checkIn, s)) return false;
+        if (s > this.form.checkIn) {
+          if (this.hasBlockedNight(this.form.checkIn, s)) return false;
+          if (this.promoBlackoutActive && stayOverlapsPromoBlackout(this.form.checkIn, s)) return false;
+        }
       }
       return true;
     },
@@ -806,7 +836,17 @@ export default {
       };
     },
     calSelect(cell) {
-      if (!this.calSelectable(cell)) return;
+      if (!this.calSelectable(cell)) {
+        if (this.promoBlackoutActive) {
+          const s = this.calStr(cell);
+          const causesBlackout = isPromoBlackoutDate(s)
+            || (this.form.checkIn && s > this.form.checkIn && stayOverlapsPromoBlackout(this.form.checkIn, s));
+          if (causesBlackout) {
+            this.error = `Kode promo aktif — malam ${PROMO_BLACKOUT_LABEL} otomatis diblokir. Pilih check-out paling lambat 20 Desember atau hapus kode promo.`;
+          }
+        }
+        return;
+      }
       const s = this.calStr(cell);
       const d = new Date(cell.year, cell.month, cell.day);
 
@@ -944,6 +984,14 @@ export default {
           this.promoApplied = promo;
           this.promoStatus = 'valid';
           this.promoMessage = `Kode ${key} diterapkan — ${promo.label}.`;
+          // Tanggal yang sudah terpilih dan overlap dengan blackout promo dibersihkan.
+          const blackoutSelection = stayOverlapsPromoBlackout(this.form.checkIn, this.form.checkOut)
+            || (this.form.checkIn && !this.form.checkOut && isPromoBlackoutDate(this.form.checkIn));
+          if (blackoutSelection) {
+            this.form.checkIn = '';
+            this.form.checkOut = '';
+            this.promoMessage = `Kode ${key} diterapkan — ${promo.label}. Tanggal 20–31 Desember tidak bisa dipakai saat kode promo aktif, jadi pilihan tanggal sebelumnya dihapus. Silakan pilih tanggal lain.`;
+          }
           return;
         }
         this.promoApplied = null;
@@ -1073,8 +1121,13 @@ export default {
           cur.setDate(cur.getDate() + 1);
         }
 
+        if (this.promoBlackoutActive && stayOverlapsPromoBlackout(this.form.checkIn, this.form.checkOut)) {
+          this.error = `Kode promo aktif — menginap pada malam ${PROMO_BLACKOUT_LABEL} tidak bisa. Pilih tanggal lain atau hapus kode promo.`;
+          return false;
+        }
+
         if (this.promoGateOpen) {
-          this.error = `${this.form.villa} punya harga promo untuk malam Minggu–Kamis. Klaim kode promo dulu lewat halaman Promo (rating Google Maps) sebelum lanjut booking. Malam Jumat, Sabtu, dan 20–31 Desember tidak wajib klaim kode.`;
+          this.error = `${this.form.villa} punya harga promo untuk malam Minggu–Kamis. Klaim kode promo dulu lewat halaman Promo (rating Google Maps) sebelum lanjut booking. Malam Jumat, Sabtu, dan 20–31 Desember memakai harga normal (tidak wajib klaim kode), dan kode promo tidak berlaku untuk menginap 20–31 Desember.`;
           return false;
         }
       }
@@ -1721,6 +1774,48 @@ export default {
   margin-top: 12px;
   text-align: center;
 }
+.bf__cal-legend--promo {
+  color: #b45309;
+  font-weight: 600;
+  margin-top: 6px;
+}
+.bf__promo-only {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+}
+.bf__promo-only strong {
+  color: #92400e;
+}
+.bf__promo-only-remove {
+  border: 1px solid #f59e0b;
+  background: #ffffff;
+  color: #b45309;
+  font: inherit;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.bf__promo-only-remove:hover {
+  background: #fef3c7;
+}
+.bf__promo-only-msg {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.74rem;
+  color: #92400e;
+}
 
 /* ===== PRICE CARD ===== */
 .bf__price-card {
@@ -1864,6 +1959,17 @@ export default {
 }
 .bf__promo-msg--warn {
   color: #b45309;
+}
+.bf__promo-blackout-note {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #b45309;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 8px 0 0;
+  line-height: 1.5;
 }
 .bf__price-detail {
   margin-top: 12px;

@@ -1,8 +1,11 @@
 ---
 import { sampleReviews, reviewCardHTML } from '../data/reviews.js';
 
-const SSR_SETS = 4;
+const SSR_SETS = 2;
 const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.map(reviewCardHTML).join('')).join('');
+// Satu set kartu (5 kartu × 424px) ≈ 2120px. Durasi awal disamakan dengan
+// kecepatan target 94 px/s; script hanya menyempurnakannya setelah diukur.
+const ssrDuration = ((sampleReviews.length * 424 + 12) / 94).toFixed(2);
 ---
 
 <section class="reviews-marquee" id="apa-kata-mereka">
@@ -25,61 +28,45 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
   </div>
 
   <div class="reviews-marquee__viewport">
-    <div class="reviews-marquee__track" id="reviewsTrack" set:html={reviewsTrackHTML}></div>
+    <div
+      class="reviews-marquee__track"
+      id="reviewsTrack"
+      style={`--marquee-duration:${ssrDuration}s`}
+      set:html={reviewsTrackHTML}
+    ></div>
   </div>
 </section>
 
 <script>
-  import { REVIEWS_API_URL, parseReviews, reviewCardHTML } from '../data/reviews.js';
+  // Script marquee (fetch + penggantian DOM) baru dimuat saat section mendekati
+  // viewport. Kartu SSR tetap tampil & beranimasi walau JS belum/tidak jalan.
+  (() => {
+    const track = document.getElementById('reviewsTrack');
+    if (!track) return;
 
-  const track = document.getElementById('reviewsTrack');
-  if (track) {
-    const CACHE_KEY = 'trv_reviews_cache';
-    const TIMEOUT_MS = 5000;
+    let started = false;
+    const start = () => {
+      if (started) return;
+      started = true;
+      if (observer) observer.disconnect();
+      import('../scripts/reviewsMarquee.js')
+        .then((mod) => mod.initReviewsMarquee(track))
+        .catch(() => {});
+    };
 
-    function renderReviews(reviews) {
-      if (!reviews || !reviews.length) return;
-      const cards = reviews.map(reviewCardHTML).join('');
-      const viewportW = window.innerWidth || 1600;
-      const approxSetW = reviews.length * 424; // card width + gap
-      const halves = Math.max(2, Math.ceil((viewportW * 2) / approxSetW) * 2);
-      const copies = halves % 2 === 0 ? halves : halves + 1;
-      // Even number of identical copies → translateX(-50%) loops seamlessly
-      track.innerHTML = cards.repeat(copies);
-      try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(reviews)); } catch (e) {}
+    let observer = null;
+    if ('IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((entry) => entry.isIntersecting)) start();
+        },
+        { rootMargin: '800px 0px' },
+      );
+      observer.observe(track);
+    } else {
+      start();
     }
-
-    (async () => {
-      // show last fetched reviews instantly, then refresh in background
-      try {
-        const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-        if (Array.isArray(cached) && cached.length) renderReviews(cached);
-      } catch (e) {}
-
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-      try {
-        const url = REVIEWS_API_URL + '?action=reviews&_=' + Date.now();
-        const res = await fetch(url, { redirect: 'follow', cache: 'no-store', signal: controller.signal });
-        const text = await res.text();
-        let data = null;
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          const m = text.match(/\(([\s\S]*)\)\s*;?\s*$/);
-          if (m) {
-            try { data = JSON.parse(m[1]); } catch (e2) { data = null; }
-          }
-        }
-        renderReviews(parseReviews(data));
-      } catch (e) {
-        // network error / timeout → keep SSR sample cards (never blank)
-      } finally {
-        clearTimeout(timer);
-      }
-    })();
-  }
+  })();
 </script>
 
 <style is:global>
@@ -182,7 +169,7 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
     width: max-content;
     padding: 10px 0 20px;
     will-change: transform;
-    animation: reviews-marquee-scroll 45s linear infinite;
+    animation: reviews-marquee-scroll var(--marquee-duration, 22.55s) linear infinite;
   }
 
   .reviews-marquee:hover .reviews-marquee__track {
@@ -191,7 +178,9 @@ const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.ma
 
   @keyframes reviews-marquee-scroll {
     from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    /* -50% saja menyisakan selisih setengah gap (12px) setiap loop;
+       kompensasi ini membuat sambungan set benar-benar mulus. */
+    to { transform: translateX(calc(-50% - 12px)); }
   }
 
   /* ===== card ===== */

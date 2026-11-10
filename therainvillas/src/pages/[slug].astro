@@ -457,7 +457,7 @@ const villaDetailDesc = makeDescription(
             <h3>Akses mudah dari Jakarta & Bandung</h3>
             <div class="vd-location__grid">
               <div class="vd-location__map">
-                <LocationMap client:load villaId={villa.id} />
+                <LocationMap client:visible villaId={villa.id} />
               </div>
               <div class="vd-location__info">
                 <div class="vd-location__item">
@@ -550,7 +550,7 @@ const villaDetailDesc = makeDescription(
 
           <div class="vd-calendar">
             <h4>Ketersediaan</h4>
-            <CalendarPicker client:load initialVillaId={villa.id} />
+            <CalendarPicker client:visible initialVillaId={villa.id} />
           </div>
         </aside>
       </div>
@@ -558,7 +558,7 @@ const villaDetailDesc = makeDescription(
 
     <div class="vd-sorotan">
       <div class="container">
-        <VillaSorotan client:load images={galleryImages} villaName={villa.name} />
+        <VillaSorotan client:visible images={galleryImages} villaName={villa.name} />
       </div>
     </div>
 
@@ -569,7 +569,7 @@ const villaDetailDesc = makeDescription(
           <h2>Pengalaman di {villa.name}</h2>
         </div>
         <div class="vd-reviews__body reveal reveal--delay-1">
-          <VillaReviews client:load villaId={villa.id} villaName={villa.name} />
+          <VillaReviews client:visible villaId={villa.id} villaName={villa.name} />
         </div>
       </div>
     </section>

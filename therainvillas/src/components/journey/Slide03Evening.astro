@@ -17,6 +17,13 @@ const wheelCovers = villas.map((villa) => {
   const sm = lg.replace('/card%20wheel/', '/card%20wheel/sm/');
   return { sm, lg };
 });
+
+// Ringkas label tarif dari data menjadi tiga kategori yang dipakai di kartu.
+const rateLabel = (label) => {
+  if (/weekday|minggu\s*[-–]\s*kamis|senin\s*[-–]\s*kamis/i.test(label)) return 'Weekday';
+  if (/sabtu|weekend/i.test(label)) return 'Weekend';
+  return label;
+};
 ---
 
 <section class="wheel" id="malam" aria-labelledby="wheelTitle" style={`--step:${stepDeg}deg`}>
@@ -127,28 +134,19 @@ const wheelCovers = villas.map((villa) => {
                       <span class="wheel__card-hover" aria-hidden="true"></span>
                     </div>
                     <div class="wheel__card-back" data-wheel-card-back aria-hidden="true" inert>
-                      <div class="wheel__card-back-strip" aria-hidden="true">
-                        <picture>
-                          {wheelCovers[i] && (
-                            <source media="(max-width: 720px)" srcset={wheelCovers[i].sm} />
-                          )}
-                          <img
-                            src={wheelCovers[i]?.lg ?? villa.image}
-                            alt=""
-                            width="209"
-                            height="290"
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        </picture>
-                      </div>
                       <div class="wheel__card-back-body">
                         <div class="wheel__card-back-head">
                           <span class="wheel__card-back-num">{pad(i + 1)}</span>
                           <span class="wheel__card-back-zone">{villa.area}</span>
                         </div>
                         <h3 class="wheel__card-back-name">{villa.name}</h3>
-                        <p class="wheel__card-back-summary">{villa.bedrooms} kamar · {villa.capacity} tamu</p>
+                        <ul class="wheel__card-back-facts">
+                          <li><strong>{villa.bedrooms}</strong> kamar</li>
+                          <li><strong>{villa.bathrooms}</strong> mandi</li>
+                          <li><strong>{villa.capacity}</strong> tamu</li>
+                          <li><strong>{villa.parking}</strong> parkir</li>
+                        </ul>
+                        <p class="wheel__card-back-desc">{villa.description}</p>
                         <ul class="wheel__card-back-amenities">
                           {villa.amenities.slice(0, 3).map((amenity) => (
                             <li class="wheel__card-back-amenity">
@@ -159,14 +157,22 @@ const wheelCovers = villas.map((villa) => {
                             </li>
                           ))}
                         </ul>
-                        <p class="wheel__card-back-price">
-                          {villa.originalPrice && (
-                            <s class="wheel__card-back-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>
-                          )}
-                          <span class="wheel__card-back-now">
-                            Rp {villa.price.toLocaleString('id-ID')}<span class="wheel__card-back-per">/malam</span>
-                          </span>
-                        </p>
+                        <div class="wheel__card-back-rates">
+                          <p class="wheel__card-back-rates-title">Tarif per malam</p>
+                          <ul class="wheel__card-back-rate-list">
+                            {(villa.pricingLabels ?? []).map((row) => (
+                              <li class="wheel__card-back-rate">
+                                <span class="wheel__card-back-rate-label">{rateLabel(row.label)}</span>
+                                <span class="wheel__card-back-rate-price">
+                                  {row.originalPrice && (
+                                    <s>Rp {row.originalPrice.toLocaleString('id-ID')}</s>
+                                  )}
+                                  <span>Rp {row.price.toLocaleString('id-ID')}</span>
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
                         <div class="wheel__card-back-actions">
                           <a class="wheel__card-back-cta wheel__card-back-cta--primary" href={`/${slugify(villa.name)}/`}>Lihat Villa</a>
                           <button type="button" class="wheel__card-back-cta wheel__card-back-cta--ghost" data-wheel-back>Kembali</button>
@@ -222,7 +228,7 @@ const wheelCovers = villas.map((villa) => {
     // tidak menjangkau kartu yang posisinya di belakang ring 3D, sehingga
     // beberapa kartu samping tampil kosong saat roda pertama diputar.
     const warmCardImages = () => {
-      section.querySelectorAll('.wheel__card-media img, .wheel__card-back-strip img').forEach((img) => {
+      section.querySelectorAll('.wheel__card-media img').forEach((img) => {
         img.loading = 'eager';
       });
     };
@@ -755,41 +761,12 @@ const wheelCovers = villas.map((villa) => {
     pointer-events: none;
   }
 
-  .wheel__card-back-strip {
-    position: relative;
-    flex: none;
-    height: 33%;
-    min-height: 42px;
-    overflow: hidden;
-  }
-
-  .wheel__card-back-strip picture {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  .wheel__card-back-strip img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 32%;
-  }
-
-  .wheel__card-back-strip::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(4, 20, 16, 0.05) 0%, rgba(4, 20, 16, 0.82) 100%);
-    pointer-events: none;
-  }
-
   .wheel__card-back-body {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
     min-height: 0;
-    padding: 8px 11px 11px;
+    padding: 9px 11px 11px;
   }
 
   .wheel__card-back-head {
@@ -835,22 +812,52 @@ const wheelCovers = villas.map((villa) => {
     -webkit-line-clamp: 2;
   }
 
-  .wheel__card-back-summary {
+  .wheel__card-back-facts {
+    display: grid;
+    overflow: hidden;
     flex: none;
-    margin: 2px 0 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 8px;
+    margin: 5px 0 0;
+    padding: 0;
     color: rgba(226, 245, 238, 0.82);
-    font-size: 0.56rem;
-    font-size: 4.4cqw;
-    font-weight: 600;
-    line-height: 1.3;
+    font-size: 0.5rem;
+    font-size: 4.1cqw;
+    line-height: 1.2;
+    list-style: none;
+  }
+
+  .wheel__card-back-facts li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .wheel__card-back-facts strong {
+    color: #f2fbf7;
+    font-weight: 700;
+  }
+
+  .wheel__card-back-desc {
+    display: -webkit-box;
+    overflow: hidden;
+    flex: none;
+    margin: 4px 0 0;
+    color: rgba(226, 245, 238, 0.72);
+    font-size: 0.48rem;
+    font-size: 4cqw;
+    line-height: 1.28;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .wheel__card-back-amenities {
     display: flex;
+    overflow: hidden;
     flex: none;
     flex-direction: column;
     gap: 2px;
-    margin: 5px 0 0;
+    margin: 4px 0 0;
     padding: 0;
     list-style: none;
   }
@@ -877,29 +884,64 @@ const wheelCovers = villas.map((villa) => {
     white-space: nowrap;
   }
 
-  .wheel__card-back-price {
-    display: flex;
+  .wheel__card-back-rates {
     flex: none;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 5px;
-    margin: 4px 0 0;
-    color: #a9e6d2;
-    font-size: 0.68rem;
-    font-size: 5.4cqw;
+    margin-top: auto;
+    padding-top: 6px;
+  }
+
+  .wheel__card-back-rates-title {
+    margin: 0 0 3px;
+    color: rgba(226, 245, 238, 0.62);
+    font-size: 0.42rem;
+    font-size: 3.5cqw;
     font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .wheel__card-back-rate-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wheel__card-back-rate {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+    min-width: 0;
+    color: rgba(226, 245, 238, 0.84);
+    font-size: 0.5rem;
+    font-size: 4.2cqw;
     line-height: 1.2;
   }
 
-  .wheel__card-back-old {
-    color: rgba(226, 245, 238, 0.58);
-    font-size: 0.53rem;
-    font-size: 4.2cqw;
-    font-weight: 500;
+  .wheel__card-back-rate-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .wheel__card-back-per {
-    font-size: 0.82em;
+  .wheel__card-back-rate-price {
+    display: flex;
+    flex: none;
+    align-items: baseline;
+    gap: 4px;
+    color: #a9e6d2;
+    font-size: 1.1em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .wheel__card-back-rate-price s {
+    color: rgba(226, 245, 238, 0.5);
+    font-size: 0.78em;
     font-weight: 500;
   }
 
@@ -907,8 +949,7 @@ const wheelCovers = villas.map((villa) => {
     display: flex;
     flex: none;
     gap: 5px;
-    margin-top: auto;
-    padding-top: 7px;
+    margin-top: 5px;
   }
 
   .wheel__card-back-cta {
@@ -951,18 +992,20 @@ const wheelCovers = villas.map((villa) => {
   /* Isi belakang muncul bertahap setelah kartu mendarat. */
   .wheel__card-back-head,
   .wheel__card-back-name,
-  .wheel__card-back-summary,
+  .wheel__card-back-facts,
+  .wheel__card-back-desc,
   .wheel__card-back-amenities,
-  .wheel__card-back-price,
+  .wheel__card-back-rates,
   .wheel__card-back-actions {
     opacity: 0;
   }
 
   .wheel__card--flipped .wheel__card-back-head,
   .wheel__card--flipped .wheel__card-back-name,
-  .wheel__card--flipped .wheel__card-back-summary,
+  .wheel__card--flipped .wheel__card-back-facts,
+  .wheel__card--flipped .wheel__card-back-desc,
   .wheel__card--flipped .wheel__card-back-amenities,
-  .wheel__card--flipped .wheel__card-back-price,
+  .wheel__card--flipped .wheel__card-back-rates,
   .wheel__card--flipped .wheel__card-back-actions {
     animation: wheel-back-rise 0.42s cubic-bezier(0.22, 1.4, 0.36, 1) both;
   }
@@ -975,20 +1018,24 @@ const wheelCovers = villas.map((villa) => {
     animation-delay: 0.96s;
   }
 
-  .wheel__card--flipped .wheel__card-back-summary {
+  .wheel__card--flipped .wheel__card-back-facts {
     animation-delay: 1.02s;
   }
 
-  .wheel__card--flipped .wheel__card-back-amenities {
+  .wheel__card--flipped .wheel__card-back-desc {
     animation-delay: 1.08s;
   }
 
-  .wheel__card--flipped .wheel__card-back-price {
+  .wheel__card--flipped .wheel__card-back-amenities {
     animation-delay: 1.14s;
   }
 
-  .wheel__card--flipped .wheel__card-back-actions {
+  .wheel__card--flipped .wheel__card-back-rates {
     animation-delay: 1.2s;
+  }
+
+  .wheel__card--flipped .wheel__card-back-actions {
+    animation-delay: 1.26s;
   }
 
   @keyframes wheel-back-rise {
@@ -1395,10 +1442,6 @@ const wheelCovers = villas.map((villa) => {
       padding: 7px 9px 9px;
     }
 
-    .wheel__card-back-strip {
-      height: 34%;
-    }
-
     /* Ruang kartu mobile sangat sempit: fasilitas ketiga disembunyikan. */
     .wheel__card-back-amenity:nth-child(3) {
       display: none;
@@ -1406,7 +1449,7 @@ const wheelCovers = villas.map((villa) => {
 
     .wheel__card-back-actions {
       gap: 4px;
-      padding-top: 6px;
+      margin-top: 4px;
     }
   }
 
@@ -1463,12 +1506,13 @@ const wheelCovers = villas.map((villa) => {
     }
 
     /* Tanpa animasi: sisi belakang langsung tampil dan tetap terbaca. */
-    .wheel__card-back-head,
-    .wheel__card-back-name,
-    .wheel__card-back-summary,
-    .wheel__card-back-amenities,
-    .wheel__card-back-price,
-    .wheel__card-back-actions {
+    .wheel__card--flipped .wheel__card-back-head,
+    .wheel__card--flipped .wheel__card-back-name,
+    .wheel__card--flipped .wheel__card-back-facts,
+    .wheel__card--flipped .wheel__card-back-desc,
+    .wheel__card--flipped .wheel__card-back-amenities,
+    .wheel__card--flipped .wheel__card-back-rates,
+    .wheel__card--flipped .wheel__card-back-actions {
       opacity: 1;
       animation: none;
     }

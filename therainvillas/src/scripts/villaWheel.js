@@ -28,6 +28,7 @@ export function initVillaWheel() {
 
   let reduced = reduceMQ.matches;
   let canHover = hoverMQ.matches;
+  let mobile = mobileMQ.matches;
   let cardW = 190;
   let cardH = 290;
   let radius = 1074;
@@ -36,6 +37,8 @@ export function initVillaWheel() {
   let target = 0;
   let rate = 7.5;
   let running = false;
+  let rafId = 0;
+  let introStarted = 0;
   let prevT = 0;
   let speed = 0;
   let intro = !reduced;
@@ -70,7 +73,7 @@ export function initVillaWheel() {
   }
 
   function measure() {
-    const mobile = mobileMQ.matches;
+    mobile = mobileMQ.matches;
     // Rasio kartu disamakan dengan artwork portrait 1080x1500 (0,72) agar
     // judul dan harga di dalam gambar tidak terpotong oleh object-fit: cover.
     cardW = mobile ? 155 : 209;
@@ -92,12 +95,15 @@ export function initVillaWheel() {
   function render() {
     applyRing();
     const motion = Math.min(0.5, Math.abs(speed) / 9);
+    // Di mobile hanya kartu yang benar-benar masuk panggung yang perlu
+    // dirender. Radius roda besar, jadi kartu di luar ±2,6 selalu offscreen.
+    const visibleLimit = mobile ? 2.6 : 6.6;
 
     for (let i = 0; i < total; i++) {
       const card = cards[i];
       const delta = shortDelta(i, pos);
       const distance = Math.abs(delta);
-      const visible = distance <= 6.6;
+      const visible = distance <= visibleLimit;
 
       if (card._hidden !== !visible) {
         card.style.visibility = visible ? 'visible' : 'hidden';
@@ -162,15 +168,42 @@ export function initVillaWheel() {
   function startLoop(nextRate) {
     if (typeof nextRate === 'number') rate = nextRate;
     clearTilt();
+    if (intro && !introStarted) introStarted = performance.now();
     if (running) return;
     running = true;
     prevT = 0;
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function stopLoop(snap, snapTo) {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+    running = false;
+    prevT = 0;
+    speed = 0;
+    velocity = 0;
+    intro = false;
+    if (snap) {
+      target = typeof snapTo === 'number' ? snapTo : Math.round(pos);
+      pos = target;
+      render();
+    }
   }
 
   function frame(now) {
+    rafId = 0;
     const dt = prevT ? Math.min(0.05, Math.max(0.004, (now - prevT) / 1000)) : 0.016;
     prevT = now;
+
+    // Di ponsel yang lambat, animasi intro bisa tertinggal jauh karena dt
+    // dibatasi. Setelah 1,8 detik langsung hentikan agar roda tidak terus
+    // memicu render selama kartu dibalik.
+    if (intro && mobile && introStarted && now - introStarted > 1800) {
+      pos = target;
+    }
+
     const ratio = 1 - Math.exp(-(dragging ? 20 : rate) * dt);
     const step = (target - pos) * ratio;
     speed = step / dt;
@@ -180,7 +213,7 @@ export function initVillaWheel() {
     render();
 
     if (pos !== target) {
-      requestAnimationFrame(frame);
+      rafId = requestAnimationFrame(frame);
       return;
     }
 
@@ -342,7 +375,9 @@ export function initVillaWheel() {
 
   function setMuted(on) {
     cards.forEach((card, i) => {
-      card.classList.toggle('wheel__card--muted', on && i !== flipped);
+      // Hanya kartu yang sedang tampil yang perlu diredam; kartu offscreen
+      // tidak terlihat tetapi tetap memicu style recalc jika ikut diubah.
+      card.classList.toggle('wheel__card--muted', on && i !== flipped && !card._hidden);
     });
   }
 
@@ -381,8 +416,9 @@ export function initVillaWheel() {
     const cy = cardRect.top - layerRect.top + cardRect.height / 2;
     const baseY = cardRect.top - layerRect.top;
     const bottomY = baseY + cardRect.height - 18;
+    const sparkCount = mobile ? 0 : 16;
 
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < sparkCount; i++) {
       const spark = document.createElement('span');
       spark.className = 'wheel__fx-spark';
       const size = 7 + Math.random() * 7;
@@ -419,20 +455,24 @@ export function initVillaWheel() {
       anim.oncancel = () => spark.remove();
     }
 
-    const wave = document.createElement('span');
-    wave.className = 'wheel__fx-wave';
-    wave.style.left = `${cx.toFixed(1)}px`;
-    wave.style.top = `${bottomY.toFixed(1)}px`;
-    fxLayer.appendChild(wave);
-    const waveAnim = wave.animate(
-      [
-        { transform: 'scale(0.15, 0.15)', opacity: 0.85 },
-        { transform: 'scale(1.5, 1.5)', opacity: 0 }
-      ],
-      { duration: 720, easing: 'cubic-bezier(0.16, 0.8, 0.3, 1)', fill: 'none' }
-    );
-    waveAnim.onfinish = () => wave.remove();
-    waveAnim.oncancel = () => wave.remove();
+    // Gelombang dan getaran panggung terlalu berat untuk GPU ponsel;
+    // percikan + label tetap memberi umpan balik saat kartu mendarat.
+    if (!mobile) {
+      const wave = document.createElement('span');
+      wave.className = 'wheel__fx-wave';
+      wave.style.left = `${cx.toFixed(1)}px`;
+      wave.style.top = `${bottomY.toFixed(1)}px`;
+      fxLayer.appendChild(wave);
+      const waveAnim = wave.animate(
+        [
+          { transform: 'scale(0.15, 0.15)', opacity: 0.85 },
+          { transform: 'scale(1.5, 1.5)', opacity: 0 }
+        ],
+        { duration: 720, easing: 'cubic-bezier(0.16, 0.8, 0.3, 1)', fill: 'none' }
+      );
+      waveAnim.onfinish = () => wave.remove();
+      waveAnim.oncancel = () => wave.remove();
+    }
 
     const label = document.createElement('span');
     label.className = 'wheel__fx-label';
@@ -451,22 +491,24 @@ export function initVillaWheel() {
     labelAnim.onfinish = () => label.remove();
     labelAnim.oncancel = () => label.remove();
 
-    if (shakeAnim) shakeAnim.cancel();
-    shakeAnim = shakeTarget.animate(
-      [
-        { transform: 'translate(0px, 0px)', offset: 0 },
-        { transform: 'translate(3px, -2px)', offset: 0.16 },
-        { transform: 'translate(-3px, 2px)', offset: 0.32 },
-        { transform: 'translate(2px, 1px)', offset: 0.48 },
-        { transform: 'translate(-2px, -1px)', offset: 0.64 },
-        { transform: 'translate(1px, 1px)', offset: 0.8 },
-        { transform: 'translate(0px, 0px)', offset: 1 }
-      ],
-      { duration: 280, easing: 'ease-out', fill: 'none' }
-    );
-    shakeAnim.onfinish = () => {
-      shakeAnim = null;
-    };
+    if (!mobile) {
+      if (shakeAnim) shakeAnim.cancel();
+      shakeAnim = shakeTarget.animate(
+        [
+          { transform: 'translate(0px, 0px)', offset: 0 },
+          { transform: 'translate(3px, -2px)', offset: 0.16 },
+          { transform: 'translate(-3px, 2px)', offset: 0.32 },
+          { transform: 'translate(2px, 1px)', offset: 0.48 },
+          { transform: 'translate(-2px, -1px)', offset: 0.64 },
+          { transform: 'translate(1px, 1px)', offset: 0.8 },
+          { transform: 'translate(0px, 0px)', offset: 1 }
+        ],
+        { duration: 280, easing: 'ease-out', fill: 'none' }
+      );
+      shakeAnim.onfinish = () => {
+        shakeAnim = null;
+      };
+    }
   }
 
   function openFlip(index) {
@@ -478,6 +520,10 @@ export function initVillaWheel() {
     const fl = getFlipContainer(card);
     const back = card ? card.querySelector('[data-wheel-card-back]') : null;
     if (!fl || !back) return;
+
+    // Hentikan roda tepat di kartu ini supaya render loop 3D tidak berjalan
+    // bersamaan dengan animasi flip.
+    stopLoop(true, index);
 
     flipped = index;
     clearTilt();
@@ -539,7 +585,7 @@ export function initVillaWheel() {
         ],
         { duration: OPEN_MS, easing: 'linear', fill: 'none' }
       );
-      fxTimer = window.setTimeout(() => runLandingFx(card), LANDING_MS);
+      fxTimer = window.setTimeout(() => runLandingFx(card), mobile ? 1180 : LANDING_MS);
     }
 
     announce(`Detail ${cardName(index)} ditampilkan.`);
@@ -971,6 +1017,8 @@ export function initVillaWheel() {
     target = 0;
     render();
   } else {
-    startLoop(3.2);
+    // Mobile memakai intro yang lebih singkat agar roda cepat diam dan
+    // tidak memicu render 3D terus-menerus.
+    startLoop(mobile ? 6 : 3.2);
   }
 }

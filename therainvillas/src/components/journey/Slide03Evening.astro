@@ -6,7 +6,6 @@ import { slugify } from '../../lib/slugify.js';
 const total = villas.length;
 const stepDeg = 360 / total;
 const zones = [...new Set(villas.map((villa) => villa.area))];
-const first = villas[0];
 const pad = (value) => String(value).padStart(2, '0');
 
 // Varian kecil (480px) untuk mobile; varian besar tetap dipakai di layar
@@ -81,18 +80,7 @@ const wheelCovers = villas.map((villa) => {
               class="wheel__card"
               data-wheel-card
               data-index={i}
-              data-number={i + 1}
-              data-name={villa.name}
               data-area={villa.area}
-              data-region={villa.region}
-              data-bedrooms={villa.bedrooms}
-              data-capacity={villa.capacity}
-              data-price={villa.priceLabel}
-              data-price-old={villa.originalPrice ? `Rp ${villa.originalPrice.toLocaleString('id-ID')}` : ''}
-              data-desc={villa.description}
-              data-amenities={villa.amenities.slice(0, 7).join(' · ')}
-              data-href={`/${slugify(villa.name)}/`}
-              data-book={`/booking/?villa=${encodeURIComponent(villa.name)}`}
               data-search={`${villa.name} ${i + 1} ${pad(i + 1)} ${villa.area} ${villa.region}`}
               style={`--i:${i}`}
               aria-label={`${villa.name}, villa ${i + 1} dari ${total}`}
@@ -100,42 +88,91 @@ const wheelCovers = villas.map((villa) => {
               <span class="wheel__card-shadow" aria-hidden="true"></span>
               <div class="wheel__card-lift">
                 <div class="wheel__card-tilt">
-                  {[0, 1, 2, 3, 4, 5, 6, 7].map((k) => (
-                    <span class="wheel__card-layer" style={`--k:${k}`} aria-hidden="true"></span>
-                  ))}
-                  <div class="wheel__card-face">
-                    <div class="wheel__card-media">
-                      <picture>
-                        {wheelCovers[i] && (
-                          <source media="(max-width: 720px)" srcset={wheelCovers[i].sm} />
-                        )}
-                        <img
-                          src={wheelCovers[i]?.lg ?? villa.image}
-                          alt=""
-                          width="209"
-                          height="290"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </picture>
+                  <div class="wheel__card-flip">
+                    {[0, 1, 2, 3, 4, 5, 6, 7].map((k) => (
+                      <span class="wheel__card-layer" style={`--k:${k}`} aria-hidden="true"></span>
+                    ))}
+                    <div class="wheel__card-face" data-wheel-card-front>
+                      <div class="wheel__card-media">
+                        <picture>
+                          {wheelCovers[i] && (
+                            <source media="(max-width: 720px)" srcset={wheelCovers[i].sm} />
+                          )}
+                          <img
+                            src={wheelCovers[i]?.lg ?? villa.image}
+                            alt=""
+                            width="209"
+                            height="290"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </picture>
+                      </div>
+                      <span class="wheel__card-number">{pad(i + 1)}</span>
+                      <span class="wheel__card-zone">{villa.area}</span>
+                      <div class="wheel__card-info">
+                        <h3 class="wheel__card-name">{villa.name}</h3>
+                        <p class="wheel__card-meta">{villa.bedrooms} kamar · {villa.capacity} tamu</p>
+                        <p class="wheel__card-price">
+                          {villa.originalPrice && (
+                            <s class="wheel__card-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>
+                          )}
+                          <span class="wheel__card-now">{villa.priceLabel}</span>
+                        </p>
+                      </div>
+                      <span class="wheel__card-shade" aria-hidden="true"></span>
+                      <span class="wheel__card-fog" aria-hidden="true"></span>
+                      <span class="wheel__card-dim" aria-hidden="true"></span>
+                      <span class="wheel__card-glare" aria-hidden="true"></span>
+                      <span class="wheel__card-hover" aria-hidden="true"></span>
                     </div>
-                    <span class="wheel__card-number">{pad(i + 1)}</span>
-                    <span class="wheel__card-zone">{villa.area}</span>
-                    <div class="wheel__card-info">
-                      <h3 class="wheel__card-name">{villa.name}</h3>
-                      <p class="wheel__card-meta">{villa.bedrooms} kamar · {villa.capacity} tamu</p>
-                      <p class="wheel__card-price">
-                        {villa.originalPrice && (
-                          <s class="wheel__card-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>
-                        )}
-                        <span class="wheel__card-now">{villa.priceLabel}</span>
-                      </p>
+                    <div class="wheel__card-back" data-wheel-card-back aria-hidden="true" inert>
+                      <div class="wheel__card-back-strip" aria-hidden="true">
+                        <picture>
+                          {wheelCovers[i] && (
+                            <source media="(max-width: 720px)" srcset={wheelCovers[i].sm} />
+                          )}
+                          <img
+                            src={wheelCovers[i]?.lg ?? villa.image}
+                            alt=""
+                            width="209"
+                            height="290"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </picture>
+                      </div>
+                      <div class="wheel__card-back-body">
+                        <div class="wheel__card-back-head">
+                          <span class="wheel__card-back-num">{pad(i + 1)}</span>
+                          <span class="wheel__card-back-zone">{villa.area}</span>
+                        </div>
+                        <h3 class="wheel__card-back-name">{villa.name}</h3>
+                        <p class="wheel__card-back-summary">{villa.bedrooms} kamar · {villa.capacity} tamu</p>
+                        <ul class="wheel__card-back-amenities">
+                          {villa.amenities.slice(0, 3).map((amenity) => (
+                            <li class="wheel__card-back-amenity">
+                              <svg viewBox="0 0 16 16" width="10" height="10" aria-hidden="true">
+                                <path d="m3.4 8.4 3 3 6.2-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                              </svg>
+                              <span>{amenity}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p class="wheel__card-back-price">
+                          {villa.originalPrice && (
+                            <s class="wheel__card-back-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>
+                          )}
+                          <span class="wheel__card-back-now">
+                            Rp {villa.price.toLocaleString('id-ID')}<span class="wheel__card-back-per">/malam</span>
+                          </span>
+                        </p>
+                        <div class="wheel__card-back-actions">
+                          <a class="wheel__card-back-cta wheel__card-back-cta--primary" href={`/${slugify(villa.name)}/`}>Lihat Villa</a>
+                          <button type="button" class="wheel__card-back-cta wheel__card-back-cta--ghost" data-wheel-back>Kembali</button>
+                        </div>
+                      </div>
                     </div>
-                    <span class="wheel__card-shade" aria-hidden="true"></span>
-                    <span class="wheel__card-fog" aria-hidden="true"></span>
-                    <span class="wheel__card-dim" aria-hidden="true"></span>
-                    <span class="wheel__card-glare" aria-hidden="true"></span>
-                    <span class="wheel__card-hover" aria-hidden="true"></span>
                   </div>
                 </div>
               </div>
@@ -167,47 +204,7 @@ const wheelCovers = villas.map((villa) => {
       <div class="wheel__range-marks" aria-hidden="true"><span>01</span><span>{pad(total)}</span></div>
     </div>
 
-    <div class="wheel__detail" data-wheel-detail aria-live="polite">
-      <div class="wheel__detail-main">
-        <div class="wheel__detail-top">
-          <span class="wheel__detail-num" data-detail-num>01</span>
-          <span class="wheel__detail-zone" data-detail-zone>{first.area} · {first.region}</span>
-        </div>
-        <h3 class="wheel__detail-name" data-detail-name>{first.name}</h3>
-        <p class="wheel__detail-desc" data-detail-desc>{first.description}</p>
-        <dl class="wheel__detail-facts">
-          <div>
-            <dt>Kamar</dt>
-            <dd data-detail-rooms>{first.bedrooms} kamar</dd>
-          </div>
-          <div>
-            <dt>Kapasitas</dt>
-            <dd data-detail-guests>{first.capacity} tamu</dd>
-          </div>
-          <div>
-            <dt>Harga / malam</dt>
-            <dd class="wheel__detail-price">
-              <s class="wheel__detail-old" data-detail-old hidden={!first.originalPrice}>
-                {first.originalPrice ? `Rp ${first.originalPrice.toLocaleString('id-ID')}` : ''}
-              </s>
-              <span data-detail-price>{first.priceLabel}</span>
-            </dd>
-          </div>
-        </dl>
-        <div class="wheel__detail-actions">
-          <a class="wheel__cta wheel__cta--primary" data-detail-link href={`/${slugify(first.name)}/`}>Lihat Villa</a>
-          <a class="wheel__cta wheel__cta--ghost" data-detail-book href={`/booking/?villa=${encodeURIComponent(first.name)}`}>Booking</a>
-          <button type="button" class="wheel__detail-more" data-wheel-more aria-expanded="false" aria-controls="wheelDetailExtra">Detail lengkap</button>
-          <button type="button" class="wheel__detail-close" data-wheel-close aria-label="Tutup detail" hidden>✕</button>
-        </div>
-      </div>
-      <div class="wheel__detail-extra" id="wheelDetailExtra">
-        <div class="wheel__detail-extra-inner">
-          <p class="wheel__detail-extra-label">Fasilitas pilihan</p>
-          <p class="wheel__detail-amenities" data-detail-amenities>{first.amenities.slice(0, 7).join(' · ')}</p>
-        </div>
-      </div>
-    </div>
+    <div class="wheel__fx" data-wheel-fx aria-hidden="true"></div>
   </div>
 </section>
 
@@ -225,7 +222,7 @@ const wheelCovers = villas.map((villa) => {
     // tidak menjangkau kartu yang posisinya di belakang ring 3D, sehingga
     // beberapa kartu samping tampil kosong saat roda pertama diputar.
     const warmCardImages = () => {
-      section.querySelectorAll('.wheel__card-media img').forEach((img) => {
+      section.querySelectorAll('.wheel__card-media img, .wheel__card-back-strip img').forEach((img) => {
         img.loading = 'eager';
       });
     };
@@ -262,6 +259,7 @@ const wheelCovers = villas.map((villa) => {
     --floor-size: 2954.44px;
     --perspective: 1595.4px;
     --step: 11.6129deg;
+    --flip-scale: 1.22;
     --wheel-bg: #f1f6f2;
     --wheel-bg-2: #e5eee8;
     --wheel-ink: #14231f;
@@ -651,6 +649,423 @@ const wheelCovers = villas.map((villa) => {
       0 0 34px rgba(80, 200, 168, 0.3);
   }
 
+  /* Pembungkus flip. Seluruh gerak dikendalikan Web Animations API,
+     jadi tidak boleh ada transition CSS di elemen ini. */
+  .wheel__card-flip {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transform-origin: 50% 50% -8.5px;
+  }
+
+  .wheel__card--flipped .wheel__card-flip {
+    transform: translateY(0px) translateZ(40px) rotateY(180deg) rotateZ(0deg)
+      scale(var(--flip-scale), var(--flip-scale));
+  }
+
+  /* Sisi belakang diletakkan di belakang tumpukan ketebalan. */
+  .wheel__card-back {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(120, 214, 186, 0.22), transparent 55%),
+      linear-gradient(160deg, #194d42, #08241e 74%);
+    box-shadow: 0 0 0 1px rgba(7, 28, 23, 0.45);
+    color: #eef9f4;
+    transform: translateZ(-17px) rotateY(180deg);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    container-type: inline-size;
+  }
+
+  .wheel__card--flipped .wheel__card-back {
+    pointer-events: auto;
+    opacity: 1;
+    animation: wheel-back-glow 0.55s ease-out 0.55s 1;
+  }
+
+  /* Saat menutup, sisi belakang masih tampil sampai animasi selesai,
+     tetapi tidak boleh menerima klik. */
+  .wheel__card--closing .wheel__card-back {
+    pointer-events: none;
+  }
+
+  /* Kilau diagonal menyapu sekali saat mendarat. */
+  .wheel__card-back::before {
+    content: "";
+    position: absolute;
+    inset: -30% -60%;
+    z-index: 4;
+    background: linear-gradient(
+      100deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 62%
+    );
+    transform: translateX(-120%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .wheel__card--flipped .wheel__card-back::before {
+    animation: wheel-back-sheen 0.6s ease-out 0.6s 1 both;
+  }
+
+  @keyframes wheel-back-sheen {
+    0% {
+      transform: translateX(-120%);
+      opacity: 0;
+    }
+    25% {
+      opacity: 0.9;
+    }
+    100% {
+      transform: translateX(120%);
+      opacity: 0;
+    }
+  }
+
+  @keyframes wheel-back-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 1px rgba(7, 28, 23, 0.45), 0 0 0 rgba(120, 214, 186, 0);
+    }
+    45% {
+      box-shadow: 0 0 0 2px rgba(168, 235, 216, 0.85), 0 0 34px rgba(120, 214, 186, 0.55);
+    }
+  }
+
+  /* Garis tepi dalam sisi belakang. */
+  .wheel__card-back::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    border-radius: inherit;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    pointer-events: none;
+  }
+
+  .wheel__card-back-strip {
+    position: relative;
+    flex: none;
+    height: 33%;
+    min-height: 42px;
+    overflow: hidden;
+  }
+
+  .wheel__card-back-strip picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .wheel__card-back-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+  }
+
+  .wheel__card-back-strip::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(4, 20, 16, 0.05) 0%, rgba(4, 20, 16, 0.82) 100%);
+    pointer-events: none;
+  }
+
+  .wheel__card-back-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    padding: 8px 11px 11px;
+  }
+
+  .wheel__card-back-head {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wheel__card-back-num {
+    color: #a9e6d2;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-size: 6.2cqw;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .wheel__card-back-zone {
+    overflow: hidden;
+    color: rgba(226, 245, 238, 0.72);
+    font-size: 0.52rem;
+    font-size: 4cqw;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .wheel__card-back-name {
+    display: -webkit-box;
+    overflow: hidden;
+    flex: none;
+    margin: 4px 0 0;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    font-size: 7.5cqw;
+    font-weight: 700;
+    line-height: 1.12;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .wheel__card-back-summary {
+    flex: none;
+    margin: 2px 0 0;
+    color: rgba(226, 245, 238, 0.82);
+    font-size: 0.56rem;
+    font-size: 4.4cqw;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .wheel__card-back-amenities {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 2px;
+    margin: 5px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wheel__card-back-amenity {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    color: rgba(226, 245, 238, 0.86);
+    font-size: 0.52rem;
+    font-size: 4.1cqw;
+    line-height: 1.25;
+  }
+
+  .wheel__card-back-amenity svg {
+    flex: none;
+    color: #a9e6d2;
+  }
+
+  .wheel__card-back-amenity span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .wheel__card-back-price {
+    display: flex;
+    flex: none;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 5px;
+    margin: 4px 0 0;
+    color: #a9e6d2;
+    font-size: 0.68rem;
+    font-size: 5.4cqw;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .wheel__card-back-old {
+    color: rgba(226, 245, 238, 0.58);
+    font-size: 0.53rem;
+    font-size: 4.2cqw;
+    font-weight: 500;
+  }
+
+  .wheel__card-back-per {
+    font-size: 0.82em;
+    font-weight: 500;
+  }
+
+  .wheel__card-back-actions {
+    display: flex;
+    flex: none;
+    gap: 5px;
+    margin-top: auto;
+    padding-top: 7px;
+  }
+
+  .wheel__card-back-cta {
+    display: inline-flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    min-height: 27px;
+    min-height: 13cqw;
+    padding: 4px 6px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.6rem;
+    font-size: 4.8cqw;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .wheel__card-back-cta--primary {
+    background: #a9e6d2;
+    color: #062019;
+  }
+
+  .wheel__card-back-cta--ghost {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(5, 22, 18, 0.34);
+    color: #f2fbf7;
+  }
+
+  .wheel__card-back-cta--ghost:hover,
+  .wheel__card-back-cta--ghost:focus-visible {
+    border-color: #a9e6d2;
+  }
+
+  /* Isi belakang muncul bertahap setelah kartu mendarat. */
+  .wheel__card-back-head,
+  .wheel__card-back-name,
+  .wheel__card-back-summary,
+  .wheel__card-back-amenities,
+  .wheel__card-back-price,
+  .wheel__card-back-actions {
+    opacity: 0;
+  }
+
+  .wheel__card--flipped .wheel__card-back-head,
+  .wheel__card--flipped .wheel__card-back-name,
+  .wheel__card--flipped .wheel__card-back-summary,
+  .wheel__card--flipped .wheel__card-back-amenities,
+  .wheel__card--flipped .wheel__card-back-price,
+  .wheel__card--flipped .wheel__card-back-actions {
+    animation: wheel-back-rise 0.42s cubic-bezier(0.22, 1.4, 0.36, 1) both;
+  }
+
+  .wheel__card--flipped .wheel__card-back-head {
+    animation-delay: 0.9s;
+  }
+
+  .wheel__card--flipped .wheel__card-back-name {
+    animation-delay: 0.96s;
+  }
+
+  .wheel__card--flipped .wheel__card-back-summary {
+    animation-delay: 1.02s;
+  }
+
+  .wheel__card--flipped .wheel__card-back-amenities {
+    animation-delay: 1.08s;
+  }
+
+  .wheel__card--flipped .wheel__card-back-price {
+    animation-delay: 1.14s;
+  }
+
+  .wheel__card--flipped .wheel__card-back-actions {
+    animation-delay: 1.2s;
+  }
+
+  @keyframes wheel-back-rise {
+    from {
+      transform: translateY(8px) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Kartu lain meredup saat satu kartu terbuka. */
+  .wheel__card--muted .wheel__card-face {
+    opacity: 0.45;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Layer efek 2D di atas roda: percikan, gelombang kejut, label melayang. */
+  .wheel__fx {
+    position: absolute;
+    inset: 0;
+    z-index: 12;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .wheel__fx-spark {
+    position: absolute;
+    width: var(--s);
+    height: var(--s);
+    margin-top: calc(var(--s) / -2);
+    margin-left: calc(var(--s) / -2);
+    background: var(--c);
+    clip-path: polygon(
+      50% 0%,
+      61% 35%,
+      100% 50%,
+      61% 65%,
+      50% 100%,
+      39% 65%,
+      0% 50%,
+      39% 35%
+    );
+    will-change: transform, opacity;
+  }
+
+  .wheel__fx-wave {
+    position: absolute;
+    width: 260px;
+    height: 70px;
+    margin-top: -35px;
+    margin-left: -130px;
+    border: 2px solid rgba(168, 235, 216, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 18px rgba(120, 214, 186, 0.45);
+    will-change: transform, opacity;
+  }
+
+  .wheel__fx-label {
+    position: absolute;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ffe08a, #7ee0c6);
+    box-shadow:
+      0 6px 20px rgba(6, 32, 25, 0.35),
+      0 0 0 1px rgba(255, 255, 255, 0.4);
+    color: #062019;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    will-change: transform, opacity;
+  }
+
   .wheel__card-media {
     position: absolute;
     inset: 0;
@@ -915,237 +1330,6 @@ const wheelCovers = villas.map((villa) => {
     letter-spacing: 0.1em;
   }
 
-  .wheel__detail {
-    position: relative;
-    max-width: 800px;
-    margin: 30px auto 0;
-    padding: 22px 26px;
-    border: 1px solid var(--wheel-panel-line);
-    border-radius: 24px;
-    background: var(--wheel-panel);
-    box-shadow: 0 20px 54px rgba(10, 30, 24, 0.09);
-  }
-
-  .wheel__detail--in .wheel__detail-main {
-    animation: wheel-detail-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  @keyframes wheel-detail-up {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .wheel__detail-top {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 12px;
-  }
-
-  .wheel__detail-num {
-    color: var(--wheel-accent);
-    font-family: var(--font-display);
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  .wheel__detail-zone {
-    color: var(--wheel-sub);
-    font-size: 0.64rem;
-    font-weight: 700;
-    letter-spacing: 2.2px;
-    text-transform: uppercase;
-  }
-
-  .wheel__detail-name {
-    margin: 6px 0 6px;
-    color: var(--wheel-ink);
-    font-family: var(--font-display);
-    font-size: clamp(1.4rem, 2.6vw, 1.8rem);
-    font-weight: 700;
-    line-height: 1.15;
-  }
-
-  .wheel__detail-desc {
-    max-width: 64ch;
-    margin: 0;
-    color: var(--wheel-sub);
-    font-size: 0.88rem;
-    line-height: 1.65;
-  }
-
-  .wheel__detail-facts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 30px;
-    margin: 16px 0 0;
-  }
-
-  .wheel__detail-facts div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .wheel__detail-facts dt {
-    color: var(--wheel-sub);
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-  }
-
-  .wheel__detail-facts dd {
-    margin: 0;
-    color: var(--wheel-ink);
-    font-size: 0.86rem;
-    font-weight: 600;
-  }
-
-  .wheel__detail-price {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 7px;
-  }
-
-  .wheel__detail-old {
-    color: var(--wheel-sub);
-    font-size: 0.74rem;
-    font-weight: 500;
-    opacity: 0.8;
-  }
-
-  .wheel__detail-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 9px;
-    margin-top: 18px;
-  }
-
-  .wheel__cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 40px;
-    padding: 9px 18px;
-    border: 1px solid transparent;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    line-height: 1;
-    text-decoration: none;
-    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .wheel__cta:hover {
-    transform: translateY(-1px);
-  }
-
-  .wheel__cta--primary {
-    background: var(--wheel-accent);
-    color: #ffffff;
-  }
-
-  :global(html[data-theme="dark"]) .wheel__cta--primary {
-    color: #07130f;
-  }
-
-  .wheel__cta--ghost {
-    border-color: var(--wheel-panel-line);
-    background: transparent;
-    color: var(--wheel-ink);
-  }
-
-  .wheel__cta--ghost:hover {
-    border-color: var(--wheel-accent);
-  }
-
-  .wheel__detail-more {
-    min-height: 40px;
-    padding: 9px 14px;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--wheel-sub);
-    font: inherit;
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-    text-decoration: underline;
-    text-decoration-color: var(--wheel-panel-line);
-    text-underline-offset: 4px;
-  }
-
-  .wheel__detail-more:hover {
-    color: var(--wheel-ink);
-  }
-
-  .wheel__detail-close {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    margin-left: auto;
-    border: 1px solid var(--wheel-panel-line);
-    border-radius: 50%;
-    background: transparent;
-    color: var(--wheel-sub);
-    font-size: 0.8rem;
-    cursor: pointer;
-  }
-
-  .wheel__detail-close:hover {
-    border-color: var(--wheel-accent);
-    color: var(--wheel-ink);
-  }
-
-  .wheel__detail-extra {
-    display: grid;
-    grid-template-rows: 0fr;
-    opacity: 0;
-    transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
-  }
-
-  .wheel__detail--open .wheel__detail-extra {
-    grid-template-rows: 1fr;
-    opacity: 1;
-  }
-
-  .wheel__detail-extra-inner {
-    overflow: hidden;
-  }
-
-  .wheel__detail--open .wheel__detail-extra-inner {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px dashed var(--wheel-panel-line);
-  }
-
-  .wheel__detail-extra-label {
-    margin: 0 0 5px;
-    color: var(--wheel-sub);
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-  }
-
-  .wheel__detail-amenities {
-    margin: 0;
-    color: var(--wheel-ink);
-    font-size: 0.82rem;
-    line-height: 1.7;
-  }
-
   .wheel__sr-only {
     position: absolute;
     width: 1px;
@@ -1183,6 +1367,7 @@ const wheelCovers = villas.map((villa) => {
       --radius: 876.44px;
       --floor-size: 2191.09px;
       --perspective: 1183.19px;
+      --flip-scale: 1.4;
       padding: 64px 0 78px;
     }
 
@@ -1206,18 +1391,22 @@ const wheelCovers = villas.map((villa) => {
       padding-top: 10px;
     }
 
-    .wheel__detail {
-      padding: 18px 18px 20px;
-      border-radius: 20px;
+    .wheel__card-back-body {
+      padding: 7px 9px 9px;
     }
 
-    .wheel__detail-facts {
-      gap: 10px 20px;
+    .wheel__card-back-strip {
+      height: 34%;
     }
 
-    .wheel__detail-close {
-      width: 34px;
-      height: 34px;
+    /* Ruang kartu mobile sangat sempit: fasilitas ketiga disembunyikan. */
+    .wheel__card-back-amenity:nth-child(3) {
+      display: none;
+    }
+
+    .wheel__card-back-actions {
+      gap: 4px;
+      padding-top: 6px;
     }
   }
 
@@ -1256,25 +1445,6 @@ const wheelCovers = villas.map((villa) => {
       min-width: 82px;
       font-size: 0.82rem;
     }
-
-    .wheel__detail-desc {
-      font-size: 0.84rem;
-    }
-
-    .wheel__detail-actions {
-      gap: 8px;
-    }
-
-    .wheel__cta {
-      min-height: 38px;
-      padding: 8px 15px;
-      font-size: 0.76rem;
-    }
-
-    .wheel__detail-more {
-      padding: 8px 4px;
-      font-size: 0.74rem;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1287,9 +1457,33 @@ const wheelCovers = villas.map((villa) => {
     .wheel__card--tilt .wheel__card-tilt,
     .wheel__card--tilt .wheel__card-shadow,
     .wheel__card-hover,
-    .wheel__detail-extra,
-    .wheel__detail--in .wheel__detail-main {
+    .wheel__card-flip {
       animation: none;
+      transition: none;
+    }
+
+    /* Tanpa animasi: sisi belakang langsung tampil dan tetap terbaca. */
+    .wheel__card-back-head,
+    .wheel__card-back-name,
+    .wheel__card-back-summary,
+    .wheel__card-back-amenities,
+    .wheel__card-back-price,
+    .wheel__card-back-actions {
+      opacity: 1;
+      animation: none;
+    }
+
+    .wheel__card-back::before,
+    .wheel__card--flipped .wheel__card-back::before,
+    .wheel__card--flipped .wheel__card-back {
+      animation: none;
+    }
+
+    .wheel__fx {
+      display: none;
+    }
+
+    .wheel__card--muted .wheel__card-face {
       transition: none;
     }
   }

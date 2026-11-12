@@ -670,6 +670,12 @@ const rateLabel = (label) => {
       scale(var(--flip-scale), var(--flip-scale));
   }
 
+  /* Hanya satu kartu yang sedang beranimasi; hint compositor aman dipakai. */
+  .wheel__card--flipped .wheel__card-flip,
+  .wheel__card--closing .wheel__card-flip {
+    will-change: transform;
+  }
+
   /* Sisi belakang diletakkan di belakang tumpukan ketebalan. */
   .wheel__card-back {
     position: absolute;
@@ -1440,6 +1446,61 @@ const rateLabel = (label) => {
 
     .wheel__card-back-body {
       padding: 7px 9px 9px;
+    }
+
+    /* Mobile: buang lapisan dekoratif yang mahal di GPU. Tampilan kartu
+       dan isi sisi belakang tetap sama setelah animasi selesai. */
+    .wheel__card-shadow,
+    .wheel__card-glare,
+    .wheel__card-hover {
+      display: none;
+    }
+
+    .wheel__card-layer:nth-child(n + 5) {
+      display: none;
+    }
+
+    .wheel__card--muted .wheel__card-face {
+      transition: none;
+    }
+
+    .wheel__card--flipped .wheel__card-back,
+    .wheel__card--flipped .wheel__card-back::before {
+      animation: none;
+    }
+
+    /* Mulai reveal setelah flip selesai agar tidak bertabrakan dengan
+       transform 3D kartu. */
+    .wheel__card--flipped .wheel__card-back-body > * {
+      animation-duration: 0.3s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-head {
+      animation-delay: 1.12s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-name {
+      animation-delay: 1.16s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-facts {
+      animation-delay: 1.2s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-desc {
+      animation-delay: 1.24s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-amenities {
+      animation-delay: 1.28s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-rates {
+      animation-delay: 1.32s;
+    }
+
+    .wheel__card--flipped .wheel__card-back-actions {
+      animation-delay: 1.36s;
     }
 
     /* Ruang kartu mobile sangat sempit: fasilitas ketiga disembunyikan. */

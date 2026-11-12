@@ -8,6 +8,16 @@ const stepDeg = 360 / total;
 const zones = [...new Set(villas.map((villa) => villa.area))];
 const first = villas[0];
 const pad = (value) => String(value).padStart(2, '0');
+
+// Varian kecil (480px) untuk mobile; varian besar tetap dipakai di layar
+// ber-DPR tinggi. Dengan begitu roda tidak perlu mengunduh/decode 31 gambar
+// 900x1250 sekaligus di ponsel.
+const wheelCovers = villas.map((villa) => {
+  const lg = villaWheelCovers[villa.name];
+  if (!lg) return null;
+  const sm = lg.replace('/card%20wheel/', '/card%20wheel/sm/');
+  return { sm, lg };
+});
 ---
 
 <section class="wheel" id="malam" aria-labelledby="wheelTitle" style={`--step:${stepDeg}deg`}>
@@ -95,7 +105,19 @@ const pad = (value) => String(value).padStart(2, '0');
                   ))}
                   <div class="wheel__card-face">
                     <div class="wheel__card-media">
-                      <img src={villaWheelCovers[villa.name] ?? villa.image} alt="" width="209" height="290" loading="lazy" decoding="async" />
+                      <picture>
+                        {wheelCovers[i] && (
+                          <source media="(max-width: 720px)" srcset={wheelCovers[i].sm} />
+                        )}
+                        <img
+                          src={wheelCovers[i]?.lg ?? villa.image}
+                          alt=""
+                          width="209"
+                          height="290"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </picture>
                     </div>
                     <span class="wheel__card-number">{pad(i + 1)}</span>
                     <span class="wheel__card-zone">{villa.area}</span>
@@ -199,10 +221,20 @@ const pad = (value) => String(value).padStart(2, '0');
     let started = false;
     let observer = null;
 
+    // Muat semua gambar kartu begitu roda hampir terlihat. Lazy-load biasa
+    // tidak menjangkau kartu yang posisinya di belakang ring 3D, sehingga
+    // beberapa kartu samping tampil kosong saat roda pertama diputar.
+    const warmCardImages = () => {
+      section.querySelectorAll('.wheel__card-media img').forEach((img) => {
+        img.loading = 'eager';
+      });
+    };
+
     const start = () => {
       if (started) return;
       started = true;
       if (observer) observer.disconnect();
+      warmCardImages();
       import('../../scripts/villaWheel.js')
         .then((mod) => mod.initVillaWheel())
         .catch(() => {});
@@ -623,6 +655,12 @@ const pad = (value) => String(value).padStart(2, '0');
     position: absolute;
     inset: 0;
     overflow: hidden;
+  }
+
+  .wheel__card-media picture {
+    display: block;
+    width: 100%;
+    height: 100%;
   }
 
   .wheel__card-media img {

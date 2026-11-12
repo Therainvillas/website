@@ -102,7 +102,12 @@ const pad = (value) => String(value).padStart(2, '0');
                     <div class="wheel__card-info">
                       <h3 class="wheel__card-name">{villa.name}</h3>
                       <p class="wheel__card-meta">{villa.bedrooms} kamar · {villa.capacity} tamu</p>
-                      <p class="wheel__card-price">{villa.priceLabel}</p>
+                      <p class="wheel__card-price">
+                        {villa.originalPrice && (
+                          <s class="wheel__card-old">Rp {villa.originalPrice.toLocaleString('id-ID')}</s>
+                        )}
+                        <span class="wheel__card-now">{villa.priceLabel}</span>
+                      </p>
                     </div>
                     <span class="wheel__card-shade" aria-hidden="true"></span>
                     <span class="wheel__card-fog" aria-hidden="true"></span>
@@ -686,11 +691,21 @@ const pad = (value) => String(value).padStart(2, '0');
   }
 
   .wheel__card-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 6px;
     margin: 4px 0 0;
     color: #a9e6d2;
     font-size: 0.69rem;
     font-weight: 700;
     line-height: 1.3;
+  }
+
+  .wheel__card-old {
+    color: rgba(226, 245, 238, 0.62);
+    font-size: 0.58rem;
+    font-weight: 500;
   }
 
   .wheel__card-shade,

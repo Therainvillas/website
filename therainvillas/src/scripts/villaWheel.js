@@ -85,7 +85,9 @@ export function initVillaWheel() {
 
   function measure() {
     const mobile = mobileMQ.matches;
-    cardW = mobile ? 140 : 190;
+    // Rasio kartu disamakan dengan artwork portrait 1080x1500 (0,72) agar
+    // judul dan harga di dalam gambar tidak terpotong oleh object-fit: cover.
+    cardW = mobile ? 155 : 209;
     cardH = mobile ? 215 : 290;
     radius = (1.15 * (cardW / 2)) / Math.tan(Math.PI / total);
     stepPx = Math.max(62, cardW * 0.62);
@@ -104,7 +106,6 @@ export function initVillaWheel() {
   function render() {
     applyRing();
     const motion = Math.min(0.5, Math.abs(speed) / 9);
-    const shift = reduced ? 0 : Math.max(-14, Math.min(14, velocity * 2.6));
 
     for (let i = 0; i < total; i++) {
       const card = cards[i];
@@ -127,7 +128,6 @@ export function initVillaWheel() {
       card.style.setProperty('--fog', fog.toFixed(3));
       card.style.setProperty('--lift', lift.toFixed(1));
       card.style.setProperty('--motion', motion.toFixed(3));
-      card.style.setProperty('--px', (shift + delta * 0.55).toFixed(1));
     }
 
     const index = mod(Math.round(pos));

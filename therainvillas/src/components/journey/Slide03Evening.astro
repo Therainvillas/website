@@ -1,5 +1,6 @@
 ---
 import { villas } from '../../data/villas';
+import { villaWheelCovers } from '../../data/covers';
 import { slugify } from '../../lib/slugify.js';
 
 const total = villas.length;
@@ -94,7 +95,7 @@ const pad = (value) => String(value).padStart(2, '0');
                   ))}
                   <div class="wheel__card-face">
                     <div class="wheel__card-media">
-                      <img src={villa.image} alt="" width="190" height="290" loading="lazy" decoding="async" />
+                      <img src={villaWheelCovers[villa.name] ?? villa.image} alt="" width="209" height="290" loading="lazy" decoding="async" />
                     </div>
                     <span class="wheel__card-number">{pad(i + 1)}</span>
                     <span class="wheel__card-zone">{villa.area}</span>
@@ -218,11 +219,11 @@ const pad = (value) => String(value).padStart(2, '0');
 
 <style>
   .wheel {
-    --card-w: 190px;
+    --card-w: 209px;
     --card-h: 290px;
-    --radius: 1074px;
-    --floor-size: 2685px;
-    --perspective: 1450px;
+    --radius: 1181.78px;
+    --floor-size: 2954.44px;
+    --perspective: 1595.4px;
     --step: 11.6129deg;
     --wheel-bg: #f1f6f2;
     --wheel-bg-2: #e5eee8;
@@ -623,7 +624,6 @@ const pad = (value) => String(value).padStart(2, '0');
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transform: translate3d(calc(var(--px, 0) * 1px), 0, 0) scale(1.14);
     transform-origin: center;
   }
 
@@ -1125,11 +1125,11 @@ const pad = (value) => String(value).padStart(2, '0');
 
   @media (max-width: 720px) {
     .wheel {
-      --card-w: 140px;
+      --card-w: 155px;
       --card-h: 215px;
-      --radius: 791.62px;
-      --floor-size: 1979.06px;
-      --perspective: 1068.69px;
+      --radius: 876.44px;
+      --floor-size: 2191.09px;
+      --perspective: 1183.19px;
       padding: 64px 0 78px;
     }
 

@@ -90,3 +90,40 @@ export const villaHeroSm = {
   'Villa Valora': '/villa-hero-sm/Valora.webp',
   'Villa Wanela': '/villa-hero-sm/wanela.webp'
 };
+
+// Kartu portrait khusus roda villa 3D (/card wheel). Rasio 1080x1500 dan
+// sudah memuat nama, harga, serta kapasitas di dalam gambar.
+/** @type {Record<string, string>} */
+export const villaWheelCovers = {
+  'Villa Agave': '/card%20wheel/agave.webp',
+  'Villa Wanela': '/card%20wheel/wanella.webp',
+  'Villa Cemara': '/card%20wheel/cemara.webp',
+  'Villa Aleia': '/card%20wheel/aleia.webp',
+  'Villa 4D': '/card%20wheel/4d.webp',
+  'Villa Calmora': '/card%20wheel/calmora.webp',
+  'Villa Twins': '/card%20wheel/twins.webp',
+  'Villa Cyrena': '/card%20wheel/cyrena.webp',
+  'Villa Arisyfa': '/card%20wheel/arisyfa.webp',
+  'Villa Cempaka': '/card%20wheel/cempaka.webp',
+  'Villa Arsy': '/card%20wheel/arsy.webp',
+  'Villa Rayya': '/card%20wheel/rayya.webp',
+  'Villa Opung': '/card%20wheel/opung.webp',
+  'Rjs Cottage 1': '/card%20wheel/rjs_cottage.webp',
+  'Rjs Cottage 2': '/card%20wheel/rjs_2.webp',
+  'Rjs Cottage 3': '/card%20wheel/rjs_3.webp',
+  'Villa Kaca 1': '/card%20wheel/kaca_1.webp',
+  'Villa Kaca 2': '/card%20wheel/kaca_2.webp',
+  'Villa De Summit': '/card%20wheel/de_summit.webp',
+  'Villa Bodas': '/card%20wheel/bodas.webp',
+  'Villa Thymi': '/card%20wheel/thymi.webp',
+  'Villa Albi': '/card%20wheel/albi.webp',
+  'Villa Valora': '/card%20wheel/valora.webp',
+  'Echa Village': '/card%20wheel/echa.webp',
+  'Villa Awan': '/card%20wheel/awan.webp',
+  'Villa Baduo': '/card%20wheel/baduo.webp',
+  'Villa Hala': '/card%20wheel/hala.webp',
+  'Villa Ranna': '/card%20wheel/ranna.webp',
+  'Villa Rio 5': '/card%20wheel/rio.webp',
+  'The Herlina': '/card%20wheel/herlina.webp',
+  'Villa Elora': '/card%20wheel/elora.webp'
+};

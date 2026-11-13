@@ -50,6 +50,7 @@
   --tip: rgba(38, 38, 42, 0.88);
   --base: 48px;
   --gap: 6px;
+  color-scheme: light;
 }
 
 html[data-theme="dark"],
@@ -109,17 +110,23 @@ html[data-theme="dark"],
   }
 }
 
-/* ===== View Transition Mode Gelap ===== */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
+/* ===== Transisi tema: tirai hujan ===== */
+.theme-rain {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: block;
+  pointer-events: none;
 }
-::view-transition-old(root) {
-  z-index: 1;
-}
-::view-transition-new(root) {
-  z-index: 2;
+
+/* Pengganti transisi hujan saat pengguna meminta animasi dikurangi.
+   Dibatasi ke root dan body agar pergantian tema tetap ringan. */
+html.theme-colors,
+html.theme-colors body {
+  transition:
+    background-color 350ms ease,
+    color 350ms ease,
+    border-color 350ms ease !important;
 }
 
 *,

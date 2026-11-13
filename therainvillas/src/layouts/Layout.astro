@@ -1,5 +1,16 @@
 ---
 import '../styles/global.css';
+// Font di-host sendiri (paket Fontsource) supaya tidak ada request ke
+// fonts.googleapis.com / fonts.gstatic.com yang menambah 2 round-trip TLS
+// sebelum teks bisa memakai font aslinya. Berkasnya identik dengan Google Fonts.
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/work-sans/wght.css';
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/dancing-script/wght.css';
+import '@fontsource-variable/cinzel/wght.css';
+// Dua font yang dipakai di layar pertama: preload agar tidak menunggu CSS.
+import interLatinUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import cinzelLatinUrl from '@fontsource-variable/cinzel/files/cinzel-latin-wght-normal.woff2?url';
 import FlashSalePopup from '../components/FlashSalePopup.astro';
 
 export interface Props {
@@ -8,6 +19,8 @@ export interface Props {
   image?: string;
   /** Gambar hero halaman ini (varian kecil & besar) — akan di-preload. */
   preloadImage?: { sm?: string; lg?: string };
+  /** Preload gambar responsif (mis. poster hero) dengan srcset agar LCP tidak menunggu parse. */
+  preloadSrcset?: { srcset: string; sizes?: string }[];
   ogType?: string;
   noindex?: boolean;
   jsonLd?: object[];
@@ -18,6 +31,7 @@ const {
   description = 'Cari sewa villa murah di Puncak untuk keluarga & gathering? Tersedia 30+ pilihan villa private pool kapasitas 20-50 orang. Booking aman, harga transparan!',
   image = '/Agave/Cover.webp',
   preloadImage,
+  preloadSrcset,
   ogType = 'website',
   noindex = false,
   jsonLd = [],
@@ -54,22 +68,24 @@ const gaBootstrap = `
       document.documentElement.classList.replace('no-js', 'js');
     </script>
     <script is:inline>
-      // gtag.js (195 KiB) baru diunduh setelah halaman selesai dimuat / saat
-      // interaksi pertama, supaya tidak berebut bandwidth & CPU dengan konten.
+      // gtag.js (195 KiB) tidak dimuat saat idle setelah load karena eksekusinya
+      // bisa menjadi long task setelah FCP. Muat saat interaksi pertama; pengguna
+      // yang pasif tetap dilayani lewat fallback jauh setelah load.
       // Perintah gtag(...) di bawah tetap mengantre di dataLayer sampai siap.
       (function () {
         var loaded = false;
+        var timer = 0;
         function loadGtag() {
           if (loaded) return;
           loaded = true;
+          if (timer) clearTimeout(timer);
           var s = document.createElement('script');
           s.async = true;
           s.src = 'https://www.googletagmanager.com/gtag/js?id=AW-18476533015';
           document.head.appendChild(s);
         }
         function schedule() {
-          if ('requestIdleCallback' in window) requestIdleCallback(loadGtag, { timeout: 3000 });
-          else setTimeout(loadGtag, 1200);
+          timer = window.setTimeout(loadGtag, 15000);
         }
         if (document.readyState === 'complete') schedule();
         else window.addEventListener('load', schedule, { once: true });
@@ -85,20 +101,23 @@ const gaBootstrap = `
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
-    <link rel="icon" type="image/png" href="/logo%20trv2.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
 
-    <link rel="apple-touch-icon" href="/logo%20trv2.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link
       rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Work+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,750&family=Dancing+Script:wght@600;700&family=Cinzel:wght@400;500;600;700;800;900&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
+      as="font"
+      type="font/woff2"
+      href={interLatinUrl}
+      crossorigin
     />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Work+Sans:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,750&family=Dancing+Script:wght@600;700&family=Cinzel:wght@400;500;600;700;800;900&display=swap" />
-    </noscript>
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={cinzelLatinUrl}
+      crossorigin
+    />
 
     {preloadImage?.sm && (
       <link rel="preload" as="image" href={preloadImage.sm} media="(max-width: 768px)" fetchpriority="high" />
@@ -106,6 +125,15 @@ const gaBootstrap = `
     {preloadImage?.lg && (
       <link rel="preload" as="image" href={preloadImage.lg} media="(min-width: 769px)" fetchpriority="high" />
     )}
+    {preloadSrcset?.map((preload) => (
+      <link
+        rel="preload"
+        as="image"
+        imagesrcset={preload.srcset}
+        imagesizes={preload.sizes ?? '100vw'}
+        fetchpriority="high"
+      />
+    ))}
 
     <meta property="og:locale" content="id_ID" />
     <meta property="og:site_name" content="The Rain Villas" />
@@ -190,6 +218,43 @@ const gaBootstrap = `
       document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
       });
+    </script>
+    <script>
+      // Ikon SVG eksternal (<use href="/icon/svg/...">) diunduh browser
+      // walaupun bagiannya masih jauh di bawah lipatan. Setiap berkas berisi
+      // dua gambar base64 (~20 KB), jadi 19 ikon = ~190 KB di jalur kritis.
+      // href baru dipasang saat bagiannya mendekati viewport.
+      const lazyIcons = Array.from(document.querySelectorAll('use[data-icon-href]'));
+      if (lazyIcons.length) {
+        const iconsByHost = new Map();
+        lazyIcons.forEach((use) => {
+          const host = use.closest('section, footer, article');
+          if (!host) return;
+          if (!iconsByHost.has(host)) iconsByHost.set(host, []);
+          iconsByHost.get(host).push(use);
+        });
+
+        const loadIcons = (uses) => {
+          uses.forEach((use) => {
+            if (!use.hasAttribute('href')) {
+              use.setAttribute('href', use.getAttribute('data-icon-href'));
+            }
+          });
+        };
+
+        if ('IntersectionObserver' in window) {
+          const iconObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              loadIcons(iconsByHost.get(entry.target) || []);
+              iconObserver.unobserve(entry.target);
+            });
+          }, { rootMargin: '200px 0px' });
+          iconsByHost.forEach((_, host) => iconObserver.observe(host));
+        } else {
+          iconsByHost.forEach((uses) => loadIcons(uses));
+        }
+      }
     </script>
     <script>
       import '../scripts/analytics.js';

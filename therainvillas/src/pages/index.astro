@@ -1,6 +1,8 @@
 ---
+import { getImage } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
+import heroPosterSrc from '../assets/display-poster.jpg';
 import Slide01Hero from '../components/journey/Slide01Hero.astro';
 
 import Slide03Evening from '../components/journey/Slide03Evening.astro';
@@ -26,6 +28,16 @@ const homeDesc = makeDescription(`${villaCount} villa private pool di Cisarua, k
 const allVillas = villas;
 // Hanya tampilkan 3 villa pertama di halaman utama (sisanya lewat "Lihat Semua Villa").
 const featuredVillas = allVillas.slice(0, 3);
+
+// Poster hero adalah elemen LCP: preload srcset-nya dari <head> supaya browser
+// tidak menunggu menemukannya di dalam body saat memulai unduhan.
+const heroPoster = await getImage({
+  src: heroPosterSrc,
+  widths: [480, 768, 1280],
+  sizes: '100vw',
+  format: 'webp',
+  quality: 72,
+});
 
 const homeFaq = [
   {
@@ -67,7 +79,11 @@ const homeFaq = [
 ];
 ---
 
-<Layout title={homeTitle} description={homeDesc}>
+<Layout
+  title={homeTitle}
+  description={homeDesc}
+  preloadSrcset={[{ srcset: heroPoster.srcSet.attribute, sizes: '100vw' }]}
+>
   <Seo title={homeTitle} description={homeDesc} />
   <Header />
   <script is:inline>

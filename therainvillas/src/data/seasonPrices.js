@@ -85,6 +85,20 @@ function getFridayPrice(villa) {
   return row && typeof row.price === "number" ? row.price : villa.price;
 }
 
+/** Tarif Sabtu villa: dayPrices[6], lalu label "Sabtu", lalu harga dasar. */
+function getSaturdayPrice(villa) {
+  if (villa.dayPrices && typeof villa.dayPrices[6] === "number") {
+    return villa.dayPrices[6];
+  }
+  const row = Array.isArray(villa.pricingLabels)
+    ? villa.pricingLabels.find((p) => /sabtu/i.test(p.label || ""))
+    : null;
+  return row && typeof row.price === "number" ? row.price : villa.price;
+}
+
+// Malam Tahun Baru 1 Januari 2027 memakai tarif Sabtu.
+export const NEW_YEAR_2027_SATURDAY = "2027-01-01";
+
 /**
  * Tarif normal per hari (tanpa promo):
  * hari kerja Minggu–Kamis memakai harga awal (originalPrice) bila ada,
@@ -243,6 +257,9 @@ export function getNightPrice(villa, date) {
     if (typeof total === "number") return Math.round(total / 2);
     return null; // TBA
   }
+
+  // Malam Tahun Baru 1 Januari 2027 memakai tarif Sabtu.
+  if (key === NEW_YEAR_2027_SATURDAY) return getSaturdayPrice(villa);
 
   // High season Januari 2027: semua malam memakai tarif Jumat.
   if (isJanuary2027HighSeasonNight(key)) return getFridayPrice(villa);

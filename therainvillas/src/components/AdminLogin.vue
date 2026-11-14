@@ -64,7 +64,7 @@ export default {
       this.error = "";
       if (this.password === "trvjon123") {
         localStorage.setItem("therainvillas_admin", "true");
-        window.location.href = "/admin/dashboard";
+        window.location.href = "/admin/dashboard/";
       } else {
         this.error = "Password salah. Coba lagi.";
       }

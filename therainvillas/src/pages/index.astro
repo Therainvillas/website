@@ -102,7 +102,7 @@ const homeFaq = [
             required: ['checkIn']
           },
           execute: async () => {
-            window.location.href = '/availability';
+            window.location.href = '/availability/';
             return { success: true, message: 'Mengarahkan ke halaman cek ketersediaan' };
           }
         });
@@ -127,7 +127,7 @@ const homeFaq = [
           description: 'Lihat daftar villa The Rain Villas',
           inputSchema: { type: 'object', properties: {} },
           execute: async () => {
-            window.location.href = '/our-villas';
+            window.location.href = '/our-villas/';
             return { success: true, message: 'Menampilkan daftar villa' };
           }
         });
@@ -151,7 +151,7 @@ const homeFaq = [
         ))}
       </div>
       <div class="featured-villas__cta reveal">
-        <a href="/booking" class="btn btn--primary" data-track="booking_click">Booking Sekarang</a>
+        <a href="/booking/" class="btn btn--primary" data-track="booking_click">Booking Sekarang</a>
         <a href="/our-villas/" class="btn btn--ghost">Lihat Semua Villa</a>
       </div>
     </div>

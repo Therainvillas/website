@@ -12,6 +12,7 @@ import '@fontsource-variable/cinzel/wght.css';
 import interLatinUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import cinzelLatinUrl from '@fontsource-variable/cinzel/files/cinzel-latin-wght-normal.woff2?url';
 import FlashSalePopup from '../components/FlashSalePopup.astro';
+import { withTrailingSlash } from '../utils/url.js';
 
 export interface Props {
   title?: string;
@@ -38,7 +39,7 @@ const {
 } = Astro.props;
 
 const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
-const canonicalUrl = new URL(Astro.url.pathname, siteRoot).href;
+const canonicalUrl = new URL(withTrailingSlash(Astro.url.pathname), siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 const isHome = Astro.url.pathname === '/';
 const isAdminRoute = /^\/admin(\/|$)/.test(Astro.url.pathname);

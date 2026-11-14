@@ -100,6 +100,7 @@
 <script>
 import { getNightPrice, getLowestNormalPrice, isDecPackageNight, toDateStr, hasDecPackage } from '../data/seasonPrices.js';
 import { calendarThemeImage } from '../data/calendarThemes.js';
+import { withTrailingSlash } from '../utils/url.js';
 
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
@@ -208,7 +209,7 @@ export default {
       // 30 & 31 Des bisa dipesan 1 malam; paket 2 malam dipilih dari halaman booking.
       const ci = new Date(cell.year, cell.month, cell.day);
       const co = new Date(cell.year, cell.month, cell.day + 1);
-      return `/booking?villa=${encodeURIComponent(v.name)}&checkIn=${fmt(ci)}&checkOut=${fmt(co)}`;
+      return withTrailingSlash(`/booking?villa=${encodeURIComponent(v.name)}&checkIn=${fmt(ci)}&checkOut=${fmt(co)}`);
     },
     isUnavailable(v, cell) {
       if (!v) return true;

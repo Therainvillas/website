@@ -437,6 +437,7 @@ import {
   DEC_PACKAGE_CHECKIN,
   DEC_PACKAGE_CHECKOUT,
 } from '../data/seasonPrices.js';
+import { withTrailingSlash } from '../utils/url.js';
 
 const BOOKING_API = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 const WHATSAPP = '6282125492037';
@@ -570,8 +571,8 @@ export default {
       return this.requiresPromo && !(this.promoApplied && !this.promoBlockedVilla);
     },
     promoHref() {
-      if (!this.selectedVilla) return '/promo#klaim';
-      return `/promo?villa=${this.selectedVilla.slug}#klaim`;
+      if (!this.selectedVilla) return withTrailingSlash('/promo#klaim');
+      return withTrailingSlash(`/promo?villa=${this.selectedVilla.slug}#klaim`);
     },
     filteredVillas() {
       const q = this.villaSearch.trim().toLowerCase();

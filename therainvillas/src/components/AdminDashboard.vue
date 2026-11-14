@@ -9,7 +9,7 @@
     </div>
 
     <div v-if="!authenticated" class="dashboard__unauthorized">
-      <p>Anda belum login. <a href="/admin">Login di sini</a></p>
+      <p>Anda belum login. <a href="/admin/">Login di sini</a></p>
     </div>
 
     <div v-else class="dashboard__content">
@@ -463,7 +463,7 @@ export default {
     },
     handleLogout() {
       localStorage.removeItem("therainvillas_admin");
-      window.location.href = "/admin";
+      window.location.href = "/admin/";
     },
     proofDate(ts) {
       if (!ts) return "";

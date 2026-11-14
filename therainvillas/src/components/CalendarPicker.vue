@@ -144,6 +144,7 @@ import {
   DEC_PACKAGE_CHECKOUT,
 } from '../data/seasonPrices.js';
 import { calendarThemeImage } from '../data/calendarThemes.js';
+import { withTrailingSlash } from '../utils/url.js';
 
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
 const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
@@ -277,13 +278,13 @@ export default {
       return `https://wa.me/6282125492037?text=${encodeURIComponent(msg)}`;
     },
     bookingLink() {
-      if (!this.selectedVilla || !this.checkIn || !this.checkOut) return "/booking";
+      if (!this.selectedVilla || !this.checkIn || !this.checkOut) return withTrailingSlash("/booking");
       const q = new URLSearchParams({
         villa: this.selectedVilla.name,
         checkIn: this.localDate(this.checkIn),
         checkOut: this.localDate(this.checkOut),
       });
-      return `/booking?${q.toString()}`;
+      return withTrailingSlash(`/booking?${q.toString()}`);
     },
   },
   methods: {

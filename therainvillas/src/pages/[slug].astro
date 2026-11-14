@@ -16,6 +16,7 @@ import { DRIVE_MINUTES } from '../data/driveTimes';
 import { ALTITUDE_METERS } from '../data/altitudes';
 import { villaCovers, villaHeroSm } from '../data/covers';
 import { isVillaPromoEligible } from '../data/promos';
+import { withTrailingSlash } from '../utils/url.js';
 
 export function getStaticPaths() {
   return villas.map((villa) => ({
@@ -31,10 +32,10 @@ const otherVillas = villas.filter((v) => v.id !== villa.id).slice(0, 3);
 const whatsapp = '6282125492037';
 const waMsg = `Halo The Rain Villas, saya ingin memesan ${villa.name}. Mohon info ketersediaan.`;
 const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(waMsg)}`;
-const villaUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://therainvillas.com/').href;
+const villaUrl = new URL(withTrailingSlash(Astro.url.pathname), Astro.site ?? 'https://therainvillas.com/').href;
 
 const hasPromo = isVillaPromoEligible(villa);
-const promoHref = `/promo?villa=${villa.slug}#klaim`;
+const promoHref = withTrailingSlash(`/promo?villa=${villa.slug}#klaim`);
 const orderLink = hasPromo ? promoHref : waLink;
 const originalPriceLabel = hasPromo ? `Rp ${villa.originalPrice.toLocaleString('id-ID')}` : '';
 
@@ -546,7 +547,7 @@ const villaDetailDesc = makeDescription(
           )}
 
           <a href={orderLink} target={hasPromo ? undefined : '_blank'} rel={hasPromo ? undefined : 'nofollow'} class="vd-booking__button" data-track="booking_click" data-villa={villa.name}>{hasPromo ? 'Klaim Kode & Pesan Sekarang' : 'Pesan Sekarang'}</a>
-          <a href="/availability" class="vd-booking__link" data-track="booking_click" data-villa={villa.name}>Cek kalender semua villa &rarr;</a>
+          <a href="/availability/" class="vd-booking__link" data-track="booking_click" data-villa={villa.name}>Cek kalender semua villa &rarr;</a>
 
           <div class="vd-calendar">
             <h4>Ketersediaan</h4>

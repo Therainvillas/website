@@ -82,6 +82,7 @@
 <script>
 import { MAPS_RATING_URL, PROOF_API, promos, isVillaPromoEligible } from '../data/promos.js';
 import { villas } from '../data/villas.js';
+import { withTrailingSlash } from '../utils/url.js';
 
 const CLAIM_KEY = 'trv_promo_claimed';
 const CLAIM_TTL_MS = 2 * 60 * 1000; // kode berlaku 2 menit
@@ -123,10 +124,10 @@ export default {
       return `${m}:${s}`;
     },
     bookingHref() {
-      if (!this.code) return '/booking';
+      if (!this.code) return withTrailingSlash('/booking');
       const params = new URLSearchParams({ promo: this.code });
       if (this.selectedVilla) params.set('villa', this.selectedVilla.name);
-      return `/booking?${params.toString()}`;
+      return withTrailingSlash(`/booking?${params.toString()}`);
     },
   },
   mounted() {

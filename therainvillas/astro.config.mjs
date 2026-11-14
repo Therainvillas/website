@@ -5,19 +5,29 @@ import { villas } from './src/data/villas.js';
 
 export default defineConfig({
   site: 'https://therainvillas.com',
-  trailingSlash: 'ignore',
+  trailingSlash: 'always',
+  build: {
+    // Hasil build: /villa-agave/index.html → URL kanonik /villa-agave/
+    format: 'directory',
+  },
   redirects: {
     ...Object.fromEntries(
-      villas.map((villa) => [`/villas/${villa.id}`, `/${villa.slug}`]),
+      villas.map((villa) => [`/villas/${villa.id}`, `/${villa.slug}/`]),
     ),
     ...Object.fromEntries(
-      villas.map((villa) => [`/villas/${villa.slug}`, `/${villa.slug}`]),
+      villas.map((villa) => [`/villas/${villa.slug}`, `/${villa.slug}/`]),
     ),
   },
   integrations: [
     vue(),
     sitemap({
-      filter: (page) => !page.includes('/admin/') && !page.includes('/villas/'),
+      // Sitemap hanya boleh berisi URL kanonik yang bisa diindeks:
+      // keluarkan /admin/ (noindex + X-Robots-Tag), /villas/ (redirect 301),
+      // dan halaman konfirmasi/terima kasih.
+      filter: (page) =>
+        !page.includes('/admin/') &&
+        !page.includes('/villas/') &&
+        !/\/(terima-kasih|thank-you|konfirmasi)(\/|$)/i.test(page),
       serialize(item) {
         item.lastmod = new Date().toISOString();
         return item;

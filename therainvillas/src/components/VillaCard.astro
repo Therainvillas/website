@@ -1,6 +1,7 @@
 ---
 import { slugify } from '../lib/slugify.js';
 import { formatPrice } from '../data/villas.js';
+import { withTrailingSlash } from '../utils/url.js';
 
 interface Props {
   id: number;
@@ -56,7 +57,7 @@ const discountPercent = showOriginal && priceNumber && originalPrice > priceNumb
   ? Math.round((1 - priceNumber / originalPrice) * 100)
   : 0;
 const showDiscount = discountPercent >= 1 && discountPercent <= 99;
-const link = `/${slugify(name)}`;
+const link = withTrailingSlash(`/${slugify(name)}`);
 ---
 
 <article class="villa-card">

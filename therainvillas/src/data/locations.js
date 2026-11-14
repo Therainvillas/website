@@ -8,6 +8,8 @@
  *
  * Villa Arsy (id 11) memakai entri "Villa Griya Arsy" yang tercantum di maps.md.
  */
+import { withTrailingSlash } from '../utils/url.js';
+
 export const OFFICE = {
   id: 'office',
   name: 'The Rain Villas (Kantor Pusat)',
@@ -16,7 +18,7 @@ export const OFFICE = {
   mapsUrl: 'https://maps.app.goo.gl/mGghdcBHjNJ1DZ2f9',
 };
 
-export const locations = [
+const locationData = [
   { id: 1, name: 'Villa Agave', lat: -6.6790739530115095, lng: 106.95188136789119, href: '/villa-agave', mapsUrl: 'https://maps.app.goo.gl/9UiPfN9B71ZXuvDC6' },
   { id: 2, name: 'Villa Wanela', lat: -6.701963971517161, lng: 106.91619320967736, href: '/villa-wanela', mapsUrl: 'https://maps.app.goo.gl/AwVg63njJYZ2dudB7' },
   { id: 3, name: 'Villa Cemara', lat: -6.700336659971097, lng: 106.94574227529155, href: '/villa-cemara', mapsUrl: 'https://maps.app.goo.gl/TNcT2GzbMQmVWfUc9' },
@@ -49,3 +51,9 @@ export const locations = [
   { id: 30, name: 'The Herlina', lat: -6.648271486314955, lng: 106.91512615200512, href: '/the-herlina', mapsUrl: 'https://maps.app.goo.gl/zbdPUju4BcZatyi3A' },
   { id: 31, name: 'Villa Elora', lat: -6.6625425040113235, lng: 106.92399322501966, href: '/villa-elora', mapsUrl: 'https://maps.app.goo.gl/VKCL77QvgBWYMmBi9' },
 ];
+
+// Semua href villa keluar sebagai URL kanonik berslash ("/villa-agave/").
+export const locations = locationData.map((loc) => ({
+  ...loc,
+  href: withTrailingSlash(loc.href),
+}));

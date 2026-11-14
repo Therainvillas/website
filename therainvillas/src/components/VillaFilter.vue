@@ -117,7 +117,7 @@
 
     <div class="vf__grid">
       <div v-for="villa in paginated" :key="villa.id" class="vf__card-wrap">
-        <a :href="`/${slugify(villa.name)}`" class="vf-card">
+        <a :href="villaHref(villa)" class="vf-card">
           <div class="vf-card__media">
             <img :src="villa.image" :alt="villa.name" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
@@ -179,6 +179,7 @@ import {
   readScheduleCache,
   writeScheduleCache,
 } from '../data/scheduleApi.js';
+import { withTrailingSlash } from '../utils/url.js';
 
 const PRICE_OPTIONS = [
   { label: 'Semua Harga', value: '' },
@@ -359,6 +360,9 @@ export default {
     },
     slugify(s) {
       return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    },
+    villaHref(villa) {
+      return withTrailingSlash(`/${this.slugify(villa.name)}`);
     },
     toggleDrop(name) {
       this.openDrop = this.openDrop === name ? null : name;

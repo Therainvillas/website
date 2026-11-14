@@ -1,4 +1,6 @@
 ---
+import { withTrailingSlash } from '../utils/url.js';
+
 export interface Props {
   title: string;
   description: string;
@@ -18,7 +20,7 @@ const {
 } = Astro.props;
 
 const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
-const canonicalUrl = canonical || new URL(Astro.url.pathname, siteRoot).href;
+const canonicalUrl = canonical || new URL(withTrailingSlash(Astro.url.pathname), siteRoot).href;
 const shareImage = new URL(image, siteRoot).href;
 ---
 

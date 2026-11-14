@@ -80,6 +80,8 @@ export function stayRequiresPromoClaim(villa, checkIn, checkOut) {
     const month = d.getMonth();
     // 20–31 Desember: harga khusus, tidak wajib klaim kode
     if (month === 11 && date >= 20) continue;
+    // Mulai 2027 harga normal (bukan promo), tidak wajib klaim kode
+    if (d.getFullYear() >= 2027) continue;
     if (day !== 5 && day !== 6) return true; // ada malam Minggu–Kamis
   }
   return false;

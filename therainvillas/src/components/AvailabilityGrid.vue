@@ -44,8 +44,8 @@
             <h3 class="avail-card__name">{{ v.name }}</h3>
             <p class="avail-card__meta">{{ v.capacity }} tamu &#8226; {{ v.bedrooms }} kamar</p>
             <p class="avail-card__price">
-              <s v-if="v.originalPrice" class="avail-card__price-old">Rp {{ v.originalPrice.toLocaleString('id-ID') }}</s>
-              {{ v.priceLabel }}
+              <s v-if="!isNormalPricePeriod && v.originalPrice" class="avail-card__price-old">Rp {{ v.originalPrice.toLocaleString('id-ID') }}</s>
+              {{ cardPriceLabel(v) }}
             </p>
           </header>
           <div class="avail-cal">
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { getNightPrice, isDecPackageNight, toDateStr, hasDecPackage } from '../data/seasonPrices.js';
+import { getNightPrice, getLowestNormalPrice, isDecPackageNight, toDateStr, hasDecPackage } from '../data/seasonPrices.js';
 import { calendarThemeImage } from '../data/calendarThemes.js';
 
 // Ganti URL ini dengan endpoint Web App Google Apps Script setelah deploy
@@ -154,6 +154,10 @@ export default {
     isDecember2026() {
       return this.year === 2026 && this.month === 11;
     },
+    // Mulai 2027 harga promo berakhir → tampilkan harga normal tanpa coretan.
+    isNormalPricePeriod() {
+      return this.year >= 2027;
+    },
     calendarCells() {
       const firstDay = new Date(this.year, this.month, 1).getDay();
       const daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
@@ -167,6 +171,10 @@ export default {
   },
   methods: {
     calendarImage,
+    cardPriceLabel(v) {
+      if (!this.isNormalPricePeriod) return v.priceLabel;
+      return `Rp ${getLowestNormalPrice(v).toLocaleString('id-ID')}/malam`;
+    },
     dayPrice(v, date) {
       return getNightPrice(v, date);
     },

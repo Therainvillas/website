@@ -14,8 +14,8 @@
             <span class="booking__pill-img" :style="{ backgroundImage: `url(${v.image})` }"></span>
             <span class="booking__pill-name">{{ v.name.replace('Villa ', '') }}</span>
             <span class="booking__pill-price">
-              <s v-if="v.originalPrice" class="booking__price-old">Rp {{ v.originalPrice.toLocaleString('id-ID') }}</s>
-              {{ v.priceLabel.replace('/malam', '') }}
+              <s v-if="!isNormalPricePeriod && v.originalPrice" class="booking__price-old">Rp {{ v.originalPrice.toLocaleString('id-ID') }}</s>
+              {{ priceLabelFor(v).replace('/malam', '') }}
             </span>
           </button>
         </div>
@@ -28,8 +28,8 @@
             <h3>{{ selectedVilla.name }}</h3>
             <p class="booking__capacity">{{ selectedVilla.capacity }} tamu • {{ selectedVilla.bedrooms }} kamar</p>
             <p class="booking__price">
-              <s v-if="selectedVilla.originalPrice" class="booking__price-old">Rp {{ selectedVilla.originalPrice.toLocaleString('id-ID') }}</s>
-              {{ selectedVilla.priceLabel }}
+              <s v-if="!isNormalPricePeriod && selectedVilla.originalPrice" class="booking__price-old">Rp {{ selectedVilla.originalPrice.toLocaleString('id-ID') }}</s>
+              {{ priceLabelFor(selectedVilla) }}
             </p>
           </div>
         </div>
@@ -135,6 +135,7 @@
 <script>
 import {
   getNightPrice,
+  getLowestNormalPrice,
   getStayTotal,
   decPackageTotal,
   hasDecPackage,
@@ -219,6 +220,10 @@ export default {
       ];
       return `${months[this.month]} ${this.year}`;
     },
+    // Mulai 2027 harga promo berakhir → tampilkan harga normal tanpa coretan.
+    isNormalPricePeriod() {
+      return this.year >= 2027;
+    },
     calendarCells() {
       const firstDay = new Date(this.year, this.month, 1).getDay();
       const daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
@@ -282,6 +287,11 @@ export default {
     },
   },
   methods: {
+    priceLabelFor(v) {
+      if (!v) return '';
+      if (!this.isNormalPricePeriod) return v.priceLabel;
+      return `Rp ${getLowestNormalPrice(v).toLocaleString('id-ID')}/malam`;
+    },
     dayPrice(date) {
       return getNightPrice(this.selectedVilla, date);
     },

@@ -14,6 +14,8 @@
  *    tersebut sekaligus, `getStayTotal()` otomatis memakai total paket bila
  *    lebih hemat daripada jumlah harga per malam.
  *    Nilai `null` = harga belum ditentukan (TBA).
+ *  - Mulai 2027 harga promo berakhir: hari kerja memakai harga normal
+ *    (`originalPrice`), tanpa tampilan harga coret.
  */
 
 // ── Tanggal paket 2 malam ──────────────────────────────────────────────
@@ -53,6 +55,62 @@ const DEC_SPEC = {
   "Villa Bodas":    [[[20, 22, 23], 2500000], [[24], 2900000], [[25], 4300000], [[26], 5500000], [[27, 28, 29], 2700000], [[30], 4000000], [[31], 7500000]],
   "Villa Agave":    [[[20, 22, 23], 2000000], [[24], 2500000], [[25], 4200000], [[26], 5000000], [[27, 28, 29], 2500000], [[30], 4000000], [[31], 7500000]],
 };
+
+// ── High season awal Januari 2027 ─────────────────────────────────────
+// Malam 3–7 Januari 2027 masih termasuk high season libur akhir tahun,
+// jadi seluruh malam memakai tarif Jumat (bukan tarif weekday).
+export const JANUARY_2027_HIGH_SEASON = [
+  "2027-01-03",
+  "2027-01-04",
+  "2027-01-05",
+  "2027-01-06",
+  "2027-01-07",
+];
+
+const JANUARY_2027_HIGH_SEASON_SET = new Set(JANUARY_2027_HIGH_SEASON);
+
+/** True jika malam tsb memakai tarif Jumat karena high season Januari 2027. */
+export function isJanuary2027HighSeasonNight(dateStr) {
+  return JANUARY_2027_HIGH_SEASON_SET.has(dateStr);
+}
+
+/** Tarif Jumat villa: dayPrices[5], lalu label "Jumat", lalu harga dasar. */
+function getFridayPrice(villa) {
+  if (villa.dayPrices && typeof villa.dayPrices[5] === "number") {
+    return villa.dayPrices[5];
+  }
+  const row = Array.isArray(villa.pricingLabels)
+    ? villa.pricingLabels.find((p) => /jumat/i.test(p.label || ""))
+    : null;
+  return row && typeof row.price === "number" ? row.price : villa.price;
+}
+
+/**
+ * Tarif normal per hari (tanpa promo):
+ * hari kerja Minggu–Kamis memakai harga awal (originalPrice) bila ada,
+ * Jumat/Sabtu memakai dayPrices. Villa tanpa promo memakai dayPrices.
+ */
+function getNormalPriceForDay(villa, day) {
+  if (day <= 4 && typeof villa.originalPrice === "number" && villa.originalPrice > 0) {
+    return villa.originalPrice;
+  }
+  return (villa.dayPrices && villa.dayPrices[day]) || villa.price;
+}
+
+/** Harga normal terendah villa (untuk label "mulai dari") pada periode non-promo. */
+export function getLowestNormalPrice(villa) {
+  let min = Infinity;
+  for (let day = 0; day <= 6; day++) {
+    const price = getNormalPriceForDay(villa, day);
+    if (typeof price === "number" && price > 0) min = Math.min(min, price);
+  }
+  return min === Infinity ? villa.price : min;
+}
+
+/** True bila tanggal tsb memakai harga normal (promo hanya berlaku sebelum 2027). */
+export function isNormalPriceYear(date) {
+  return date.getFullYear() >= 2027;
+}
 
 // ── Harga total Paket 2 malam (30–31 Des) ──────────────────────────────
 // null = TBA (harga menyusul).
@@ -185,6 +243,12 @@ export function getNightPrice(villa, date) {
     if (typeof total === "number") return Math.round(total / 2);
     return null; // TBA
   }
+
+  // High season Januari 2027: semua malam memakai tarif Jumat.
+  if (isJanuary2027HighSeasonNight(key)) return getFridayPrice(villa);
+
+  // Mulai 2027 promo berakhir: hari kerja memakai harga normal (tanpa coretan).
+  if (isNormalPriceYear(date)) return getNormalPriceForDay(villa, date.getDay());
 
   const day = date.getDay();
   return (villa.dayPrices && villa.dayPrices[day]) || villa.price;

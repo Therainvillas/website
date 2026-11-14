@@ -71,7 +71,7 @@
                     <img :src="selectedVilla.image" :alt="selectedVilla.name" class="bf__dd-trigger-img" />
                     <span class="bf__dd-trigger-info">
                       <span class="bf__dd-trigger-name">{{ selectedVilla.name }}</span>
-                      <span class="bf__dd-trigger-sub">{{ selectedVilla.capacity }} tamu • <s v-if="selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ selectedVilla.priceLabel }}</span>
+                      <span class="bf__dd-trigger-sub">{{ selectedVilla.capacity }} tamu • <s v-if="!isNormalPricePeriod && selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ priceLabelFor(selectedVilla) }}</span>
                     </span>
                   </template>
                   <span v-else class="bf__dd-placeholder">— Pilih villa —</span>
@@ -110,8 +110,8 @@
                           <span class="bf__dd-option-meta">{{ v.capacity }} tamu • {{ v.bedrooms }} kamar</span>
                         </span>
                         <span class="bf__dd-option-price">
-                          <s v-if="v.originalPrice" class="bf__price-old">Rp {{ formatNum(v.originalPrice) }}</s>
-                          {{ v.priceLabel.replace('/malam', '') }}
+                          <s v-if="!isNormalPricePeriod && v.originalPrice" class="bf__price-old">Rp {{ formatNum(v.originalPrice) }}</s>
+                          {{ priceLabelFor(v).replace('/malam', '') }}
                         </span>
                       </button>
                       <p v-if="filteredVillas.length === 0" class="bf__dd-empty">Villa tidak ditemukan.</p>
@@ -126,7 +126,7 @@
               <div class="bf__villa-info">
                 <strong>{{ selectedVilla.name }}</strong>
                 <span>{{ selectedVilla.capacity }} tamu • {{ selectedVilla.bedrooms }} kamar • {{ selectedVilla.bathrooms }} KM</span>
-                <span class="bf__villa-price">Mulai dari <s v-if="selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ selectedVilla.priceLabel }}</span>
+                <span class="bf__villa-price">Mulai dari <s v-if="!isNormalPricePeriod && selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ priceLabelFor(selectedVilla) }}</span>
               </div>
             </div>
 
@@ -430,6 +430,7 @@ import {
 } from '../data/promos.js';
 import {
   getStayTotal,
+  getLowestNormalPrice,
   decPackageTotal,
   hasDecPackage,
   isDecPackageNight,
@@ -533,6 +534,10 @@ export default {
         'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
       ];
       return `${months[this.month]} ${this.year}`;
+    },
+    // Mulai 2027 harga promo berakhir → tampilkan harga normal tanpa coretan.
+    isNormalPricePeriod() {
+      return this.year >= 2027;
     },
     calCells() {
       const firstDay = new Date(this.year, this.month, 1).getDay();
@@ -743,6 +748,11 @@ export default {
     document.removeEventListener('click', this.onDocClick);
   },
   methods: {
+    priceLabelFor(v) {
+      if (!v) return '';
+      if (!this.isNormalPricePeriod) return v.priceLabel;
+      return `Rp ${getLowestNormalPrice(v).toLocaleString('id-ID')}/malam`;
+    },
     toggleVillaDropdown() {
       this.villaDropdownOpen = !this.villaDropdownOpen;
       if (this.villaDropdownOpen) {

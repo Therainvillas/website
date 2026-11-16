@@ -1,6 +1,9 @@
 ---
 import { Image } from 'astro:assets';
 import heroPoster from '../../assets/display-poster.jpg';
+import { getGeneralImageSeo } from '../../utils/imageSeo';
+
+const heroSeo = getGeneralImageSeo('hero');
 
 // Video profil memakai YouTube (bukan file mp4 yang di-hosting), supaya
 // bandwidth server & kuota pengunjung hemat. Iframe baru dimuat setelah
@@ -13,7 +16,8 @@ const YOUTUBE_URL = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
   <div class="journey-hero__bg">
     <Image
       src={heroPoster}
-      alt=""
+      alt={heroSeo.alt}
+      title={heroSeo.title}
       class="journey-hero__poster"
       widths={[480, 768, 1280]}
       sizes="100vw"

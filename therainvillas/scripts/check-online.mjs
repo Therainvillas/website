@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
-const OUT = path.resolve('public/thumbnail');
+const OUT = path.resolve('public/img/thumbnail');
 const names = fs.readdirSync(OUT);
 
 const remote = new Map();
 
 for (const n of names) {
   const enc = n.replace(/ /g, '%20');
-  const r = await fetch(`https://therainvillas.com/thumbnail/${enc}`, { method: 'HEAD' });
+  const r = await fetch(`https://therainvillas.com/img/thumbnail/${enc}`, { method: 'HEAD' });
   const len = Number(r.headers.get('content-length'));
   const lm = r.headers.get('last-modified');
   const cc = r.headers.get('cache-control');

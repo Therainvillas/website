@@ -10,14 +10,30 @@ export default defineConfig({
     // Hasil build: /villa-agave/index.html → URL kanonik /villa-agave/
     format: 'directory',
   },
-  redirects: {
-    ...Object.fromEntries(
-      villas.map((villa) => [`/villas/${villa.id}`, `/${villa.slug}/`]),
-    ),
-    ...Object.fromEntries(
-      villas.map((villa) => [`/villas/${villa.slug}`, `/${villa.slug}/`]),
-    ),
-  },
+  redirects: (() => {
+    // Slug lama (nama villa saja, mis. "villa-agave") diambil dari nama file
+    // thumbnail supaya tidak perlu disalin manual.
+    const legacySlug = (villa) =>
+      villa.image.match(/\/img\/thumbnail\/(.+)-thumb\.webp$/)?.[1] ?? villa.slug;
+    const legacy = villas.filter((villa) => legacySlug(villa) !== villa.slug);
+    return {
+      ...Object.fromEntries(
+        villas.map((villa) => [`/villas/${villa.id}`, `/${villa.slug}/`]),
+      ),
+      ...Object.fromEntries(
+        villas.map((villa) => [`/villas/${villa.slug}`, `/${villa.slug}/`]),
+      ),
+      ...Object.fromEntries(
+        legacy.map((villa) => [`/${legacySlug(villa)}`, `/${villa.slug}/`]),
+      ),
+      ...Object.fromEntries(
+        legacy.map((villa) => [`/villas/${legacySlug(villa)}`, `/${villa.slug}/`]),
+      ),
+      // Villa Hariza berganti nama menjadi Villa Elora.
+      '/villa-hariza': '/villa-elora-leuwimalang-puncak/',
+      '/villas/villa-hariza': '/villa-elora-leuwimalang-puncak/',
+    };
+  })(),
   integrations: [
     vue(),
     sitemap({

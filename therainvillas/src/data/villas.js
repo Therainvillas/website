@@ -1,9 +1,8 @@
-import { slugify } from '../lib/slugify.js';
-
 export const villas = [
   {
     id: 1,
     name: "Villa Agave",
+    slug: "villa-agave-batulayang-puncak",
     area: "Batulayang",
     region: "Cisarua",
     description: "Villa luas dengan 3 bangunan, private pool, dan area billiard. Cocok untuk acara besar dan gathering.",
@@ -15,7 +14,7 @@ export const villas = [
     bedrooms: 7,
     bathrooms: 7,
     parking: 12,
-    image: "/thumbnail/Agave%20Thumb.webp",
+    image: "/img/thumbnail/villa-agave-thumb.webp",
     amenities: ["3 Bangunan", "Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Halaman Luas", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 2500000, 4500000],
     pricingLabels: [
@@ -30,6 +29,7 @@ export const villas = [
   {
     id: 2,
     name: "Villa Wanela",
+    slug: "villa-wanela-sukagalih-puncak",
     area: "Sukagalih",
     region: "Megamendung",
     description: "Villa cozy dengan private pool dan billiard. Cocok untuk staycation santai bersama teman atau keluarga.",
@@ -41,7 +41,7 @@ export const villas = [
     bedroomsNote: "Free extrabed 5",
     bathrooms: 2,
     parking: 4,
-    image: "/thumbnail/Wanela%20Thumb.webp",
+    image: "/img/thumbnail/villa-wanela-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Kitchen Set", "BBQ Space"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1500000, 2500000],
     pricingLabels: [
@@ -56,6 +56,7 @@ export const villas = [
   {
     id: 3,
     name: "Villa Cemara",
+    slug: "villa-cemara-cibeureum-puncak",
     area: "Cibeureum",
     region: "Cisarua",
     description: "Villa asri dengan private pool, balkon, dan halaman luas. Cocok untuk healing dan quality time.",
@@ -68,7 +69,7 @@ export const villas = [
     bathrooms: 4,
     parking: 7,
     busAccess: true,
-    image: "/thumbnail/Cemara%20Thumb.webp",
+    image: "/img/thumbnail/villa-cemara-thumb.webp",
     amenities: ["Water Heater", "Living Room", "2 Smart TV & WiFi", "Billiard", "Karaoke", "Halaman Luas", "Private Pool", "BBQ Space", "Balkon", "Kitchen Set"],
     dayPrices: [1100000, 1100000, 1100000, 1100000, 1100000, 1800000, 3500000],
     pricingLabels: [
@@ -83,6 +84,7 @@ export const villas = [
   {
     id: 4,
     name: "Villa Aleia",
+    slug: "villa-aleia-tugu-selatan-puncak",
     area: "Tugu Selatan",
     region: "Cisarua",
     description: "Villa cozy dengan private pool, gazebo, dan kitchen set lengkap. Cocok untuk liburan santai bersama keluarga.",
@@ -94,7 +96,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/Aleia%20Thumb.webp",
+    image: "/img/thumbnail/villa-aleia-thumb.webp",
     amenities: ["Karaoke", "Gazebo", "Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set Lengkap", "BBQ Space", "Chill Space"],
     dayPrices: [1100000, 1100000, 1100000, 1100000, 1100000, 2000000, 3500000],
     pricingLabels: [
@@ -109,6 +111,7 @@ export const villas = [
   {
     id: 5,
     name: "Villa 4D",
+    slug: "villa-4d-tugu-selatan-puncak",
     area: "Tugu Selatan",
     region: "Cisarua",
     description: "Villa dengan konsep ala cafe, private pool, gazebo, dan area billiard. Cocok untuk nongkrong santai bersama teman.",
@@ -120,7 +123,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/4D%20Thumb.webp",
+    image: "/img/thumbnail/villa-4d-thumb.webp",
     instagramReel: "https://www.instagram.com/reel/Dc03mWGsrIy/",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Gazebo", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1800000, 3000000],
@@ -136,6 +139,7 @@ export const villas = [
   {
     id: 6,
     name: "Villa Calmora",
+    slug: "villa-calmora-tugu-utara-puncak",
     area: "Tugu Utara",
     region: "Cisarua",
     badge: "⭐ Best Seller",
@@ -149,7 +153,7 @@ export const villas = [
     bedroomsNote: "6 Queen Bed",
     bathrooms: 6,
     parking: 4,
-    image: "/thumbnail/Calmora%20Thumb.webp",
+    image: "/img/thumbnail/villa-calmora-thumb.webp",
     amenities: ["Water Heater", "Karaoke", "WiFi & Smart TV", "Living Room", "Private Pool", "Gazebo", "Billiard", "Kitchen Set", "Chill Space", "Best View (Mountain & Citylight)"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2000000, 3500000],
     pricingLabels: [
@@ -164,6 +168,7 @@ export const villas = [
   {
     id: 7,
     name: "Villa Twins",
+    slug: "villa-twins-batulayang-puncak",
     area: "Batulayang",
     region: "Cisarua",
     description: "Villa twin dengan lapangan basket, playground, dan free 2 glamping. Cocok untuk gathering dan acara keluarga.",
@@ -176,7 +181,7 @@ export const villas = [
     bathrooms: 4,
     parking: 15,
     busAccess: true,
-    image: "/thumbnail/Twins%20Thumb.webp",
+    image: "/img/thumbnail/villa-twins-thumb.webp",
     amenities: ["Lapangan Basket", "Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Halaman Luas", "Playground", "Private Pool", "BBQ Space", "Kitchen Set", "Gazebo", "Free 2 Glamping"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 2000000, 3500000],
     pricingLabels: [
@@ -191,6 +196,7 @@ export const villas = [
   {
     id: 8,
     name: "Villa Cyrena",
+    slug: "villa-cyrena-cibeureum-puncak",
     area: "Cibeureum",
     region: "Cisarua",
     description: "Villa elegan dengan private pool dan area bersantai. Cocok untuk liburan keluarga atau kumpul teman.",
@@ -202,7 +208,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/Cyrena%20Thumb.webp",
+    image: "/img/thumbnail/villa-cyrena-thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Chill Area", "Halaman", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1700000, 3000000],
     pricingLabels: [
@@ -217,6 +223,7 @@ export const villas = [
   {
     id: 9,
     name: "Villa Arisyfa",
+    slug: "villa-arisyfa-cibeureum-puncak",
     area: "Cibeureum",
     region: "Cisarua",
     description: "Villa luas 3 lantai dengan lapangan badminton dan private pool. Cocok untuk gathering keluarga besar.",
@@ -230,7 +237,7 @@ export const villas = [
     bathrooms: 5,
     parking: 7,
     busAccess: true,
-    image: "/thumbnail/Arisyfa%20Thumb.webp",
+    image: "/img/thumbnail/villa-arisyfa-thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard Area", "Karaoke", "Chill Area", "Halaman Luas", "Lapangan Badminton", "Private Pool", "Gazebo", "BBQ Space", "Kitchen Set"],
     dayPrices: [1200000, 1200000, 1200000, 1200000, 1200000, 1800000, 3500000],
     pricingLabels: [
@@ -245,6 +252,7 @@ export const villas = [
   {
     id: 10,
     name: "Villa Cempaka",
+    slug: "villa-cempaka-tugu-utara-puncak",
     area: "Tugu Utara",
     region: "Cisarua",
     description: "Villa bergaya Eropa dengan arsitektur klasik elegan dan private pool. Cocok untuk quality time bersama keluarga.",
@@ -256,7 +264,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 3,
     parking: 5,
-    image: "/thumbnail/Cempaka%20Thumb.webp",
+    image: "/img/thumbnail/villa-cempaka-thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Halaman", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [1400000, 1000000, 1000000, 1000000, 1000000, 1700000, 3200000],
     pricingLabels: [
@@ -272,6 +280,7 @@ export const villas = [
   {
     id: 11,
     name: "Villa Arsy",
+    slug: "villa-arsy-leuwimalang-puncak",
     area: "Leuwimalang",
     region: "Cisarua",
     description: "Villa dengan private pool, mushola, dan suasana nyaman. Cocok untuk liburan keluarga yang tenang.",
@@ -284,7 +293,7 @@ export const villas = [
     bedroomsNote: "Masing-masing kamar double bed",
     bathrooms: 3,
     parking: 4,
-    image: "/thumbnail/Griya%20Arsy%20Thumb.webp",
+    image: "/img/thumbnail/villa-arsy-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Mushola", "Karaoke", "Billiard", "Private Pool", "Kitchen Set", "BBQ Space"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 2000000, 4000000],
     pricingLabels: [
@@ -299,6 +308,7 @@ export const villas = [
   {
     id: 12,
     name: "Villa Rayya",
+    slug: "villa-rayya-batulayang-puncak",
     area: "Batulayang",
     region: "Cisarua",
     description: "Villa 2 lantai dengan api unggun space, playground, dan private pool. Cocok untuk gathering keluarga.",
@@ -311,7 +321,7 @@ export const villas = [
     bedroomsNote: "Queen Bed",
     bathrooms: 5,
     parking: 7,
-    image: "/thumbnail/Rayya%20Thumb.webp",
+    image: "/img/thumbnail/villa-rayya-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Api Unggun Space", "Playground", "Karaoke", "Billiard", "Private Pool", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [1350000, 1350000, 1350000, 1350000, 1350000, 2500000, 4000000],
     pricingLabels: [
@@ -326,6 +336,7 @@ export const villas = [
   {
     id: 13,
     name: "Villa Opung",
+    slug: "villa-opung-sukaresmi-puncak",
     area: "Sukaresmi",
     region: "Megamendung",
     description: "Villa asri dengan private pool, billiard, dan halaman luas. Cocok untuk staycation santai bersama teman.",
@@ -337,7 +348,7 @@ export const villas = [
     bedroomsNote: "3 extrabed",
     bathrooms: 3,
     parking: 5,
-    image: "/thumbnail/Opung%20Thumb.webp",
+    image: "/img/thumbnail/villa-opung-thumb.webp",
     amenities: ["Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Chill Area", "Halaman"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2000000, 3500000],
     pricingLabels: [
@@ -352,6 +363,7 @@ export const villas = [
   {
     id: 14,
     name: "Rjs Cottage 1",
+    slug: "rjs-cottage-1-kuta-puncak",
     area: "Kuta",
     region: "Megamendung",
     description: "Cottage cozy dengan private pool, gazebo, dan halaman luas. Cocok untuk family getaway yang santai.",
@@ -362,7 +374,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 5,
-    image: "/thumbnail/RJS%20Cottage%201%20Thumb.webp",
+    image: "/img/thumbnail/rjs-cottage-1-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Gazebo", "Kitchen Set", "BBQ Space"],
     dayPrices: [1800000, 1800000, 1800000, 1800000, 1800000, 2300000, 3700000],
     pricingLabels: [
@@ -377,6 +389,7 @@ export const villas = [
   {
     id: 15,
     name: "Rjs Cottage 2",
+    slug: "rjs-cottage-2-kuta-puncak",
     area: "Kuta",
     region: "Megamendung",
     description: "Cottage nyaman dengan private pool dan chill space. Cocok untuk vila cozy getaway bersama keluarga.",
@@ -387,7 +400,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 5,
-    image: "/thumbnail/RJS%202%20Thumb.webp",
+    image: "/img/thumbnail/rjs-cottage-2-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 2700000, 3800000],
     pricingLabels: [
@@ -402,6 +415,7 @@ export const villas = [
   {
     id: 16,
     name: "Rjs Cottage 3",
+    slug: "rjs-cottage-3-kuta-puncak",
     area: "Kuta",
     region: "Megamendung",
     description: "Cottage nyaman dengan private pool dan chill space. Cocok untuk vila cozy getaway bersama keluarga.",
@@ -412,7 +426,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 4,
     parking: 5,
-    image: "/thumbnail/RJS%203%20Thumb.webp",
+    image: "/img/thumbnail/rjs-cottage-3-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 2700000, 3800000],
     pricingLabels: [
@@ -427,6 +441,7 @@ export const villas = [
   {
     id: 17,
     name: "Villa Kaca 1",
+    slug: "villa-kaca-1-tugu-utara-puncak",
     area: "Tugu Utara",
     region: "Cisarua",
     badge: "New",
@@ -439,7 +454,7 @@ export const villas = [
     bedrooms: 7,
     bathrooms: 4,
     parking: 7,
-    image: "/thumbnail/Kaca%201%20Thumb.webp",
+    image: "/img/thumbnail/villa-kaca-1-thumb.webp",
     amenities: ["Billiard", "Private Pool", "Smart TV & WiFi", "2 Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Chill Area", "Gazebo", "Halaman"],
     dayPrices: [2500000, 2500000, 2500000, 2500000, 2500000, 3000000, 5000000],
     pricingLabels: [
@@ -454,6 +469,7 @@ export const villas = [
   {
     id: 18,
     name: "Villa Kaca 2",
+    slug: "villa-kaca-2-tugu-utara-puncak",
     area: "Tugu Utara",
     region: "Cisarua",
     badge: "New",
@@ -466,7 +482,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 4,
     parking: 4,
-    image: "/thumbnail/Kaca%202%20Thumb.webp",
+    image: "/img/thumbnail/villa-kaca-2-thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Chill Space", "BBQ Space", "Kitchen Set"],
     dayPrices: [1500000, 1500000, 1500000, 1500000, 1500000, 2000000, 3500000],
     pricingLabels: [
@@ -481,6 +497,7 @@ export const villas = [
   {
     id: 19,
     name: "Villa De Summit",
+    slug: "villa-de-summit-cibeureum-puncak",
     area: "Cibeureum",
     region: "Cisarua",
     description: "Villa dengan pendopo view 360, private pool, dan space api unggun. Cocok untuk gathering eksklusif.",
@@ -493,7 +510,7 @@ export const villas = [
     bathrooms: 4,
     parking: 10,
     busAccess: true,
-    image: "/thumbnail/De%20Summit%20Thumb.webp",
+    image: "/img/thumbnail/villa-de-summit-thumb.webp",
     amenities: ["2 Smart TV", "Karaoke", "WiFi", "Space Api Unggun", "Private Pool", "Billiard", "Pendopo View 360"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 4500000],
     pricingLabels: [
@@ -508,6 +525,7 @@ export const villas = [
   {
     id: 20,
     name: "Villa Bodas",
+    slug: "villa-bodas-kopo-puncak",
     area: "Kopo",
     region: "Cisarua",
     description: "Villa luas dengan mushola, private pool, dan halaman luas. Cocok untuk acara dan gathering keluarga besar.",
@@ -520,7 +538,7 @@ export const villas = [
     bedroomsNote: "1 kamar barracks",
     bathrooms: 6,
     parking: 20,
-    image: "/thumbnail/Bodas%20Thumb.webp",
+    image: "/img/thumbnail/villa-bodas-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Mushola", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman Luas", "Kitchen Set", "BBQ Space"],
     dayPrices: [1700000, 1700000, 1700000, 1700000, 1700000, 2500000, 5000000],
     pricingLabels: [
@@ -535,6 +553,7 @@ export const villas = [
   {
     id: 21,
     name: "Villa Thymi",
+    slug: "villa-thymi-tugu-utara-puncak",
     area: "Tugu Utara",
     region: "Cisarua",
     description: "Villa dengan mountain view, playground, gazebo, dan private pool. Cocok untuk liburan keluarga besar.",
@@ -546,7 +565,7 @@ export const villas = [
     bedrooms: 6,
     bathrooms: 6,
     parking: 8,
-    image: "/thumbnail/Thymi%20Thumb.webp",
+    image: "/img/thumbnail/villa-thymi-thumb.webp",
     amenities: ["Water Heater", "Living Room", "Smart TV & WiFi", "Billiard", "Karaoke", "Gazebo", "Halaman", "Private Pool", "BBQ Space", "Kitchen Set", "Mountain View", "Playground"],
     dayPrices: [1300000, 1300000, 1300000, 1300000, 1300000, 2000000, 4000000],
     pricingLabels: [
@@ -561,6 +580,7 @@ export const villas = [
   {
     id: 22,
     name: "Villa Albi",
+    slug: "villa-albi-cipayung-datar-puncak",
     area: "Cipayung Datar",
     region: "Megamendung",
     description: "Villa dengan pagi pegunungan, private pool, dan chill space. Cocok untuk quality time bersama keluarga.",
@@ -571,7 +591,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 4,
     parking: 4,
-    image: "/thumbnail/Albi%20Thumb.webp",
+    image: "/img/thumbnail/villa-albi-thumb.webp",
     amenities: ["Water Heater", "Karaoke", "Smart TV & WiFi", "Chill Space & BBQ Space", "Private Pool", "Billiard & View Pegunungan", "Kitchen Set"],
     dayPrices: [1300000, 1300000, 1300000, 1300000, 1300000, 1800000, 3000000],
     pricingLabels: [
@@ -586,6 +606,7 @@ export const villas = [
   {
     id: 23,
     name: "Villa Valora",
+    slug: "villa-valora-sukagalih-puncak",
     area: "Sukagalih",
     region: "Megamendung",
     description: "Villa compact dengan mountain view, karaoke, dan billiard. Cocok untuk budget-friendly getaway.",
@@ -597,7 +618,7 @@ export const villas = [
     bedroomsNote: "1 kamar mezanine",
     bathrooms: 4,
     parking: 2,
-    image: "/thumbnail/Valora%20Thumb.webp",
+    image: "/img/thumbnail/villa-valora-thumb.webp",
     amenities: ["Billiard", "Private Pool", "Karaoke", "Living Room", "Smart TV & WiFi", "Chill Space", "Mountain View", "Kitchen Set", "BBQ Space"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1500000, 2500000],
     pricingLabels: [
@@ -612,6 +633,7 @@ export const villas = [
   {
     id: 24,
     name: "Echa Village",
+    slug: "echa-village-jogjogan-puncak",
     area: "Jogjogan",
     region: "Cisarua",
     description: "Village 3 lantai dengan rooftop, karaoke, dan private pool. Cocok untuk staycation santai bersama teman.",
@@ -623,7 +645,7 @@ export const villas = [
     bedrooms: 4,
     bathrooms: 3,
     parking: 3,
-    image: "/thumbnail/Echa%20Village%20Thumb.webp",
+    image: "/img/thumbnail/echa-village-thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Rooftop", "Kitchen Set", "BBQ Space"],
     dayPrices: [1300000, 1300000, 1300000, 1300000, 1300000, 2000000, 3500000],
     pricingLabels: [
@@ -638,6 +660,7 @@ export const villas = [
   {
     id: 25,
     name: "Villa Awan",
+    slug: "villa-awan-citeko-puncak",
     area: "Citeko",
     region: "Cisarua",
     description: "Villa cozy dengan private pool, karaoke, dan halaman luas. Cocok untuk liburan keluarga yang tenang.",
@@ -650,7 +673,7 @@ export const villas = [
     bathrooms: 2,
     bedroomsNote: "1 kamar bilas",
     parking: 4,
-    image: "/thumbnail/Awan%20Thumb.webp",
+    image: "/img/thumbnail/villa-awan-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Halaman", "Kitchen Set", "BBQ Space"],
     dayPrices: [1400000, 1100000, 1100000, 1100000, 1100000, 1800000, 3500000],
     pricingLabels: [
@@ -666,6 +689,7 @@ export const villas = [
   {
     id: 26,
     name: "Villa Baduo",
+    slug: "villa-baduo-jogjogan-puncak",
     area: "Jogjogan",
     region: "Cisarua",
     description: "Villa dengan mushola, playground, karaoke, dan private pool. Cocok untuk family gathering besar.",
@@ -678,7 +702,7 @@ export const villas = [
     bathrooms: 3,
     bedroomsNote: "1 musolah",
     parking: 3,
-    image: "/thumbnail/Baduo%20Thumb.webp",
+    image: "/img/thumbnail/villa-baduo-thumb.webp",
     amenities: ["Living Room", "Smart TV & WiFi", "Water Heater", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Kitchen Set", "BBQ Space", "Playground"],
     dayPrices: [1100000, 1100000, 1100000, 1100000, 1100000, 1800000, 3300000],
     pricingLabels: [
@@ -693,6 +717,7 @@ export const villas = [
   {
     id: 27,
     name: "Villa Hala",
+    slug: "villa-hala-tugu-utara-puncak",
     area: "Tugu Utara",
     region: "Cisarua",
     scheduleName: "halla",
@@ -705,7 +730,7 @@ export const villas = [
     bathrooms: 7,
     parking: 5,
     busAccess: true,
-    image: "/thumbnail/Hala%20Thumb.webp",
+    image: "/img/thumbnail/villa-hala-thumb.webp",
     amenities: ["Mountain View", "Billiard", "Tennis Meja", "Balkon", "Water Heater", "Living Room", "Smart TV & WiFi", "Karaoke & Mini Bar", "Halaman Luas", "Private Pool", "BBQ Space", "Kitchen Set"],
     dayPrices: [2000000, 2000000, 2000000, 2000000, 2000000, 3000000, 4500000],
     pricingLabels: [
@@ -720,6 +745,7 @@ export const villas = [
   {
     id: 28,
     name: "Villa Ranna",
+    slug: "villa-ranna-kopo-puncak",
     area: "Kopo",
     region: "Cisarua",
     description: "Villa cozy dengan queen bed, private pool, karaoke, dan chill space. Cocok untuk staycation romantis.",
@@ -732,7 +758,7 @@ export const villas = [
     bedroomsNote: "4 queen bed, free extrabed 3",
     bathrooms: 3,
     parking: 5,
-    image: "/thumbnail/Ranna%20Thumb.webp",
+    image: "/img/thumbnail/villa-ranna-thumb.webp",
     amenities: ["Smart TV & WiFi", "Living Room", "Karaoke", "Billiard", "Private Pool", "Chill Space", "Kitchen Set", "BBQ Space"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1700000, 3000000],
     pricingLabels: [
@@ -747,6 +773,7 @@ export const villas = [
   {
     id: 29,
     name: "Villa Rio 5",
+    slug: "villa-rio-5-citeko-puncak",
     area: "Citeko",
     region: "Cisarua",
     badge: "New",
@@ -761,7 +788,7 @@ export const villas = [
     bathrooms: 5,
     parking: 4,
     busAccess: true,
-    image: "/thumbnail/Rio%205%20Thumb.webp",
+    image: "/img/thumbnail/villa-rio-5-thumb.webp",
     amenities: ["Lapang Bola (Mini Soccer)", "Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Halaman Luas", "Gazebo"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1700000, 3000000],
     pricingLabels: [
@@ -776,6 +803,7 @@ export const villas = [
   {
     id: 30,
     name: "The Herlina",
+    slug: "the-herlina-cilember-puncak",
     area: "Cilember",
     region: "Cisarua",
     scheduleName: "the helina",
@@ -789,7 +817,7 @@ export const villas = [
     bedroomsNote: "Free 2 extrabed",
     bathrooms: 3,
     parking: 7,
-    image: "/thumbnail/The%20Herlina%20Thumb.webp",
+    image: "/img/thumbnail/the-herlina-thumb.webp",
     amenities: ["Billiard", "Private Pool", "Smart TV & WiFi", "Water Heater", "Living Room", "Kitchen Set", "BBQ Space", "Chill Area", "Halaman"],
     dayPrices: [1800000, 1800000, 1800000, 1800000, 1800000, 3000000, 5000000],
     pricingLabels: [
@@ -804,6 +832,7 @@ export const villas = [
   {
     id: 31,
     name: "Villa Elora",
+    slug: "villa-elora-leuwimalang-puncak",
     area: "Leuwimalang",
     region: "Cisarua",
     description: "Villa compact dengan karaoke, billiard, dan chill space. Cocok untuk staycation santai bersama teman.",
@@ -815,7 +844,7 @@ export const villas = [
     bedrooms: 3,
     bathrooms: 2,
     parking: 4,
-    image: "/thumbnail/Elora%20Thumb.webp",
+    image: "/img/thumbnail/villa-elora-thumb.webp",
     amenities: ["Smart TV & WiFi", "Karaoke", "Billiard", "Chill Space", "BBQ Space", "Kitchen Set"],
     dayPrices: [1000000, 1000000, 1000000, 1000000, 1000000, 1600000, 2700000],
     pricingLabels: [
@@ -829,9 +858,6 @@ export const villas = [
   },
 ];
 
-for (const villa of villas) {
-  villa.slug = slugify(villa.name);
-}
 
 export const amenities = [
   {

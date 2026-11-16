@@ -10,8 +10,6 @@
 
 <script>
 import { OFFICE, locations } from '../data/locations.js';
-import { slugify } from '../lib/slugify.js';
-import { withTrailingSlash } from '../utils/url.js';
 
 export default {
   props: {
@@ -128,7 +126,7 @@ export default {
         .replace(/^Rjs\s+cottage\s+/i, 'RJS ');
     },
     openVilla(v) {
-      window.location.href = withTrailingSlash(`/${slugify(v.name)}`);
+      window.location.href = v.href;
     },
   },
 };

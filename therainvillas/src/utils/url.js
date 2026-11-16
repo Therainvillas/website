@@ -1,7 +1,8 @@
 /**
  * Utilitas URL internal.
  *
- * Situs memakai trailing slash ("/villa-agave/") sebagai bentuk kanonik.
+ * Situs memakai trailing slash ("/villa-agave-batulayang-puncak/") sebagai bentuk
+ * kanonik.
  * Semua tautan internal yang dibuat secara dinamis harus lewat helper ini
  * supaya tidak ada versi tanpa slash yang memicu redirect 301.
  *

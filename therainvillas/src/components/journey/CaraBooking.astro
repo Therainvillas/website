@@ -1,3 +1,9 @@
+---
+import { getGeneralImageSeo } from '../../utils/imageSeo';
+
+const manPhoneSeo = getGeneralImageSeo('man-phone');
+---
+
 <section class="cara-booking section" id="cara-booking">
   <div class="container">
     <div class="cara-booking__header reveal">
@@ -7,8 +13,8 @@
     </div>
 
     <div class="cara-booking__split">
-      <div class="cara-booking__visual" aria-hidden="true">
-        <img src="/man-phone.webp" alt="" class="cara-booking__img" width="1000" height="1000" loading="lazy" decoding="async" />
+      <div class="cara-booking__visual">
+        <img src="/man-phone.webp" alt={manPhoneSeo.alt} title={manPhoneSeo.title} class="cara-booking__img" width="1000" height="1000" loading="lazy" decoding="async" />
       </div>
 
       <div class="cara-booking__split-grid">

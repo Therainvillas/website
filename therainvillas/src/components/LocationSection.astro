@@ -1,6 +1,19 @@
 ---
 import VillaDistanceMap from '../components/VillaDistanceMap.vue';
 import { OFFICE, locations } from '../data/locations.js';
+import { villas } from '../data/villas';
+import { getVillaImageSeo } from '../utils/imageSeo';
+
+// Alt/title foto kartu peta dihitung di server dari src/data/image-seo.json,
+// supaya JSON tidak ikut masuk bundle Vue.
+const villaById = new Map(villas.map((villa) => [String(villa.id), villa]));
+const mapVillas = locations.map((loc) => {
+  const villa = villaById.get(String(loc.id));
+  const imageSeo = villa
+    ? getVillaImageSeo(villa.slug, 'thumbnail')
+    : { alt: '', title: '' };
+  return { ...loc, imageAlt: imageSeo.alt, imageTitle: imageSeo.title };
+});
 ---
 
 <section class="loka" id="lokasi">
@@ -29,7 +42,7 @@ import { OFFICE, locations } from '../data/locations.js';
       <VillaDistanceMap
         client:visible
         office={OFFICE}
-        villas={locations}
+        villas={mapVillas}
         title="Jarak Villa dari Kantor"
         subtitle="The Rain Villas · Puncak, Bogor"
       />

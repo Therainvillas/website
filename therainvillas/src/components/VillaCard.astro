@@ -1,11 +1,12 @@
 ---
-import { slugify } from '../lib/slugify.js';
 import { formatPrice } from '../data/villas.js';
 import { withTrailingSlash } from '../utils/url.js';
+import { getVillaImageSeo } from '../utils/imageSeo';
 
 interface Props {
   id: number;
   name: string;
+  slug: string;
   area?: string;
   region?: string;
   description: string;
@@ -23,6 +24,7 @@ interface Props {
 const {
   id,
   name,
+  slug,
   area,
   region,
   description,
@@ -57,12 +59,13 @@ const discountPercent = showOriginal && priceNumber && originalPrice > priceNumb
   ? Math.round((1 - priceNumber / originalPrice) * 100)
   : 0;
 const showDiscount = discountPercent >= 1 && discountPercent <= 99;
-const link = withTrailingSlash(`/${slugify(name)}`);
+const link = withTrailingSlash(`/${slug}`);
+const imageSeo = getVillaImageSeo(slug, 'thumbnail');
 ---
 
 <article class="villa-card">
   <a href={link} class="villa-card__media" aria-hidden="true" tabindex="-1">
-    <img src={image} alt={name} width="1200" height="675" loading="lazy" decoding="async" />
+    <img src={image} alt={imageSeo.alt} title={imageSeo.title} width="1200" height="675" loading="lazy" decoding="async" />
     {badge && <span class="villa-card__badge">{badge}</span>}
     {showDiscount && (
       <span class="villa-card__discount" aria-label={`Diskon ${discountPercent} persen`}>

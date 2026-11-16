@@ -1,5 +1,8 @@
 ---
 // TeamSection.astro - Showcase Tim The Rain Villas
+import { getGeneralImageSeo } from '../utils/imageSeo';
+
+const teamImageSeo = getGeneralImageSeo('team');
 ---
 
 <section class="team-section section" id="tim-kami">
@@ -19,7 +22,8 @@
           <source srcset="/foto-team.webp?v=2" type="image/webp" />
           <img
             src="/foto-team.webp?v=2"
-            alt="Tim The Rain Villas - Meet Our Team"
+            alt={teamImageSeo.alt}
+            title={teamImageSeo.title}
             class="team-showcase__img"
             loading="lazy"
             width="2000"

@@ -41,7 +41,7 @@ const related = landingPages
 <Layout
   title={page.title}
   description={page.description}
-  image={villaList[0]?.image || '/Agave/Cover.webp'}
+  image={villaList[0]?.image || '/img/villas/villa-agave/villa-agave-cover.webp'}
   jsonLd={[breadcrumbJsonLd]}
   canonical={canonicalUrl}
 >
@@ -75,20 +75,7 @@ const related = landingPages
         <p class="landing-villas__count">{villaList.length} villa tersedia</p>
         <div class="landing-villas__grid">
           {villaList.map((villa) => (
-            <VillaCard
-              id={villa.id}
-              name={villa.name}
-              description={villa.description}
-              image={villa.image}
-              price={villa.price}
-              priceLabel={villa.priceLabel}
-              originalPrice={villa.originalPrice}
-              badge={villa.badge}
-              capacity={villa.capacity}
-              bedrooms={villa.bedrooms}
-              bathrooms={villa.bathrooms}
-              parking={villa.parking}
-            />
+            <VillaCard {...villa} />
           ))}
         </div>
       </div>

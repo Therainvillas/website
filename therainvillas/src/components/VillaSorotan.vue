@@ -16,7 +16,7 @@
       >
         <span class="vs-ring">
           <span class="vs-ring__inner">
-            <img :src="img" :alt="`${villaName} sorotan ${i + 1}`" loading="lazy" />
+            <img :src="img" :alt="altFor(i)" loading="lazy" />
           </span>
         </span>
         <span class="vs-item__label">{{ i === 0 ? 'Utama' : 'Foto ' + (i + 1) }}</span>
@@ -51,7 +51,7 @@
         <button v-if="n > 1" type="button" class="vs-story__chev vs-story__chev--prev" aria-label="Sebelumnya" @click.stop="prev">&#8249;</button>
         <div class="vs-story__media" @click="onZone">
           <div class="vs-story__blur" :style="{ backgroundImage: 'url(' + images[index] + ')' }"></div>
-          <img :src="images[index]" :alt="`${villaName} foto ${index + 1}`" class="vs-story__img" />
+          <img :src="images[index]" :alt="altFor(index)" class="vs-story__img" />
         </div>
         <button v-if="n > 1" type="button" class="vs-story__chev vs-story__chev--next" aria-label="Berikutnya" @click.stop="next">&#8250;</button>
       </div>
@@ -71,6 +71,8 @@ export default {
   name: 'VillaSorotan',
   props: {
     images: { type: Array, required: true },
+    // Alt per foto, dihitung dari src/data/image-seo.json di halaman villa.
+    alts: { type: Array, default: () => [] },
     villaName: { type: String, default: '' },
   },
   data() {
@@ -103,6 +105,9 @@ export default {
     this.clearTimer();
   },
   methods: {
+    altFor(index) {
+      return this.alts[index] || `${this.villaName} – Foto ${index + 1}`;
+    },
     openAt(i) {
       this.index = (i + this.n) % this.n;
       this.open = true;

@@ -1,7 +1,7 @@
 ---
 import { villas } from '../../data/villas';
 import { villaWheelCovers } from '../../data/covers';
-import { slugify } from '../../lib/slugify.js';
+import { getVillaImageSeo } from '../../utils/imageSeo';
 
 const total = villas.length;
 const stepDeg = 360 / total;
@@ -14,9 +14,12 @@ const pad = (value) => String(value).padStart(2, '0');
 const wheelCovers = villas.map((villa) => {
   const lg = villaWheelCovers[villa.name];
   if (!lg) return null;
-  const sm = lg.replace('/card%20wheel/', '/card%20wheel/sm/');
+  const sm = lg.replace('/img/card-wheel/', '/img/card-wheel/sm/');
   return { sm, lg };
 });
+
+// Alt/title kartu roda dibaca dari src/data/image-seo.json.
+const wheelSeo = villas.map((villa) => getVillaImageSeo(villa.slug, 'wheel'));
 
 // Ringkas label tarif dari data menjadi tiga kategori yang dipakai di kartu.
 const rateLabel = (label) => {
@@ -107,7 +110,8 @@ const rateLabel = (label) => {
                           )}
                           <img
                             src={wheelCovers[i]?.lg ?? villa.image}
-                            alt=""
+                            alt={wheelSeo[i].alt}
+                            title={wheelSeo[i].title}
                             width="209"
                             height="290"
                             loading="lazy"
@@ -174,7 +178,7 @@ const rateLabel = (label) => {
                           </ul>
                         </div>
                         <div class="wheel__card-back-actions">
-                          <a class="wheel__card-back-cta wheel__card-back-cta--primary" href={`/${slugify(villa.name)}/`}>Lihat Villa</a>
+                          <a class="wheel__card-back-cta wheel__card-back-cta--primary" href={`/${villa.slug}/`}>Lihat Villa</a>
                           <button type="button" class="wheel__card-back-cta wheel__card-back-cta--ghost" data-wheel-back>Kembali</button>
                         </div>
                       </div>

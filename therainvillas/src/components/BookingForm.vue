@@ -68,7 +68,7 @@
                   @click="toggleVillaDropdown"
                 >
                   <template v-if="selectedVilla">
-                    <img :src="selectedVilla.image" :alt="selectedVilla.name" class="bf__dd-trigger-img" />
+                    <img :src="selectedVilla.image" alt="" class="bf__dd-trigger-img" />
                     <span class="bf__dd-trigger-info">
                       <span class="bf__dd-trigger-name">{{ selectedVilla.name }}</span>
                       <span class="bf__dd-trigger-sub">{{ selectedVilla.capacity }} tamu • <s v-if="!isNormalPricePeriod && selectedVilla.originalPrice" class="bf__price-old">Rp {{ formatNum(selectedVilla.originalPrice) }}</s> {{ priceLabelFor(selectedVilla) }}</span>
@@ -104,7 +104,7 @@
                         :class="{ 'bf__dd-option--active': v.name === form.villa }"
                         @click="pickVilla(v)"
                       >
-                        <img :src="v.image" :alt="v.name" class="bf__dd-option-img" />
+                        <img :src="v.image" alt="" class="bf__dd-option-img" />
                         <span class="bf__dd-option-info">
                           <span class="bf__dd-option-name">{{ v.name }}</span>
                           <span class="bf__dd-option-meta">{{ v.capacity }} tamu • {{ v.bedrooms }} kamar</span>
@@ -122,7 +122,7 @@
             </div>
 
             <div v-if="selectedVilla" class="bf__villa-preview">
-              <img :src="selectedVilla.image" :alt="selectedVilla.name" />
+              <img :src="selectedVilla.image" :alt="villaImageSeo(selectedVilla).alt" :title="villaImageSeo(selectedVilla).title" />
               <div class="bf__villa-info">
                 <strong>{{ selectedVilla.name }}</strong>
                 <span>{{ selectedVilla.capacity }} tamu • {{ selectedVilla.bedrooms }} kamar • {{ selectedVilla.bathrooms }} KM</span>
@@ -438,6 +438,7 @@ import {
   DEC_PACKAGE_CHECKOUT,
 } from '../data/seasonPrices.js';
 import { withTrailingSlash } from '../utils/url.js';
+import { getVillaImageSeo } from '../utils/imageSeo';
 
 const BOOKING_API = 'https://script.google.com/macros/s/AKfycbzuvJ1h77RQyTPx9nz_CHjeisiOgvLhksHT60esWOh3BrHnUTVn_9xQrEH30Tv5op7s/exec';
 const WHATSAPP = '6282125492037';
@@ -749,6 +750,10 @@ export default {
     document.removeEventListener('click', this.onDocClick);
   },
   methods: {
+    villaImageSeo(v) {
+      if (!v) return { alt: '', title: '' };
+      return getVillaImageSeo(v.slug || v.name, 'thumbnail');
+    },
     priceLabelFor(v) {
       if (!v) return '';
       if (!this.isNormalPricePeriod) return v.priceLabel;

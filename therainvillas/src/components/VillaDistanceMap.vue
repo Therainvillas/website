@@ -198,6 +198,8 @@ function villaCardInfo(id) {
     name: loc.name,
     href: loc.href || '#',
     image: cat.image || '/pin.png',
+    imageAlt: loc.imageAlt || '',
+    imageTitle: loc.imageTitle || '',
     description: cat.description || '',
     driveLabel: driveLabelFor(loc.id),
   };
@@ -402,7 +404,7 @@ onBeforeUnmount(() => {
           role="region"
           aria-live="polite"
         >
-          <img class="vdm-location__media" :src="card.image" :alt="card.name" loading="lazy" />
+          <img class="vdm-location__media" :src="card.image" :alt="card.imageAlt || card.name" :title="card.imageTitle || null" loading="lazy" />
           <div class="vdm-location__content">
             <span class="vdm-location__dist">{{ card.driveLabel }}</span>
             <h4 class="vdm-location__name">{{ card.name }}</h4>

@@ -13,11 +13,13 @@ import interLatinUrl from '@fontsource-variable/inter/files/inter-latin-wght-nor
 import cinzelLatinUrl from '@fontsource-variable/cinzel/files/cinzel-latin-wght-normal.woff2?url';
 import FlashSalePopup from '../components/FlashSalePopup.astro';
 import { withTrailingSlash } from '../utils/url.js';
+import { getGeneralImageSeo } from '../utils/imageSeo';
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   /** Gambar hero halaman ini (varian kecil & besar) — akan di-preload. */
   preloadImage?: { sm?: string; lg?: string };
   /** Preload gambar responsif (mis. poster hero) dengan srcset agar LCP tidak menunggu parse. */
@@ -30,7 +32,8 @@ export interface Props {
 const {
   title = 'Sewa Villa Murah di Puncak, Private Pool & View Mewah | The Rain Villas',
   description = 'Cari sewa villa murah di Puncak untuk keluarga & gathering? Tersedia 30+ pilihan villa private pool kapasitas 20-50 orang. Booking aman, harga transparan!',
-  image = '/Agave/Cover.webp',
+  image,
+  imageAlt,
   preloadImage,
   preloadSrcset,
   ogType = 'website',
@@ -38,9 +41,15 @@ const {
   jsonLd = [],
 } = Astro.props;
 
+const ogGeneral = getGeneralImageSeo('og-image');
+const imagePath = image ?? ogGeneral.file ?? '/img/villas/villa-agave/villa-agave-cover.webp';
+const imageAltText = imageAlt ?? ogGeneral.alt;
 const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = new URL(withTrailingSlash(Astro.url.pathname), siteRoot).href;
-const shareImage = new URL(image, siteRoot).href;
+const shareImage = new URL(
+  /^(https?:)?\/\//.test(imagePath) || imagePath.startsWith('/') ? imagePath : `/${imagePath}`,
+  siteRoot,
+).href;
 const isHome = Astro.url.pathname === '/';
 const isAdminRoute = /^\/admin(\/|$)/.test(Astro.url.pathname);
 
@@ -143,10 +152,12 @@ const gaBootstrap = `
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={shareImage} />
+    <meta property="og:image:alt" content={imageAltText} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={shareImage} />
+    <meta name="twitter:image:alt" content={imageAltText} />
 
     <script is:inline>
       (function () {

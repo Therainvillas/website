@@ -1,11 +1,13 @@
 ---
 import { withTrailingSlash } from '../utils/url.js';
+import { getGeneralImageSeo } from '../utils/imageSeo';
 
 export interface Props {
   title: string;
   description: string;
   canonical?: string;
   image?: string;
+  imageAlt?: string;
   ogType?: string;
   noindex?: boolean;
 }
@@ -14,14 +16,21 @@ const {
   title,
   description,
   canonical,
-  image = '/Agave/Cover.webp',
+  image,
+  imageAlt,
   ogType = 'website',
   noindex = false,
 } = Astro.props;
 
+const ogGeneral = getGeneralImageSeo('og-image');
+const imagePath = image ?? ogGeneral.file ?? '/img/villas/villa-agave/villa-agave-cover.webp';
+const imageAltText = imageAlt ?? ogGeneral.alt;
 const siteRoot = Astro.site ?? new URL('https://therainvillas.com/');
 const canonicalUrl = canonical || new URL(withTrailingSlash(Astro.url.pathname), siteRoot).href;
-const shareImage = new URL(image, siteRoot).href;
+const shareImage = new URL(
+  /^(https?:)?\/\//.test(imagePath) || imagePath.startsWith('/') ? imagePath : `/${imagePath}`,
+  siteRoot,
+).href;
 ---
 
 <title>{title}</title>
@@ -36,8 +45,10 @@ const shareImage = new URL(image, siteRoot).href;
 <meta property="og:type" content={ogType} />
 <meta property="og:url" content={canonicalUrl} />
 <meta property="og:image" content={shareImage} />
+<meta property="og:image:alt" content={imageAltText} />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={shareImage} />
+<meta name="twitter:image:alt" content={imageAltText} />

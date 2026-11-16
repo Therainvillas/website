@@ -1,4 +1,9 @@
 ---
+import { getGeneralImageSeo } from '../utils/imageSeo';
+
+const headerLogoSeo = getGeneralImageSeo('logo-header');
+const headerLogoLightSeo = getGeneralImageSeo('logo-header-light');
+
 const navLinks = [
   {
     id: 'beranda',
@@ -59,10 +64,11 @@ const isLinkActive = (href: string) => {
   <div class="container header__inner">
     <a href="/" class="header__logo" aria-label="The Rain Villas beranda">
       <span class="header__logo-media">
-        <img src="/logo-header.webp" alt="The Rain Villas" width="144" height="80" class="header__logo-img header__logo-img--dark" />
+        <img src="/logo-header.webp" alt={headerLogoSeo.alt} title={headerLogoSeo.title} width="144" height="80" class="header__logo-img header__logo-img--dark" />
         <img
           src="/logo-header-light.webp"
-          alt=""
+          alt={headerLogoLightSeo.alt}
+          title={headerLogoLightSeo.title}
           aria-hidden="true"
           width="144"
           height="80"

@@ -119,7 +119,7 @@
       <div v-for="villa in paginated" :key="villa.id" class="vf__card-wrap">
         <a :href="villaHref(villa)" class="vf-card">
           <div class="vf-card__media">
-            <img :src="villa.image" :alt="villa.name" loading="lazy" />
+            <img :src="villa.image" :alt="villa.imageAlt || villa.name" :title="villa.imageTitle" loading="lazy" />
             <span v-if="villa.badge" class="vf-card__badge">{{ villa.badge }}</span>
             <span v-if="checkIn && isVillaAvailable(villa, checkIn)" class="vf-card__available">Tersedia</span>
             <span
@@ -362,7 +362,9 @@ export default {
       return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     },
     villaHref(villa) {
-      return withTrailingSlash(`/${this.slugify(villa.name)}`);
+      // `slug` sudah memuat nama + area ("villa-agave-batulayang-puncak").
+      const slug = villa.slug || this.slugify(villa.name);
+      return withTrailingSlash(`/${slug}`);
     },
     toggleDrop(name) {
       this.openDrop = this.openDrop === name ? null : name;

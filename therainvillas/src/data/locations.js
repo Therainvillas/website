@@ -9,6 +9,7 @@
  * Villa Arsy (id 11) memakai entri "Villa Griya Arsy" yang tercantum di maps.md.
  */
 import { withTrailingSlash } from '../utils/url.js';
+import { villas } from './villas.js';
 
 export const OFFICE = {
   id: 'office',
@@ -52,8 +53,10 @@ const locationData = [
   { id: 31, name: 'Villa Elora', lat: -6.6625425040113235, lng: 106.92399322501966, href: '/villa-elora', mapsUrl: 'https://maps.app.goo.gl/VKCL77QvgBWYMmBi9' },
 ];
 
-// Semua href villa keluar sebagai URL kanonik berslash ("/villa-agave/").
+// Semua href villa keluar sebagai URL kanonik berslash. Slug diambil dari
+// data villa (nama + area + "puncak") supaya tidak perlu disalin manual.
+const slugById = new Map(villas.map((v) => [v.id, v.slug]));
 export const locations = locationData.map((loc) => ({
   ...loc,
-  href: withTrailingSlash(loc.href),
+  href: withTrailingSlash(`/${slugById.get(loc.id) ?? loc.href.replace(/^\//, '')}`),
 }));

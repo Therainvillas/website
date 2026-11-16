@@ -1,0 +1,481 @@
+{
+  "villas": [
+    {
+      "slug": "villa-agave-batulayang-puncak",
+      "name": "Villa Agave",
+      "location": "Batulayang",
+      "url": "https://therainvillas.com/villa-agave-batulayang-puncak/",
+      "wheelImage": "img/card-wheel/villa-agave-batulayang-puncak.webp",
+      "suggestedFileName": "villa-agave-batulayang-puncak.webp",
+      "altThumbnail": "Villa Agave di Batulayang, Puncak dengan 3 bangunan, private pool, dan area billiard untuk 50 tamu",
+      "altWheel": "Foto Villa Agave Batulayang Puncak, villa 7 kamar kapasitas 50 orang",
+      "title": "Villa Agave – Sewa Villa Puncak 50 Orang"
+    },
+    {
+      "slug": "villa-wanela-sukagalih-puncak",
+      "name": "Villa Wanela",
+      "location": "Sukagalih",
+      "url": "https://therainvillas.com/villa-wanela-sukagalih-puncak/",
+      "wheelImage": "img/card-wheel/villa-wanela-sukagalih-puncak.webp",
+      "suggestedFileName": "villa-wanela-sukagalih-puncak.webp",
+      "altThumbnail": "Villa Wanela di Sukagalih, Puncak dengan private pool dan billiard untuk 20 tamu",
+      "altWheel": "Foto Villa Wanela Sukagalih Puncak, villa 2 kamar kapasitas 20 orang",
+      "title": "Villa Wanela – Sewa Villa Puncak 20 Orang"
+    },
+    {
+      "slug": "villa-cemara-cibeureum-puncak",
+      "name": "Villa Cemara",
+      "location": "Cibeureum",
+      "url": "https://therainvillas.com/villa-cemara-cibeureum-puncak/",
+      "wheelImage": "img/card-wheel/villa-cemara-cibeureum-puncak.webp",
+      "suggestedFileName": "villa-cemara-cibeureum-puncak.webp",
+      "altThumbnail": "Villa Cemara di Cibeureum, Puncak dengan private pool, balkon, dan halaman luas untuk 35 tamu",
+      "altWheel": "Foto Villa Cemara Cibeureum Puncak, villa 5 kamar kapasitas 35 orang",
+      "title": "Villa Cemara – Sewa Villa Puncak 35 Orang"
+    },
+    {
+      "slug": "villa-aleia-tugu-selatan-puncak",
+      "name": "Villa Aleia",
+      "location": "Tugu Selatan",
+      "url": "https://therainvillas.com/villa-aleia-tugu-selatan-puncak/",
+      "wheelImage": "img/card-wheel/villa-aleia-tugu-selatan-puncak.webp",
+      "suggestedFileName": "villa-aleia-tugu-selatan-puncak.webp",
+      "altThumbnail": "Villa Aleia di Tugu Selatan, Puncak dengan private pool, gazebo, dan kitchen set untuk 30 tamu",
+      "altWheel": "Foto Villa Aleia Tugu Selatan Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Aleia – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-4d-tugu-selatan-puncak",
+      "name": "Villa 4D",
+      "location": "Tugu Selatan",
+      "url": "https://therainvillas.com/villa-4d-tugu-selatan-puncak/",
+      "wheelImage": "img/card-wheel/villa-4d-tugu-selatan-puncak.webp",
+      "suggestedFileName": "villa-4d-tugu-selatan-puncak.webp",
+      "altThumbnail": "Villa 4D di Tugu Selatan, Puncak dengan konsep cafe, private pool, dan billiard untuk 30 tamu",
+      "altWheel": "Foto Villa 4D Tugu Selatan Puncak, villa 4 kamar kapasitas 30 orang",
+      "title": "Villa 4D – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-calmora-tugu-utara-puncak",
+      "name": "Villa Calmora",
+      "location": "Tugu Utara",
+      "url": "https://therainvillas.com/villa-calmora-tugu-utara-puncak/",
+      "wheelImage": "img/card-wheel/villa-calmora-tugu-utara-puncak.webp",
+      "suggestedFileName": "villa-calmora-tugu-utara-puncak.webp",
+      "altThumbnail": "Villa Calmora di Tugu Utara, Puncak dengan private pool, gazebo, dan view pegunungan untuk 40 tamu",
+      "altWheel": "Foto Villa Calmora Tugu Utara Puncak, villa 5 kamar kapasitas 40 orang",
+      "title": "Villa Calmora – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-twins-batulayang-puncak",
+      "name": "Villa Twins",
+      "location": "Batulayang",
+      "url": "https://therainvillas.com/villa-twins-batulayang-puncak/",
+      "wheelImage": "img/card-wheel/villa-twins-batulayang-puncak.webp",
+      "suggestedFileName": "villa-twins-batulayang-puncak.webp",
+      "altThumbnail": "Villa Twins di Batulayang, Puncak dengan lapangan basket, playground, dan 2 glamping untuk 30 tamu",
+      "altWheel": "Foto Villa Twins Batulayang Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Twins – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-cyrena-cibeureum-puncak",
+      "name": "Villa Cyrena",
+      "location": "Cibeureum",
+      "url": "https://therainvillas.com/villa-cyrena-cibeureum-puncak/",
+      "wheelImage": "img/card-wheel/villa-cyrena-cibeureum-puncak.webp",
+      "suggestedFileName": "villa-cyrena-cibeureum-puncak.webp",
+      "altThumbnail": "Villa Cyrena di Cibeureum, Puncak dengan private pool dan area bersantai untuk 30 tamu",
+      "altWheel": "Foto Villa Cyrena Cibeureum Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Cyrena – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-arisyfa-cibeureum-puncak",
+      "name": "Villa Arisyfa",
+      "location": "Cibeureum",
+      "url": "https://therainvillas.com/villa-arisyfa-cibeureum-puncak/",
+      "wheelImage": "img/card-wheel/villa-arisyfa-cibeureum-puncak.webp",
+      "suggestedFileName": "villa-arisyfa-cibeureum-puncak.webp",
+      "altThumbnail": "Villa Arisyfa di Cibeureum, Puncak dengan 3 lantai, lapangan badminton, dan private pool untuk 40 tamu",
+      "altWheel": "Foto Villa Arisyfa Cibeureum Puncak, villa 5 kamar kapasitas 40 orang",
+      "title": "Villa Arisyfa – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-cempaka-tugu-utara-puncak",
+      "name": "Villa Cempaka",
+      "location": "Tugu Utara",
+      "url": "https://therainvillas.com/villa-cempaka-tugu-utara-puncak/",
+      "wheelImage": "img/card-wheel/villa-cempaka-tugu-utara-puncak.webp",
+      "suggestedFileName": "villa-cempaka-tugu-utara-puncak.webp",
+      "altThumbnail": "Villa Cempaka di Tugu Utara, Puncak dengan arsitektur klasik Eropa dan private pool untuk 30 tamu",
+      "altWheel": "Foto Villa Cempaka Tugu Utara Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Cempaka – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-arsy-leuwimalang-puncak",
+      "name": "Villa Arsy",
+      "location": "Leuwimalang",
+      "url": "https://therainvillas.com/villa-arsy-leuwimalang-puncak/",
+      "wheelImage": "img/card-wheel/villa-arsy-leuwimalang-puncak.webp",
+      "suggestedFileName": "villa-arsy-leuwimalang-puncak.webp",
+      "altThumbnail": "Villa Arsy di Leuwimalang, Puncak dengan private pool dan mushola untuk 40 tamu",
+      "altWheel": "Foto Villa Arsy Leuwimalang Puncak, villa 4 kamar kapasitas 40 orang",
+      "title": "Villa Arsy – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-rayya-batulayang-puncak",
+      "name": "Villa Rayya",
+      "location": "Batulayang",
+      "url": "https://therainvillas.com/villa-rayya-batulayang-puncak/",
+      "wheelImage": "img/card-wheel/villa-rayya-batulayang-puncak.webp",
+      "suggestedFileName": "villa-rayya-batulayang-puncak.webp",
+      "altThumbnail": "Villa Rayya di Batulayang, Puncak dengan 2 lantai, api unggun, playground, dan private pool untuk 40 tamu",
+      "altWheel": "Foto Villa Rayya Batulayang Puncak, villa 4 kamar kapasitas 40 orang",
+      "title": "Villa Rayya – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-opung-sukaresmi-puncak",
+      "name": "Villa Opung",
+      "location": "Sukaresmi",
+      "url": "https://therainvillas.com/villa-opung-sukaresmi-puncak/",
+      "wheelImage": "img/card-wheel/villa-opung-sukaresmi-puncak.webp",
+      "suggestedFileName": "villa-opung-sukaresmi-puncak.webp",
+      "altThumbnail": "Villa Opung di Sukaresmi, Puncak dengan private pool, billiard, dan halaman luas untuk 30 tamu",
+      "altWheel": "Foto Villa Opung Sukaresmi Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Opung – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "rjs-cottage-1-kuta-puncak",
+      "name": "Rjs Cottage 1",
+      "location": "Kuta",
+      "url": "https://therainvillas.com/rjs-cottage-1-kuta-puncak/",
+      "wheelImage": "img/card-wheel/rjs-cottage-1-kuta-puncak.webp",
+      "suggestedFileName": "rjs-cottage-1-kuta-puncak.webp",
+      "altThumbnail": "Rjs Cottage 1 di Kuta, Puncak dengan private pool, gazebo, dan halaman luas untuk 20 tamu",
+      "altWheel": "Foto Rjs Cottage 1 Kuta Puncak, villa 3 kamar kapasitas 20 orang",
+      "title": "Rjs Cottage 1 – Sewa Villa Puncak 20 Orang"
+    },
+    {
+      "slug": "rjs-cottage-2-kuta-puncak",
+      "name": "Rjs Cottage 2",
+      "location": "Kuta",
+      "url": "https://therainvillas.com/rjs-cottage-2-kuta-puncak/",
+      "wheelImage": "img/card-wheel/rjs-cottage-2-kuta-puncak.webp",
+      "suggestedFileName": "rjs-cottage-2-kuta-puncak.webp",
+      "altThumbnail": "Rjs Cottage 2 di Kuta, Puncak dengan private pool dan chill space untuk 25 tamu",
+      "altWheel": "Foto Rjs Cottage 2 Kuta Puncak, villa 3 kamar kapasitas 25 orang",
+      "title": "Rjs Cottage 2 – Sewa Villa Puncak 25 Orang"
+    },
+    {
+      "slug": "rjs-cottage-3-kuta-puncak",
+      "name": "Rjs Cottage 3",
+      "location": "Kuta",
+      "url": "https://therainvillas.com/rjs-cottage-3-kuta-puncak/",
+      "wheelImage": "img/card-wheel/rjs-cottage-3-kuta-puncak.webp",
+      "suggestedFileName": "rjs-cottage-3-kuta-puncak.webp",
+      "altThumbnail": "Rjs Cottage 3 di Kuta, Puncak dengan private pool dan chill space untuk 25 tamu",
+      "altWheel": "Foto Rjs Cottage 3 Kuta Puncak, villa 3 kamar kapasitas 25 orang",
+      "title": "Rjs Cottage 3 – Sewa Villa Puncak 25 Orang"
+    },
+    {
+      "slug": "villa-kaca-1-tugu-utara-puncak",
+      "name": "Villa Kaca 1",
+      "location": "Tugu Utara",
+      "url": "https://therainvillas.com/villa-kaca-1-tugu-utara-puncak/",
+      "wheelImage": "img/card-wheel/villa-kaca-1-tugu-utara-puncak.webp",
+      "suggestedFileName": "villa-kaca-1-tugu-utara-puncak.webp",
+      "altThumbnail": "Villa Kaca 1 di Tugu Utara, Puncak dengan gazebo, billiard, dan private pool untuk 40 tamu",
+      "altWheel": "Foto Villa Kaca 1 Tugu Utara Puncak, villa 7 kamar kapasitas 40 orang",
+      "title": "Villa Kaca 1 – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-kaca-2-tugu-utara-puncak",
+      "name": "Villa Kaca 2",
+      "location": "Tugu Utara",
+      "url": "https://therainvillas.com/villa-kaca-2-tugu-utara-puncak/",
+      "wheelImage": "img/card-wheel/villa-kaca-2-tugu-utara-puncak.webp",
+      "suggestedFileName": "villa-kaca-2-tugu-utara-puncak.webp",
+      "altThumbnail": "Villa Kaca 2 di Tugu Utara, Puncak dengan karaoke, billiard, dan chill space untuk 25 tamu",
+      "altWheel": "Foto Villa Kaca 2 Tugu Utara Puncak, villa 4 kamar kapasitas 25 orang",
+      "title": "Villa Kaca 2 – Sewa Villa Puncak 25 Orang"
+    },
+    {
+      "slug": "villa-de-summit-cibeureum-puncak",
+      "name": "Villa De Summit",
+      "location": "Cibeureum",
+      "url": "https://therainvillas.com/villa-de-summit-cibeureum-puncak/",
+      "wheelImage": "img/card-wheel/villa-de-summit-cibeureum-puncak.webp",
+      "suggestedFileName": "villa-de-summit-cibeureum-puncak.webp",
+      "altThumbnail": "Villa De Summit di Cibeureum, Puncak dengan pendopo view 360, private pool, dan api unggun untuk 40 tamu",
+      "altWheel": "Foto Villa De Summit Cibeureum Puncak, villa 4 kamar kapasitas 40 orang",
+      "title": "Villa De Summit – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-bodas-kopo-puncak",
+      "name": "Villa Bodas",
+      "location": "Kopo",
+      "url": "https://therainvillas.com/villa-bodas-kopo-puncak/",
+      "wheelImage": "img/card-wheel/villa-bodas-kopo-puncak.webp",
+      "suggestedFileName": "villa-bodas-kopo-puncak.webp",
+      "altThumbnail": "Villa Bodas di Kopo, Puncak dengan mushola, private pool, dan halaman luas untuk 50 tamu",
+      "altWheel": "Foto Villa Bodas Kopo Puncak, villa 6 kamar kapasitas 50 orang",
+      "title": "Villa Bodas – Sewa Villa Puncak 50 Orang"
+    },
+    {
+      "slug": "villa-thymi-tugu-utara-puncak",
+      "name": "Villa Thymi",
+      "location": "Tugu Utara",
+      "url": "https://therainvillas.com/villa-thymi-tugu-utara-puncak/",
+      "wheelImage": "img/card-wheel/villa-thymi-tugu-utara-puncak.webp",
+      "suggestedFileName": "villa-thymi-tugu-utara-puncak.webp",
+      "altThumbnail": "Villa Thymi di Tugu Utara, Puncak dengan mountain view, playground, gazebo, dan private pool untuk 40 tamu",
+      "altWheel": "Foto Villa Thymi Tugu Utara Puncak, villa 6 kamar kapasitas 40 orang",
+      "title": "Villa Thymi – Sewa Villa Puncak 40 Orang"
+    },
+    {
+      "slug": "villa-albi-cipayung-datar-puncak",
+      "name": "Villa Albi",
+      "location": "Cipayung Datar",
+      "url": "https://therainvillas.com/villa-albi-cipayung-datar-puncak/",
+      "wheelImage": "img/card-wheel/villa-albi-cipayung-datar-puncak.webp",
+      "suggestedFileName": "villa-albi-cipayung-datar-puncak.webp",
+      "altThumbnail": "Villa Albi di Cipayung Datar, Puncak dengan view pegunungan, private pool, dan chill space untuk 30 tamu",
+      "altWheel": "Foto Villa Albi Cipayung Datar Puncak, villa 4 kamar kapasitas 30 orang",
+      "title": "Villa Albi – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-valora-sukagalih-puncak",
+      "name": "Villa Valora",
+      "location": "Sukagalih",
+      "url": "https://therainvillas.com/villa-valora-sukagalih-puncak/",
+      "wheelImage": "img/card-wheel/villa-valora-sukagalih-puncak.webp",
+      "suggestedFileName": "villa-valora-sukagalih-puncak.webp",
+      "altThumbnail": "Villa Valora di Sukagalih, Puncak dengan mountain view, private pool, karaoke, dan billiard untuk 25 tamu",
+      "altWheel": "Foto Villa Valora Sukagalih Puncak, villa 2 kamar kapasitas 25 orang",
+      "title": "Villa Valora – Sewa Villa Puncak 25 Orang"
+    },
+    {
+      "slug": "echa-village-jogjogan-puncak",
+      "name": "Echa Village",
+      "location": "Jogjogan",
+      "url": "https://therainvillas.com/echa-village-jogjogan-puncak/",
+      "wheelImage": "img/card-wheel/echa-village-jogjogan-puncak.webp",
+      "suggestedFileName": "echa-village-jogjogan-puncak.webp",
+      "altThumbnail": "Echa Village di Jogjogan, Puncak dengan 3 lantai, rooftop, karaoke, dan private pool untuk 30 tamu",
+      "altWheel": "Foto Echa Village Jogjogan Puncak, villa 4 kamar kapasitas 30 orang",
+      "title": "Echa Village – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-awan-citeko-puncak",
+      "name": "Villa Awan",
+      "location": "Citeko",
+      "url": "https://therainvillas.com/villa-awan-citeko-puncak/",
+      "wheelImage": "img/card-wheel/villa-awan-citeko-puncak.webp",
+      "suggestedFileName": "villa-awan-citeko-puncak.webp",
+      "altThumbnail": "Villa Awan di Citeko, Puncak dengan private pool, karaoke, dan halaman luas untuk 30 tamu",
+      "altWheel": "Foto Villa Awan Citeko Puncak, villa 4 kamar kapasitas 30 orang",
+      "title": "Villa Awan – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-baduo-jogjogan-puncak",
+      "name": "Villa Baduo",
+      "location": "Jogjogan",
+      "url": "https://therainvillas.com/villa-baduo-jogjogan-puncak/",
+      "wheelImage": "img/card-wheel/villa-baduo-jogjogan-puncak.webp",
+      "suggestedFileName": "villa-baduo-jogjogan-puncak.webp",
+      "altThumbnail": "Villa Baduo di Jogjogan, Puncak dengan mushola, playground, karaoke, dan private pool untuk 35 tamu",
+      "altWheel": "Foto Villa Baduo Jogjogan Puncak, villa 5 kamar kapasitas 35 orang",
+      "title": "Villa Baduo – Sewa Villa Puncak 35 Orang"
+    },
+    {
+      "slug": "villa-hala-tugu-utara-puncak",
+      "name": "Villa Hala",
+      "location": "Tugu Utara",
+      "url": "https://therainvillas.com/villa-hala-tugu-utara-puncak/",
+      "wheelImage": "img/card-wheel/villa-hala-tugu-utara-puncak.webp",
+      "suggestedFileName": "villa-hala-tugu-utara-puncak.webp",
+      "altThumbnail": "Villa Hala di Tugu Utara, Puncak dengan 3 lantai, tenis meja, balkon, dan private pool untuk 35 tamu",
+      "altWheel": "Foto Villa Hala Tugu Utara Puncak, villa 5 kamar kapasitas 35 orang",
+      "title": "Villa Hala – Sewa Villa Puncak 35 Orang"
+    },
+    {
+      "slug": "villa-ranna-kopo-puncak",
+      "name": "Villa Ranna",
+      "location": "Kopo",
+      "url": "https://therainvillas.com/villa-ranna-kopo-puncak/",
+      "wheelImage": "img/card-wheel/villa-ranna-kopo-puncak.webp",
+      "suggestedFileName": "villa-ranna-kopo-puncak.webp",
+      "altThumbnail": "Villa Ranna di Kopo, Puncak dengan queen bed, private pool, karaoke, dan chill space untuk 30 tamu",
+      "altWheel": "Foto Villa Ranna Kopo Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Ranna – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "villa-rio-5-citeko-puncak",
+      "name": "Villa Rio 5",
+      "location": "Citeko",
+      "url": "https://therainvillas.com/villa-rio-5-citeko-puncak/",
+      "wheelImage": "img/card-wheel/villa-rio-5-citeko-puncak.webp",
+      "suggestedFileName": "villa-rio-5-citeko-puncak.webp",
+      "altThumbnail": "Villa Rio 5 di Citeko, Puncak dengan lapangan mini soccer, gazebo, dan private pool untuk 30 tamu",
+      "altWheel": "Foto Villa Rio 5 Citeko Puncak, villa 3 kamar kapasitas 30 orang",
+      "title": "Villa Rio 5 – Sewa Villa Puncak 30 Orang"
+    },
+    {
+      "slug": "the-herlina-cilember-puncak",
+      "name": "The Herlina",
+      "location": "Cilember",
+      "url": "https://therainvillas.com/the-herlina-cilember-puncak/",
+      "wheelImage": "img/card-wheel/the-herlina-cilember-puncak.webp",
+      "suggestedFileName": "the-herlina-cilember-puncak.webp",
+      "altThumbnail": "The Herlina di Cilember, Puncak dengan billiard, private pool, dan halaman luas untuk 50 tamu",
+      "altWheel": "Foto The Herlina Cilember Puncak, villa 5 kamar kapasitas 50 orang",
+      "title": "The Herlina – Sewa Villa Puncak 50 Orang"
+    },
+    {
+      "slug": "villa-elora-leuwimalang-puncak",
+      "name": "Villa Elora",
+      "location": "Leuwimalang",
+      "url": "https://therainvillas.com/villa-elora-leuwimalang-puncak/",
+      "wheelImage": "img/card-wheel/villa-elora-leuwimalang-puncak.webp",
+      "suggestedFileName": "villa-elora-leuwimalang-puncak.webp",
+      "altThumbnail": "Villa Elora di Leuwimalang, Puncak dengan karaoke, billiard, dan chill space untuk 25 tamu",
+      "altWheel": "Foto Villa Elora Leuwimalang Puncak, villa 3 kamar kapasitas 25 orang",
+      "title": "Villa Elora – Sewa Villa Puncak 25 Orang"
+    }
+  ],
+  "general": [
+    {
+      "label": "Hero homepage",
+      "file": "_astro/display-poster.BTMkx7Jz_Z2uYcv2.webp",
+      "alt": "Villa private pool dengan view pegunungan di Puncak, Cisarua",
+      "title": "Sewa Villa Puncak Private Pool – The Rain Villas",
+      "note": "Saat ini alt kosong. Sesuaikan dengan isi foto hero yang sebenarnya.",
+      "key": "hero"
+    },
+    {
+      "label": "Logo header",
+      "file": "logo-header.webp",
+      "alt": "Logo The Rain Villas",
+      "title": "The Rain Villas – Sewa Villa Puncak",
+      "note": "Saat ini alt sudah \"The Rain Villas\". Boleh dibiarkan.",
+      "key": "logo-header"
+    },
+    {
+      "label": "Logo header (mode terang)",
+      "file": "logo-header-light.webp",
+      "alt": "Logo The Rain Villas versi terang",
+      "title": "The Rain Villas – Sewa Villa Puncak",
+      "note": "Saat ini alt kosong. Isi sama dengan logo header.",
+      "key": "logo-header-light"
+    },
+    {
+      "label": "Ilustrasi cara booking",
+      "file": "man-phone.webp",
+      "alt": "Booking villa Puncak lewat WhatsApp The Rain Villas",
+      "title": "Cara Booking Villa Puncak",
+      "note": "Saat ini alt kosong.",
+      "key": "man-phone"
+    },
+    {
+      "label": "Logo footer",
+      "file": "logo-footer.webp",
+      "alt": "Logo The Rain Villas di footer",
+      "title": "The Rain Villas",
+      "note": "Saat ini alt \"The Rain Villas\".",
+      "key": "logo-footer"
+    },
+    {
+      "label": "Gambar share (og:image)",
+      "file": "img/villas/villa-agave/villa-agave-cover.webp",
+      "alt": "Villa private pool di Puncak – The Rain Villas",
+      "title": "Sewa Villa Murah Puncak Private Pool | The Rain Villas",
+      "note": "Ini meta og:image:alt. Saat ini memakai cover Villa Agave. Sebaiknya diganti gambar brand/umum.",
+      "key": "og-image"
+    },
+    {
+      "key": "about-interior",
+      "label": "Foto villa di bagian Tentang Kami",
+      "file": "img/villas/villa-calmora/villa-calmora-cover.webp",
+      "alt": "Villa Calmora dengan private pool di Puncak",
+      "title": "Villa Private Pool di Puncak",
+      "note": "Dipakai di AboutSection halaman Tentang."
+    },
+    {
+      "key": "team",
+      "label": "Foto tim The Rain Villas",
+      "file": "foto-team.webp",
+      "alt": "Tim The Rain Villas",
+      "title": "Tim The Rain Villas",
+      "note": "Dipakai di TeamSection halaman Tentang."
+    },
+    {
+      "key": "flash-sale",
+      "label": "Gambar popup promo paket 2 malam Tahun Baru 2027",
+      "file": "promo/promo-2-malam-1200.webp",
+      "alt": "Promo paket 2 malam Tahun Baru 2027 The Rain Villas lebih murah dari 1 malam",
+      "title": "Promo Paket 2 Malam Tahun Baru 2027 – The Rain Villas",
+      "note": "Dipakai di FlashSalePopup. Varian 800px untuk layar kecil."
+    }
+  ],
+  "galleryTemplates": [
+    {
+      "type": "Tampak depan",
+      "altPattern": "Tampak depan {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-tampak-depan.webp"
+    },
+    {
+      "type": "Kolam renang",
+      "altPattern": "Kolam renang private {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-kolam-renang-private.webp"
+    },
+    {
+      "type": "Kamar tidur",
+      "altPattern": "Kamar tidur {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-kamar-tidur.webp"
+    },
+    {
+      "type": "Ruang tamu",
+      "altPattern": "Ruang tamu {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-ruang-tamu.webp"
+    },
+    {
+      "type": "Billiard",
+      "altPattern": "Area billiard {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-area-billiard.webp"
+    },
+    {
+      "type": "Karaoke",
+      "altPattern": "Ruang karaoke {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-ruang-karaoke.webp"
+    },
+    {
+      "type": "Gazebo / BBQ",
+      "altPattern": "Gazebo dan area BBQ {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-gazebo-bbq.webp"
+    },
+    {
+      "type": "Playground",
+      "altPattern": "Playground anak di {Nama Villa} {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-playground.webp"
+    },
+    {
+      "type": "Pemandangan",
+      "altPattern": "Pemandangan pegunungan dari {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-view-pegunungan.webp"
+    },
+    {
+      "type": "Dapur",
+      "altPattern": "Dapur dan kitchen set {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-dapur.webp"
+    },
+    {
+      "type": "Kamar mandi",
+      "altPattern": "Kamar mandi {Nama Villa} dengan water heater, {Lokasi} Puncak",
+      "fileNamePattern": "{slug}-kamar-mandi.webp"
+    },
+    {
+      "type": "Parkir / halaman",
+      "altPattern": "Halaman dan area parkir {Nama Villa} di {Lokasi}, Puncak",
+      "fileNamePattern": "{slug}-halaman-parkir.webp"
+    }
+  ]
+}

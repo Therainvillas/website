@@ -1,172 +1,611 @@
 ---
 // Popup promo Paket 2 Malam Tahun Baru 2027.
 //
-// Dulu komponen ini Vue (client:idle) sehingga seluruh runtime Vue (~33 KB gzip)
-// ikut diunduh di halaman depan hanya untuk sebuah modal. Markup, teks, dan gaya
-// di bawah ini identik dengan versi Vue; interaksinya ditangani script vanilla
-// kecil agar first paint / TBT tetap ringan.
+// Versi baru (tema malam tahun baru): latar navy + bintang, bukit + rumah
+// menyala, konfeti, angka 2027 Playfair, dan kembang api canvas.
+// Tanpa hitung mundur. Markup, gaya, dan script vanilla (tanpa library).
 import { getGeneralImageSeo } from '../utils/imageSeo';
 
 const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
 ---
 
-<div class="flash-popup" data-flash-popup hidden>
-  <div
-    class="flash-popup__modal"
-    data-flash-modal
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="flash-sale-title"
-    aria-describedby="flash-sale-desc"
-  >
-    <button
-      type="button"
-      class="flash-popup__close"
-      data-flash-close
-      aria-label="Tutup popup promo paket 2 malam Tahun Baru 2027"
-    >
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
-        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+<div
+  class="ny-pop"
+  id="nyPromo"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="nyTitle"
+  aria-describedby="nyOffer"
+  hidden
+>
+  <div class="ny-confetti" id="nyConfetti" aria-hidden="true"></div>
+
+  <svg class="ny-hills" viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path
+      d="M0 120C120 70 240 90 360 110C500 135 600 60 760 70C920 80 1040 130 1180 100C1300 75 1380 90 1440 105V200H0Z"
+      fill="#0d1230"></path>
+    <path d="M0 150C200 118 360 150 520 150H1120C1240 150 1340 125 1440 140V200H0Z" fill="#060817"></path>
+    <path d="M990 150V132H1050V150ZM984 132L1020 110L1056 132Z" fill="#060817"></path>
+    <rect class="ny-light" x="1008" y="138" width="9" height="8" fill="#ffd479"></rect>
+    <rect class="ny-light" x="1026" y="138" width="9" height="8" fill="#ffd479" style="animation-delay:-1.3s"></rect>
+  </svg>
+
+  <div class="ny-card" id="nyCard" tabindex="-1">
+    <button class="ny-x" id="nyClose" type="button" aria-label="Tutup promo">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M2 2l10 10M12 2L2 12"></path>
       </svg>
     </button>
 
-    <figure class="flash-popup__hero">
-      <picture>
-        <source data-flash-source media="(max-width: 560px)" />
+    <div class="ny-scroll">
+      <!-- Gambar promo tampil utuh (tidak dipotong). Sembunyikan otomatis bila gagal dimuat. -->
+      <figure class="ny-figure" id="nyFigure">
         <img
-          data-flash-img
+          class="ny-img"
+          id="nyImg"
           alt={flashSaleImageSeo.alt}
           title={flashSaleImageSeo.title}
-          class="flash-popup__img"
           width="1200"
           height="848"
           decoding="async"
         />
-      </picture>
-      <div class="flash-popup__fireworks" aria-hidden="true">
-        <span class="flash-popup__fw flash-popup__fw--1"></span>
-        <span class="flash-popup__fw flash-popup__fw--2"></span>
-        <span class="flash-popup__fw flash-popup__fw--3"></span>
-        <span class="flash-popup__fw flash-popup__fw--4"></span>
-      </div>
-    </figure>
+      </figure>
 
-    <div class="flash-popup__panel">
-      <p class="flash-popup__kicker">
-        <span class="flash-popup__dot" aria-hidden="true"></span>
-        <span id="flash-sale-title">Paket 2 Malam · Tahun Baru 2027</span>
-      </p>
+      <div class="ny-body">
+        <!-- EDIT teks promo di sini -->
+        <p class="ny-kicker">Paket 2 Malam · Tahun Baru 2027</p>
+        <div class="ny-year" role="img" aria-label="2027">
+          <span style="--i:0">2</span><span style="--i:1">0</span><span style="--i:2">2</span><span style="--i:3">7</span>
+        </div>
 
-      <p id="flash-sale-desc" class="flash-popup__headline">
-        Paket 2 malam lebih murah dibanding menginap 1 malam untuk Tahun Baru
-      </p>
+        <h2 class="ny-title" id="nyTitle">Malam Tahun Baru di Puncak</h2>
+        <p class="ny-offer" id="nyOffer">
+          <b>Paket 2 malam</b> lebih murah dibanding menginap 1 malam untuk Tahun Baru.
+        </p>
 
-      <div class="flash-popup__actions">
         <a
+          class="ny-cta"
+          id="nyCta"
           href="https://wa.me/6282125492037?text=Halo%20The%20Rain%20Villas%2C%20saya%20ingin%20tanya%20promo%20paket%202%20malam%20Tahun%20Baru%202027."
           target="_blank"
           rel="noopener"
-          class="flash-popup__btn flash-popup__btn--primary"
-          data-flash-close
         >
           Tanya Paket 2 Malam
         </a>
-        <a href="/our-villas/" class="flash-popup__btn" data-flash-close>Lihat Villa</a>
+        <button class="ny-later" id="nyLater" type="button">Nanti saja</button>
+        <p class="ny-note">Kuota terbatas · menginap 30–31 Desember 2026</p>
       </div>
     </div>
   </div>
+
+  <canvas class="ny-fx" id="nyFx" aria-hidden="true"></canvas>
 </div>
 
 <script>
   (() => {
-    // Popup dianggap sudah ditutup hanya untuk sesi browser ini. Saat halaman
-    // di-refresh, popup sengaja ditampilkan lagi; saat pindah halaman biasa
-    // dalam sesi yang sama, popup tidak muncul ulang.
+    const root = document.getElementById('nyPromo');
+    if (!root) return;
+
+    /* === Pengaturan (EDIT DI SINI) === */
+    const CONFIG = {
+      image: '/promo/promo-2-malam-1200.webp', // '' = sembunyikan slot gambar
+      imageSmall: '/promo/promo-2-malam-800.webp',
+      imageMaxWidthPx: 440,
+      hideAfter: '2026-12-30T00:00:00+07:00', // setelah paket mulai, popup berhenti muncul
+      delayMs: 1200, // jeda sebelum popup muncul
+      respectReducedMotion: false, // true = matikan kembang api/konfeti saat OS reduce-motion
+    };
+
+    const card = document.getElementById('nyCard');
+    const xBtn = document.getElementById('nyClose');
+    const cta = document.getElementById('nyCta');
+    const later = document.getElementById('nyLater');
+    const figure = document.getElementById('nyFigure');
+    const img = document.getElementById('nyImg');
+    const cv = document.getElementById('nyFx');
+    const ctx = cv ? cv.getContext('2d') : null;
+
+    const mqReduce = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    const forceFx = /[?&](fx|fireworks)\b/.test(location.search);
+    let reduce = !!(mqReduce && mqReduce.matches) && CONFIG.respectReducedMotion && !forceFx;
+    const debug = /[?&]debug\b/.test(location.search);
+    root.classList.toggle('ny-anim-on', !reduce);
+
     const DISMISS_KEY = 'trv_promo_ny2027_dismissed';
-    const SHOW_DELAY_MS = 900;
 
-    const popup = document.querySelector('[data-flash-popup]');
-    if (!popup) return;
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
 
-    const modal = popup.querySelector('[data-flash-modal]');
-    const closeBtn = popup.querySelector('.flash-popup__close');
-    const img = popup.querySelector('[data-flash-img]');
-    const source = popup.querySelector('[data-flash-source]');
+    /* ---------- Gambar promo ---------- */
+    function imageSources() {
+      if (!CONFIG.image) return null;
+      return {
+        src: CONFIG.image,
+        srcset: CONFIG.imageSmall
+          ? `${CONFIG.imageSmall} 800w, ${CONFIG.image} 1200w`
+          : undefined,
+      };
+    }
 
-    let visible = false;
-    let revealTimer = 0;
-    let closeTimer = 0;
-    let lastFocused = null;
-    let prevOverflow = '';
-    let prevPaddingRight = '';
-    let bodyLocked = false;
+    function preloadImage() {
+      const src = imageSources();
+      if (!src) return;
+      const im = new Image();
+      if (src.srcset) {
+        im.srcset = src.srcset;
+        im.sizes = `(max-width: 560px) 92vw, ${CONFIG.imageMaxWidthPx}px`;
+      }
+      im.src = src.src;
+    }
 
-    /** true bila halaman ini dibuka lewat refresh/reload, bukan navigasi biasa. */
-    function isReload() {
-      try {
-        const [nav] = performance.getEntriesByType('navigation');
-        if (nav && nav.type) return nav.type === 'reload';
-        return Boolean(performance.navigation) && performance.navigation.type === 1;
-      } catch (error) {
-        return false;
+    function applyImage() {
+      const src = imageSources();
+      if (!src) {
+        figure.hidden = true;
+        return;
+      }
+      if (src.srcset) {
+        img.srcset = src.srcset;
+        img.sizes = `(max-width: 560px) 92vw, ${CONFIG.imageMaxWidthPx}px`;
+      }
+      img.src = src.src;
+      img.addEventListener('error', () => {
+        figure.hidden = true;
+      });
+    }
+
+    /* ---------- Kembang api ---------- */
+    let W = 0;
+    let H = 0;
+    let S = 1;
+    let parts = [];
+    let rockets = [];
+    let raf = 0;
+    let last = 0;
+    let next = 0;
+    let running = false;
+    let frames = 0;
+    let drawn = 0;
+    let ticker = 0;
+    let debugEl = null;
+
+    const PAL = [
+      ['#ffd479', '#ffb347'],
+      ['#ff6f91', '#ffb0c2'],
+      ['#7fe7ff', '#4fb8ff'],
+      ['#fff6e0', '#f3dca4'],
+      ['#9dffb0', '#4fe39a'],
+      ['#c9a6ff', '#8f7bff'],
+    ];
+
+    function badge() {
+      if (!debug || debugEl || !ctx) return;
+      debugEl = document.createElement('div');
+      debugEl.style.cssText =
+        'position:fixed;left:8px;bottom:8px;z-index:100000;font:11px/1.5 monospace;color:#fff;' +
+        'background:rgba(0,0,0,.75);padding:6px 8px;border-radius:8px;max-width:74vw;white-space:pre;pointer-events:none';
+      document.body.appendChild(debugEl);
+      setInterval(() => {
+        debugEl.textContent = [
+          `reduce=${reduce ? 1 : 0}  animon=${root.classList.contains('ny-anim-on') ? 1 : 0}  instant=${
+            root.classList.contains('ny-instant') ? 1 : 0
+          }`,
+          `open=${!root.hidden && root.classList.contains('is-open') ? 1 : 0}  canvas=${W}x${H}  rafFrames=${frames}  draws=${drawn}`,
+          `parts=${parts.length}  rockets=${rockets.length}  reduceCSS=${mqReduce && mqReduce.matches ? 1 : 0}`,
+        ].join('\n');
+      }, 250);
+    }
+
+    function size() {
+      if (!ctx) return;
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      W = cv.clientWidth || window.innerWidth || 0;
+      H = cv.clientHeight || window.innerHeight || 0;
+      cv.width = Math.max(1, W * d);
+      cv.height = Math.max(1, H * d);
+      ctx.setTransform(d, 0, 0, d, 0, 0);
+      S = Math.max(0.55, Math.min(1.3, Math.min(W, H) / 720));
+    }
+
+    function launch(tx, ty, wait, type, dur) {
+      const x1 = tx == null ? rnd(W * 0.1, W * 0.9) : tx;
+      const y1 = ty == null ? rnd(H * 0.1, H * 0.45) : ty;
+      const x0 = tx == null ? x1 + rnd(-70, 70) : W / 2 + (tx - W / 2) * 0.6;
+      rockets.push({
+        x0,
+        y0: H - 30,
+        x1,
+        y1,
+        p: 0,
+        dur: dur || rnd(0.8, 1.15),
+        wait: wait || 0,
+        type,
+        pal: pick(PAL),
+        px: x0,
+        py: H - 30,
+      });
+    }
+
+    function spark(x, y) {
+      parts.push({
+        x,
+        y,
+        px: x,
+        py: y,
+        vx: rnd(-0.6, 0.6),
+        vy: rnd(0.2, 1.2),
+        life: 1,
+        decay: rnd(0.05, 0.09),
+        size: 1.2,
+        c: '#ffd9a0',
+        g: 0.04,
+        f: 0.96,
+      });
+    }
+
+    function burst(x, y, pal, type) {
+      type = type || pick(['sphere', 'sphere', 'crackle', 'ring', 'willow', 'heart', 'double']);
+      const k = S < 0.8 ? 0.7 : 1;
+      const P = 6.4 * S;
+      let n;
+      let i;
+      let a;
+      let v;
+      const add = (vx, vy, c, o) => {
+        o = o || {};
+        parts.push({
+          x,
+          y,
+          px: x,
+          py: y,
+          vx,
+          vy,
+          life: 1,
+          decay: o.decay || rnd(0.011, 0.019),
+          size: o.size || rnd(1.4, 2.4),
+          c,
+          g: o.g == null ? 0.05 : o.g,
+          f: o.f || 0.965,
+          tw: o.tw,
+          cr: o.cr,
+        });
+      };
+
+      if (type === 'ring') {
+        n = Math.round(70 * k);
+        const tilt = rnd(0.35, 1);
+        for (i = 0; i < n; i++) {
+          a = (i / n) * 6.283;
+          add(Math.cos(a) * P * 0.95, Math.sin(a) * P * 0.95 * tilt, pal[0]);
+        }
+      } else if (type === 'heart') {
+        n = Math.round(90 * k);
+        for (i = 0; i < n; i++) {
+          a = (i / n) * 6.283;
+          const s = Math.sin(a);
+          add(
+            (16 * s * s * s * P) / 17,
+            -(
+              (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) *
+              (P / 17)
+            ),
+            '#ff6f91',
+            { decay: 0.012, g: 0.02 },
+          );
+        }
+      } else if (type === 'willow') {
+        n = Math.round(90 * k);
+        for (i = 0; i < n; i++) {
+          a = rnd(0, 6.283);
+          v = rnd(0.3, 1) * P * 0.85;
+          add(Math.cos(a) * v, Math.sin(a) * v, '#ffd479', {
+            decay: rnd(0.005, 0.009),
+            g: 0.035,
+            f: 0.975,
+            tw: true,
+          });
+        }
+      } else if (type === 'double') {
+        n = Math.round(100 * k);
+        for (i = 0; i < n; i++) {
+          a = rnd(0, 6.283);
+          v = P * Math.sqrt(Math.random());
+          add(Math.cos(a) * v, Math.sin(a) * v, pal[0]);
+        }
+        n = Math.round(60 * k);
+        for (i = 0; i < n; i++) {
+          a = rnd(0, 6.283);
+          v = P * 0.5 * Math.sqrt(Math.random());
+          add(Math.cos(a) * v, Math.sin(a) * v, pal[1]);
+        }
+      } else {
+        n = Math.round(120 * k);
+        for (i = 0; i < n; i++) {
+          a = rnd(0, 6.283);
+          v = P * Math.sqrt(Math.random());
+          add(Math.cos(a) * v, Math.sin(a) * v, Math.random() < 0.5 ? pal[0] : pal[1], {
+            cr: type === 'crackle' && Math.random() < 0.3,
+          });
+        }
       }
     }
 
-    function canShow() {
-      if (/^\/admin(\/|$)/.test(location.pathname)) return false;
-      // Refresh selalu memunculkan popup, meskipun sebelumnya sudah ditutup.
-      if (isReload()) return true;
-      try {
-        if (sessionStorage.getItem(DISMISS_KEY) === '1') return false;
-      } catch (error) {
-        /* ignore */
+    function stepRocket(r, dt) {
+      if (r.wait > 0) {
+        r.wait -= dt;
+        return true;
+      }
+      r.p += dt / r.dur;
+      const e = 1 - Math.pow(1 - Math.min(r.p, 1), 2.2);
+      const x = r.x0 + (r.x1 - r.x0) * e;
+      const y = r.y0 + (r.y1 - r.y0) * e;
+      ctx.strokeStyle = 'rgba(255,243,207,.9)';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(r.px, r.py);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      spark(x, y);
+      r.px = x;
+      r.py = y;
+      if (r.p >= 1) {
+        burst(x, y, r.pal, r.type);
+        return false;
       }
       return true;
     }
 
-    function lockBody() {
-      if (bodyLocked) return;
-      bodyLocked = true;
-      prevOverflow = document.body.style.overflow;
-      prevPaddingRight = document.body.style.paddingRight;
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.overflow = 'hidden';
-      if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+    function draw(t) {
+      if (!running || !ctx) return;
+      const now = t == null ? performance.now() : t;
+      const dt = Math.min((now - last) / 1000 || 0.016, 0.1);
+      const f = dt * 60;
+      let i;
+      let j;
+      let p;
+      last = now;
+      drawn++;
+
+      // Jejak memudar berbasis waktu (bukan per frame) supaya tampilan tetap
+      // sama saat frame rate turun / digambar lewat timer.
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = `rgba(0,0,0,${(1 - Math.pow(0.78, f)).toFixed(3)})`;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round';
+
+      next -= dt;
+      if (next <= 0) {
+        launch();
+        if (Math.random() < 0.35) launch(null, null, 0.18);
+        if (Math.random() < 0.12) launch(null, null, 0.34);
+        next = rnd(0.3, 0.8);
+      }
+      for (i = rockets.length - 1; i >= 0; i--) if (!stepRocket(rockets[i], dt)) rockets.splice(i, 1);
+
+      for (i = parts.length - 1; i >= 0; i--) {
+        p = parts[i];
+        p.px = p.x;
+        p.py = p.y;
+        p.vx *= Math.pow(p.f, f);
+        p.vy *= Math.pow(p.f, f);
+        p.vy += p.g * f;
+        p.x += p.vx * f;
+        p.y += p.vy * f;
+        p.life -= p.decay * f;
+        if (p.life <= 0) {
+          if (p.cr && parts.length < 2400) {
+            for (j = 0; j < 4; j++) {
+              parts.push({
+                x: p.x,
+                y: p.y,
+                px: p.x,
+                py: p.y,
+                vx: rnd(-1.6, 1.6),
+                vy: rnd(-1.6, 1.6),
+                life: 1,
+                decay: 0.09,
+                size: 1.2,
+                c: '#ffffff',
+                g: 0.03,
+                f: 0.95,
+              });
+            }
+          }
+          parts.splice(i, 1);
+          continue;
+        }
+        if (p.tw && Math.random() < 0.25) continue; // kelap-kelip
+        ctx.globalAlpha = Math.min(1, p.life * 1.4);
+        ctx.strokeStyle = p.c;
+        ctx.lineWidth = p.size * (0.5 + 0.5 * p.life);
+        ctx.beginPath();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
     }
 
-    function unlockBody() {
-      if (!bodyLocked) return;
-      bodyLocked = false;
-      document.body.style.overflow = prevOverflow || '';
-      document.body.style.paddingRight = prevPaddingRight || '';
+    function loop(t) {
+      if (!running) return;
+      frames++;
+      draw(t);
+      raf = requestAnimationFrame(loop);
     }
 
-    function preloadHero() {
-      const mobile = window.matchMedia('(max-width: 560px)').matches;
-      const src = mobile
-        ? '/promo/promo-2-malam-800.webp'
-        : '/promo/promo-2-malam-1200.webp';
-      if (source) source.srcset = '/promo/promo-2-malam-800.webp';
-      if (img) {
-        img.src = src;
-        if (img.decode) img.decode().catch(() => {});
+    function onVis() {
+      if (!running) return;
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else {
+        last = performance.now();
+        raf = requestAnimationFrame(loop);
       }
     }
 
+    function startFx() {
+      if (!ctx) return;
+      size();
+      parts = [];
+      rockets = [];
+      running = true;
+      frames = 0;
+      drawn = 0;
+      last = performance.now();
+      next = 2;
+
+      // Rentetan pembuka: ledakan pertama < 1 detik.
+      const xs = [0.15, 0.85, 0.3, 0.7, 0.5, 0.08, 0.92];
+      for (let i = 0; i < xs.length; i++) {
+        launch(W * xs[i], H * rnd(0.14, 0.38), 0.05 + i * 0.13, i === 6 ? 'double' : null, 0.62 + Math.random() * 0.18);
+      }
+      // Ledakan instan supaya kembang api langsung terlihat tanpa menunggu roket.
+      burst(W * 0.5, H * 0.24, PAL[0], 'sphere');
+      burst(W * 0.2, H * 0.3, PAL[3], 'ring');
+      burst(W * 0.8, H * 0.3, PAL[1], 'sphere');
+      draw(performance.now());
+
+      document.addEventListener('visibilitychange', onVis);
+      raf = requestAnimationFrame(loop);
+
+      // Pengaman: bila requestAnimationFrame tidak berjalan (tab/preview beku),
+      // gambar tetap dilanjutkan lewat timer.
+      if (!ticker) {
+        ticker = window.setInterval(() => {
+          if (!running) return;
+          if (performance.now() - last > 100) draw(performance.now());
+        }, 100);
+      }
+    }
+
+    function stopFx() {
+      running = false;
+      cancelAnimationFrame(raf);
+      raf = 0;
+      clearInterval(ticker);
+      ticker = 0;
+      document.removeEventListener('visibilitychange', onVis);
+      if (ctx) ctx.clearRect(0, 0, W, H);
+    }
+
+    /* ---------- Konfeti ---------- */
+    function confetti() {
+      const box = document.getElementById('nyConfetti');
+      if (!box || box.children.length || reduce) return;
+      const cols = ['#ffd479', '#ff6f91', '#7fe7ff', '#fff6e0', '#9dffb0', '#c9a6ff'];
+      for (let i = 0; i < 38; i++) {
+        const e = document.createElement('i');
+        const s = e.style;
+        s.left = `${rnd(0, 100)}%`;
+        s.background = pick(cols);
+        s.width = `${rnd(6, 10)}px`;
+        s.height = `${rnd(10, 16)}px`;
+        s.setProperty('--dx', `${rnd(-80, 80)}px`);
+        s.animationDuration = `${rnd(5, 10)}s`;
+        s.animationDelay = `${-rnd(0, 10)}s`;
+        box.appendChild(e);
+      }
+    }
+
+    /* ---------- Buka / tutup ---------- */
+    let visible = false;
+    let hideTimer = 0;
+    let closing = false;
+    let opener = null;
+    let prevOverflow = '';
+    let prevPadding = '';
+
+    function ensureVisible() {
+      if (!visible) return;
+      const o = parseFloat(getComputedStyle(root).opacity) || 0;
+      const c = parseFloat(getComputedStyle(card).opacity) || 0;
+      // Bila transisi tidak berjalan (opacity masih 0), tampilkan tanpa animasi.
+      if (o < 0.9 || c < 0.9) root.classList.add('ny-instant');
+    }
+
+    function lockBody() {
+      prevOverflow = document.body.style.overflow;
+      prevPadding = document.body.style.paddingRight;
+      const gap = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      if (gap > 0) document.body.style.paddingRight = `${gap}px`;
+    }
+
+    function unlockBody() {
+      document.body.style.overflow = prevOverflow || '';
+      document.body.style.paddingRight = prevPadding || '';
+    }
+
+    function show() {
+      if (visible) return;
+      visible = true;
+      closing = false;
+      clearTimeout(hideTimer);
+      hideTimer = 0;
+
+      opener = document.activeElement;
+      applyImage();
+      root.hidden = false;
+      root.classList.toggle('ny-anim-on', !reduce);
+      lockBody();
+      void root.offsetWidth;
+      root.classList.add('is-open');
+      badge();
+      confetti();
+      if (!reduce) startFx();
+      document.addEventListener('keydown', onKeydown);
+
+      window.setTimeout(() => {
+        if (card) card.focus({ preventScroll: true });
+      }, 60);
+      // Jaga-jaga bila animasi CSS macet.
+      window.setTimeout(ensureVisible, 750);
+      window.setTimeout(() => {
+        ensureVisible();
+        if (!reduce && !running) startFx();
+      }, 1700);
+    }
+
+    function close() {
+      if (!visible || closing) return;
+      closing = true;
+      visible = false;
+      clearTimeout(hideTimer);
+      document.removeEventListener('keydown', onKeydown);
+      try {
+        sessionStorage.setItem(DISMISS_KEY, '1');
+      } catch (error) {
+        /* ignore */
+      }
+
+      root.classList.remove('is-open');
+      hideTimer = window.setTimeout(() => {
+        root.hidden = true;
+        closing = false;
+        stopFx();
+        unlockBody();
+        const lastFocus = opener;
+        opener = null;
+        if (lastFocus && typeof lastFocus.focus === 'function' && document.contains(lastFocus)) {
+          try {
+            lastFocus.focus({ preventScroll: true });
+          } catch (error) {
+            /* ignore */
+          }
+        }
+      }, 520);
+    }
+
     function trapFocus(event) {
-      if (!modal) return;
-      const focusable = modal.querySelectorAll(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      );
+      const focusable = [xBtn, cta, later].filter(Boolean);
       if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
+      const i = focusable.indexOf(document.activeElement);
+      const n = event.shiftKey ? i - 1 : i + 1;
+      if (i === -1 || n < 0 || n >= focusable.length) {
+        focusable[n < 0 ? focusable.length - 1 : 0].focus();
         event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
       }
     }
 
@@ -180,433 +619,579 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       if (event.key === 'Tab') trapFocus(event);
     }
 
-    function show() {
-      if (visible) return;
-
-      visible = true;
-      preloadHero();
-
-      popup.hidden = false;
-      popup.classList.add('flash-popup--enter');
-      void popup.offsetWidth;
-      requestAnimationFrame(() => {
-        popup.classList.add('flash-popup--in');
-        popup.classList.remove('flash-popup--enter');
-      });
-
-      lockBody();
-      document.addEventListener('keydown', onKeydown);
-
-      lastFocused = document.activeElement;
-      if (closeBtn) closeBtn.focus({ preventScroll: true });
-    }
-
-    function close() {
-      if (!visible) return;
-      visible = false;
-      document.removeEventListener('keydown', onKeydown);
-      unlockBody();
-
+    xBtn.addEventListener('click', close);
+    later.addEventListener('click', close);
+    cta.addEventListener('click', () => {
       try {
         sessionStorage.setItem(DISMISS_KEY, '1');
       } catch (error) {
         /* ignore */
       }
+    });
 
-      popup.classList.remove('flash-popup--in');
-      popup.classList.add('flash-popup--leave');
-      clearTimeout(closeTimer);
-      closeTimer = window.setTimeout(() => {
-        popup.hidden = true;
-        popup.classList.remove('flash-popup--leave');
-      }, 300);
+    // Klik latar = kembang api di titik itu (fokus tetap di dalam dialog).
+    root.addEventListener('click', (event) => {
+      if (card.contains(event.target)) return;
+      if (!reduce && ctx) {
+        if (!running) startFx();
+        launch(event.clientX, event.clientY);
+      }
+      window.setTimeout(() => {
+        if (card && !card.contains(document.activeElement)) card.focus({ preventScroll: true });
+      }, 0);
+    });
 
-      const last = lastFocused;
-      lastFocused = null;
-      if (last && typeof last.focus === 'function' && document.contains(last)) {
-        try {
-          last.focus({ preventScroll: true });
-        } catch (error) {
-          /* ignore */
-        }
+    window.addEventListener('resize', () => {
+      if (running) size();
+    });
+
+    if (mqReduce && mqReduce.addEventListener) {
+      mqReduce.addEventListener('change', (event) => {
+        reduce = event.matches && CONFIG.respectReducedMotion && !forceFx;
+        root.classList.toggle('ny-anim-on', !reduce);
+        if (!visible) return;
+        if (reduce) stopFx();
+        else if (!running) startFx();
+        confetti();
+      });
+    }
+
+    window.addEventListener(
+      'pagehide',
+      () => {
+        clearTimeout(hideTimer);
+        if (running) stopFx();
+      },
+      { once: true },
+    );
+
+    /* ---------- Muncul otomatis ---------- */
+    function isReload() {
+      try {
+        const [nav] = performance.getEntriesByType('navigation');
+        if (nav && nav.type) return nav.type === 'reload';
+        return Boolean(performance.navigation) && performance.navigation.type === 1;
+      } catch (error) {
+        return false;
       }
     }
 
-    function reveal() {
-      if (!canShow()) return;
-      revealTimer = window.setTimeout(show, SHOW_DELAY_MS);
+    function canShow() {
+      if (/^\/admin(\/|$)/.test(location.pathname)) return false;
+      if (/[?&]promo\b/.test(location.search)) return true; // ?promo untuk menguji
+      if (Date.now() >= Date.parse(CONFIG.hideAfter)) return false;
+      if (isReload()) return true; // refresh selalu menampilkan lagi
+      try {
+        if (sessionStorage.getItem(DISMISS_KEY) === '1') return false;
+      } catch (error) {
+        /* ignore */
+      }
+      return true;
     }
 
-    popup.addEventListener('click', (event) => {
-      if (event.target === popup) close();
-    });
-
-    popup.querySelectorAll('[data-flash-close]').forEach((node) => {
-      node.addEventListener('click', () => close());
-    });
+    function schedule() {
+      if (!canShow()) return;
+      preloadImage();
+      window.setTimeout(show, CONFIG.delayMs);
+    }
 
     if (document.visibilityState === 'hidden') {
       const onVisible = () => {
         if (document.visibilityState !== 'visible') return;
         document.removeEventListener('visibilitychange', onVisible);
-        reveal();
+        schedule();
       };
       document.addEventListener('visibilitychange', onVisible);
+    } else if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', schedule);
     } else {
-      reveal();
+      schedule();
     }
 
-    window.addEventListener('pagehide', () => {
-      clearTimeout(revealTimer);
-      clearTimeout(closeTimer);
-    }, { once: true });
+    // Pintu darurat untuk uji manual dari console: __nyPromo.open()
+    window.__nyPromo = { open: show, close };
   })();
 </script>
 
 <style scoped>
-  .flash-popup {
+  /* ============ 1) Latar malam ============ */
+  .ny-pop {
+    --ny-gold: #f3dca4;
+    --ny-amber: #ffd479;
+    --ny-cream: #fff6e0;
+    --ny-mute: #a9afcc;
     position: fixed;
     inset: 0;
     z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     padding: 16px;
-    background: rgba(3, 8, 18, 0.74);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    opacity: 1;
-    transition: opacity 0.28s ease;
+    overflow: hidden;
+    font-family: var(--font-primary);
+    color: var(--ny-cream);
+    background: radial-gradient(120% 90% at 50% 108%, #1a2754 0%, #0b1030 48%, #04050f 100%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
   }
-  .flash-popup[hidden] {
+  .ny-pop[hidden] {
     display: none;
   }
-  .flash-popup--enter {
-    opacity: 0;
+  .ny-pop.is-open {
+    opacity: 1;
   }
-  .flash-popup--leave {
-    opacity: 0;
+  .ny-pop * {
+    box-sizing: border-box;
   }
 
-  .flash-popup__modal {
-    position: relative;
+  /* bintang berkelip */
+  .ny-pop::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    animation: ny-twinkle 3.2s ease-in-out infinite alternate;
+    background-image:
+      radial-gradient(1.5px 1.5px at 8% 14%, #fff, transparent),
+      radial-gradient(1px 1px at 22% 38%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 35% 9%, #ffe9b0, transparent),
+      radial-gradient(1px 1px at 52% 22%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 66% 11%, #fff, transparent),
+      radial-gradient(1px 1px at 78% 33%, #ffe9b0, transparent),
+      radial-gradient(1.5px 1.5px at 91% 17%, #fff, transparent),
+      radial-gradient(1px 1px at 14% 62%, #fff, transparent),
+      radial-gradient(1px 1px at 88% 58%, #fff, transparent);
+  }
+  @keyframes ny-twinkle {
+    from {
+      opacity: 0.45;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* lapisan: bukit < confetti < kartu < kembang api */
+  .ny-hills {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    /* Lebar kartu mengikuti tinggi layar supaya gambar selalu selebar kartu
-       (tidak ada celah di kiri/kanan) dan isinya tetap muat tanpa scroll. */
-    max-width: min(560px, calc((100vh - 240px) * 1.4145));
-    max-width: min(560px, calc((100dvh - 240px) * 1.4145));
+    height: clamp(90px, 22vh, 200px);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .ny-light {
+    animation: ny-lamp 2.6s ease-in-out infinite alternate;
+  }
+  @keyframes ny-lamp {
+    from {
+      opacity: 0.55;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .ny-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 2;
+  }
+  .ny-confetti i {
+    position: absolute;
+    top: -24px;
+    opacity: 0.9;
+    animation: ny-fall linear infinite;
+  }
+  @keyframes ny-fall {
+    to {
+      transform: translate3d(var(--dx, 0), 112vh, 0) rotate3d(1, 0.6, 0.3, 900deg);
+    }
+  }
+
+  .ny-fx {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* ============ 2) Kartu ============ */
+  .ny-card {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    /* Lebar kartu mengikuti tinggi layar: gambar tampil utuh (rasio 1200x848)
+       dan isi kartu tetap muat tanpa scroll di layar pendek. */
+    width: min(92vw, 440px, max(300px, calc((100vh - 350px) * 1.415)));
+    width: min(92vw, 440px, max(300px, calc((100dvh - 350px) * 1.415)));
     max-height: calc(100vh - 32px);
     max-height: calc(100dvh - 32px);
-    overflow: hidden auto;
-    border-radius: 24px;
-    border: 1px solid rgba(247, 207, 107, 0.32);
-    background: #050d19;
-    box-shadow:
-      0 30px 80px rgba(0, 0, 0, 0.6),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    isolation: isolate;
-  }
-  .flash-popup--enter .flash-popup__modal {
-    transform: translateY(18px) scale(0.96);
-  }
-  .flash-popup--in .flash-popup__modal {
-    transition: transform 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .flash-popup--leave .flash-popup__modal {
-    transition: none;
-  }
-
-  .flash-popup__hero {
-    position: relative;
-    margin: 0;
     overflow: hidden;
-    background: #0b1a2e;
+    border-radius: 28px;
+    outline: none;
+    background: rgba(9, 13, 34, 0.94);
+    border: 1px solid rgba(243, 220, 164, 0.34);
+    box-shadow:
+      0 30px 90px -20px rgba(0, 0, 0, 0.85),
+      0 0 70px -10px rgba(243, 220, 164, 0.2);
+    opacity: 0;
+    transform: translateY(34px) scale(0.9);
+    transition:
+      transform 0.7s cubic-bezier(0.2, 1.25, 0.3, 1) 0.12s,
+      opacity 0.45s ease 0.12s;
+  }
+  .ny-pop.is-open .ny-card {
+    opacity: 1;
+    transform: none;
   }
 
-  .flash-popup__img {
+  .ny-scroll {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(243, 220, 164, 0.4) transparent;
+  }
+  .ny-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+  .ny-scroll::-webkit-scrollbar-thumb {
+    background: rgba(243, 220, 164, 0.3);
+    border-radius: 8px;
+  }
+
+  /* Gambar promo tampil utuh: lebar penuh kartu, rasio asli 1200x848. */
+  .ny-figure {
+    position: relative;
+    flex: none;
+    margin: 0;
+    background: #0b1030;
+  }
+  .ny-figure[hidden] {
+    display: none;
+  }
+  .ny-img {
     display: block;
     width: 100%;
     height: auto;
     aspect-ratio: 1200 / 848;
   }
-
-  .flash-popup__fireworks {
+  /* gradasi halus agar gambar menyatu dengan kartu */
+  .ny-figure::after {
+    content: '';
     position: absolute;
-    inset: 0;
-    z-index: 1;
-    overflow: hidden;
+    inset: auto 0 0 0;
+    height: 46px;
     pointer-events: none;
+    background: linear-gradient(180deg, rgba(9, 13, 34, 0), rgba(9, 13, 34, 0.82));
   }
 
-  .flash-popup__fw {
+  .ny-body {
+    padding: 24px 26px 20px;
+    text-align: center;
+  }
+
+  .ny-x {
     position: absolute;
-    width: 3px;
-    height: 3px;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
     border-radius: 50%;
-    color: #ffd67a;
-    background: currentColor;
+    border: 1px solid rgba(243, 220, 164, 0.42);
+    background: rgba(7, 10, 26, 0.62);
+    color: var(--ny-cream);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+  .ny-x:hover {
+    background: var(--ny-gold);
+    color: #1a1405;
+  }
+  .ny-x svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .ny-kicker {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ny-amber);
+  }
+
+  .ny-year {
+    display: flex;
+    justify-content: center;
+    margin: 6px 0 4px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(4rem, 20vw, 5.6rem);
+    line-height: 1;
+    color: var(--ny-gold);
+    text-shadow:
+      0 0 26px rgba(243, 220, 164, 0.5),
+      0 0 2px rgba(255, 255, 255, 0.6);
+    animation: ny-glow 2.4s ease-in-out 1.8s infinite alternate;
+  }
+  .ny-year span {
+    display: inline-block;
     opacity: 0;
-    transform: scale(0.1);
-    animation: flash-fw 6s ease-out infinite;
-    will-change: transform, opacity;
-    /* Satu titik + 12 bayangan = satu ledakan kembang api. */
-    box-shadow:
-      0 -30px 0 currentColor,
-      15px -26px 0 currentColor,
-      26px -15px 0 currentColor,
-      30px 0 0 currentColor,
-      26px 15px 0 currentColor,
-      15px 26px 0 currentColor,
-      0 30px 0 currentColor,
-      -15px 26px 0 currentColor,
-      -26px 15px 0 currentColor,
-      -30px 0 0 currentColor,
-      -26px -15px 0 currentColor,
-      -15px -26px 0 currentColor;
+    transform: translateY(30px) scale(0.6);
   }
-
-  .flash-popup__fw--1 {
-    top: 16%;
-    left: 10%;
-    color: #ffd67a;
-    animation-delay: -0.6s;
+  .ny-pop.is-open .ny-year span {
+    animation: ny-pop 0.85s cubic-bezier(0.2, 1.5, 0.4, 1) forwards;
+    animation-delay: calc(0.45s + var(--i) * 0.12s);
   }
-
-  .flash-popup__fw--2 {
-    top: 26%;
-    left: 78%;
-    color: #eaf4ff;
-    animation-delay: -2.7s;
-  }
-
-  .flash-popup__fw--3 {
-    top: 62%;
-    left: 14%;
-    color: #9be6d6;
-    animation-delay: -4.3s;
-  }
-
-  .flash-popup__fw--4 {
-    top: 70%;
-    left: 82%;
-    color: #ffd67a;
-    animation-delay: -1.5s;
-  }
-
-  @keyframes flash-fw {
-    0% {
-      opacity: 0;
-      transform: scale(0.1);
-    }
-    8% {
-      opacity: 0;
-      transform: scale(0.25);
-    }
-    14% {
-      opacity: 1;
-    }
-    38% {
-      opacity: 0.9;
-      transform: scale(1);
-    }
+  @keyframes ny-pop {
     60% {
-      opacity: 0;
-      transform: scale(1.2);
+      opacity: 1;
+      transform: translateY(-8px) scale(1.14);
     }
     100% {
-      opacity: 0;
-      transform: scale(1.2);
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes ny-glow {
+    to {
+      text-shadow:
+        0 0 44px rgba(243, 220, 164, 0.85),
+        0 0 3px rgba(255, 255, 255, 0.8);
     }
   }
 
-  .flash-popup__panel {
-    position: relative;
-    z-index: 2;
-    padding: 14px 26px 24px;
-    text-align: center;
-    background:
-      radial-gradient(90% 130% at 50% 0%, rgba(56, 130, 190, 0.16) 0%, transparent 62%),
-      linear-gradient(180deg, #08111f 0%, #050d19 100%);
-  }
-
-  .flash-popup__close {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(6, 14, 26, 0.58);
-    color: #dbe8f5;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-  }
-  .flash-popup__close:hover {
-    background: rgba(255, 255, 255, 0.16);
-    color: #fff;
-    transform: rotate(90deg);
-  }
-  .flash-popup__close:focus-visible {
-    outline: 3px solid rgba(247, 207, 107, 0.62);
-    outline-offset: 2px;
-  }
-
-  .flash-popup__kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+  .ny-title {
     margin: 0;
-    color: #f7cf6b;
-    font-size: 0.69rem;
-    font-weight: 700;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-  }
-  .flash-popup__dot {
-    width: 7px;
-    height: 7px;
-    flex: 0 0 auto;
-    border-radius: 50%;
-    background: #f7cf6b;
-    box-shadow: 0 0 0 0 rgba(247, 207, 107, 0.6);
-    animation: flash-pulse 1.8s ease-out infinite;
-  }
-  @keyframes flash-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(247, 207, 107, 0.6); }
-    70% { box-shadow: 0 0 0 9px rgba(247, 207, 107, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(247, 207, 107, 0); }
-  }
-
-  .flash-popup__headline {
-    margin: 10px 0 0;
-    color: #fff6d8;
     font-family: var(--font-display);
-    font-size: 1.16rem;
+    font-size: 1.28rem;
     font-weight: 600;
     line-height: 1.32;
+    color: var(--ny-cream);
     text-wrap: balance;
   }
+  .ny-offer {
+    margin: 10px 0 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ny-mute);
+  }
+  .ny-offer b {
+    color: var(--ny-amber);
+    font-weight: 700;
+  }
 
-  .flash-popup__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 18px;
-  }
-  .flash-popup__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 11px 22px;
+  .ny-cta {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    margin-top: 20px;
+    padding: 15px 20px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.06);
-    color: #e6f1fb;
-    font-size: 0.88rem;
-    font-weight: 600;
+    background: var(--ny-gold);
+    color: #1a1405;
+    font-weight: 700;
+    font-size: 15px;
     text-decoration: none;
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 14px 32px -10px rgba(243, 220, 164, 0.6);
+    transition: transform 0.2s ease;
   }
-  .flash-popup__btn:hover {
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.13);
+  .ny-cta:hover {
+    transform: translateY(-2px);
   }
-  .flash-popup__btn--primary {
-    border-color: transparent;
-    background: linear-gradient(135deg, #ffe7a3 0%, #f7cf6b 45%, #d39a35 100%);
-    color: #201403;
-    box-shadow: 0 12px 26px rgba(247, 207, 107, 0.22);
+  .ny-cta::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+    transform: skewX(-20deg);
+    animation: ny-sheen 3s ease-in-out 1.6s infinite;
   }
-  .flash-popup__btn--primary:hover {
-    background: linear-gradient(135deg, #fff0bd 0%, #ffd97a 45%, #e0a93f 100%);
-    box-shadow: 0 16px 32px rgba(247, 207, 107, 0.3);
+  @keyframes ny-sheen {
+    to {
+      left: 140%;
+    }
   }
-  .flash-popup__btn:focus-visible {
-    outline: 3px solid rgba(247, 207, 107, 0.62);
-    outline-offset: 2px;
+
+  .ny-later {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 4px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: 500 13px/1.2 var(--font-primary);
+    color: var(--ny-mute);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .ny-later:hover {
+    color: #fff;
+  }
+  .ny-note {
+    margin: 6px 0 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #8f95b8;
+  }
+  .ny-x:focus-visible,
+  .ny-cta:focus-visible,
+  .ny-later:focus-visible {
+    outline: 2px solid var(--ny-amber);
+    outline-offset: 3px;
+  }
+
+  /* ============ 3) Layar pendek ============ */
+  @media (max-height: 800px) {
+    .ny-body {
+      padding: 20px 24px 16px;
+    }
+    .ny-year {
+      font-size: clamp(3.6rem, 18vw, 4.8rem);
+      margin: 4px 0 2px;
+    }
+    .ny-title {
+      font-size: 1.16rem;
+    }
+    .ny-offer {
+      margin-top: 8px;
+      font-size: 13.5px;
+    }
+    .ny-cta {
+      margin-top: 16px;
+      padding: 14px 20px;
+    }
+    .ny-later {
+      margin-top: 10px;
+    }
+  }
+  @media (max-height: 700px) {
+    .ny-body {
+      padding: 16px 20px 14px;
+    }
+    .ny-year {
+      font-size: clamp(3.1rem, 15vw, 3.9rem);
+    }
+    .ny-title {
+      font-size: 1.08rem;
+    }
+    .ny-offer {
+      font-size: 13px;
+    }
+    .ny-cta {
+      margin-top: 14px;
+      padding: 13px 18px;
+      font-size: 14px;
+    }
+    .ny-note {
+      font-size: 10.5px;
+    }
+  }
+  @media (max-height: 660px) {
+    .ny-figure::after {
+      height: 28px;
+    }
+    .ny-body {
+      padding: 14px 18px 12px;
+    }
+    .ny-year {
+      font-size: clamp(2.6rem, 12vw, 3.2rem);
+    }
+    .ny-title {
+      font-size: 1rem;
+    }
+    .ny-offer {
+      font-size: 12.5px;
+    }
+    .ny-cta {
+      margin-top: 12px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+    }
+    .ny-later {
+      margin-top: 8px;
+      font-size: 12px;
+    }
   }
 
   @media (max-width: 430px) {
-    .flash-popup {
+    .ny-pop {
       padding: 12px;
     }
-    .flash-popup__modal {
+    .ny-card {
+      width: min(94vw, 440px);
       max-height: calc(100vh - 24px);
       max-height: calc(100dvh - 24px);
-      border-radius: 20px;
+      border-radius: 24px;
     }
-    .flash-popup__panel {
-      padding: 14px 16px 22px;
-    }
-    .flash-popup__headline {
-      font-size: 1.02rem;
-    }
-    .flash-popup__actions {
-      flex-direction: column;
-    }
-    .flash-popup__btn {
-      width: 100%;
+    .ny-x {
+      top: 10px;
+      right: 10px;
+      width: 34px;
+      height: 34px;
     }
   }
 
-  @media (max-height: 700px) {
-    .flash-popup__panel {
-      padding: 12px 20px 18px;
-    }
-    .flash-popup__headline {
-      margin-top: 8px;
-      font-size: 1rem;
-    }
-    .flash-popup__actions {
-      margin-top: 12px;
-    }
+  /* ============ 4) Mode tanpa animasi ============ */
+  .ny-pop.ny-instant {
+    opacity: 1 !important;
+    transition: none !important;
   }
-
-  /* Layar sangat pendek (mis. ponsel landscape): kartu lebih ramping lagi,
-     dan bila masih kurang, gambar dipotong sedikit agar tetap selebar kartu. */
-  @media (max-height: 560px) {
-    .flash-popup__modal {
-      max-width: min(560px, calc((100vh - 300px) * 1.4145));
-      max-width: min(560px, calc((100dvh - 300px) * 1.4145));
-    }
+  .ny-pop.ny-instant .ny-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
-
-  @media (max-height: 480px) {
-    .flash-popup__hero {
-      height: 120px;
-    }
-    .flash-popup__img {
-      height: 100%;
-      object-fit: cover;
-    }
+  .ny-pop.ny-instant .ny-year {
+    animation: none !important;
+  }
+  .ny-pop.ny-instant .ny-year span {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .flash-popup__fw,
-    .flash-popup__dot {
+    .ny-pop::before,
+    .ny-year,
+    .ny-light,
+    .ny-cta::after {
       animation: none;
     }
-    .flash-popup__fw {
-      opacity: 0.75;
-      transform: scale(0.9);
+    .ny-year span {
+      opacity: 1;
+      transform: none;
+      animation: none !important;
     }
-    .flash-popup,
-    .flash-popup--in .flash-popup__modal,
-    .flash-popup__close,
-    .flash-popup__btn {
+    .ny-card {
       transition: none;
     }
-    .flash-popup__close:hover,
-    .flash-popup__btn:hover {
+    /* Efek hanya dimatikan bila CONFIG.respectReducedMotion = true. */
+    .ny-pop:not(.ny-anim-on) .ny-confetti,
+    .ny-pop:not(.ny-anim-on) .ny-fx {
+      display: none;
+    }
+    .ny-cta:hover {
       transform: none;
     }
   }

@@ -1,48 +1,94 @@
 ---
-import { sampleReviews, reviewCardHTML } from '../data/reviews.js';
+import { sampleReviews, reviewRowHTML } from '../data/reviews.js';
 
-const SSR_SETS = 2;
-const reviewsTrackHTML = Array.from({ length: SSR_SETS }, () => sampleReviews.map(reviewCardHTML).join('')).join('');
-// Satu set kartu (5 kartu × 424px) ≈ 2120px. Durasi awal disamakan dengan
-// kecepatan target 94 px/s; script hanya menyempurnakannya setelah diukur.
-const ssrDuration = ((sampleReviews.length * 424 + 12) / 94).toFixed(2);
+const reviewRows = sampleReviews.map(reviewRowHTML).join('');
+// Dua salinan identik agar animasi translateY(-50%) menyambung mulus.
+const reviewsTrackHTML = `<div class="reviews-marquee__half">${reviewRows}</div><div class="reviews-marquee__half" aria-hidden="true">${reviewRows}</div>`;
+
+const whatsappNumber = '6282125492037';
+const whatsappMessage = 'Halo The Rain Villas, saya ingin cek ketersediaan villa.';
+const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 ---
 
-<section class="reviews-marquee" id="apa-kata-mereka">
-  <div class="container">
-    <div class="reviews-marquee__header reveal">
-      <span class="reviews-marquee__badge reveal">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Ulasan Tamu
-      </span>
-      <h2 class="reviews-marquee__title reveal">
-        Apa Kata <span class="reviews-marquee__title-accent">Mereka</span>
+<section class="reviews-marquee" id="apa-kata-mereka" aria-labelledby="reviewsTitle">
+  <div class="reviews-marquee__wrap">
+    <div class="reviews-marquee__left">
+      <h2 class="reviews-marquee__title" id="reviewsTitle">
+        <span class="reviews-marquee__title-serif">Apa Kata</span>
+        <span class="reviews-marquee__title-sans">Mereka.</span>
       </h2>
-      <div class="reviews-marquee__divider reveal" aria-hidden="true">
-        <span class="reviews-marquee__line"></span>
-        <span class="reviews-marquee__dot"></span>
-        <span class="reviews-marquee__line"></span>
-      </div>
-      <p class="reviews-marquee__subtitle reveal reveal--delay-1">Ulasan asli dari penyewa yang telah menginap di The Rain Villas</p>
-    </div>
-  </div>
+      <p class="reviews-marquee__sub">Ulasan asli dari penyewa yang telah menginap di The Rain Villas.</p>
 
-  <div class="reviews-marquee__viewport">
-    <div
-      class="reviews-marquee__track"
-      id="reviewsTrack"
-      style={`--marquee-duration:${ssrDuration}s`}
-      set:html={reviewsTrackHTML}
-    ></div>
+      <div class="reviews-marquee__cta">
+        <a
+          class="reviews-marquee__tile"
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener"
+          data-track="whatsapp_click"
+          aria-label="Hubungi The Rain Villas via WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+        <a
+          class="reviews-marquee__tile"
+          href="https://www.instagram.com/therainvillas"
+          target="_blank"
+          rel="noopener"
+          aria-label="Instagram The Rain Villas"
+        >
+          <svg class="reviews-marquee__tile-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          Instagram
+        </a>
+        <a
+          class="reviews-marquee__tile"
+          href="https://www.tiktok.com/@therainvillas"
+          target="_blank"
+          rel="noopener"
+          aria-label="TikTok The Rain Villas"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.5 9.84202C20.4357 9.84696 18.4221 9.20321 16.7435 8.00171V16.3813C16.7429 17.9333 16.2685 19.4482 15.3838 20.7233C14.499 21.9984 13.246 22.973 11.7923 23.5168C10.3387 24.0606 8.75362 24.1477 7.24914 23.7664C5.74466 23.3851 4.39245 22.5536 3.37333 21.383C2.3542 20.2125 1.71674 18.7587 1.54617 17.2161C1.3756 15.6735 1.68007 14.1156 2.41884 12.7507C3.15762 11.3858 4.2955 10.279 5.68034 9.57823C7.06517 8.87746 8.63095 8.61616 10.1683 8.82927V13.0439C9.46481 12.8227 8.70938 12.8293 8.0099 13.063C7.31041 13.2966 6.70265 13.7453 6.2734 14.345C5.84415 14.9446 5.61536 15.6646 5.6197 16.402C5.62404 17.1395 5.8613 17.8567 6.29759 18.4512C6.73387 19.0458 7.34688 19.4873 8.04906 19.7127C8.75125 19.9381 9.5067 19.9359 10.2075 19.7063C10.9084 19.4768 11.5188 19.0316 11.9515 18.4345C12.3843 17.8374 12.6173 17.1188 12.6173 16.3813V0H16.7435C16.7406 0.348435 16.7698 0.696395 16.8307 1.03948C16.9741 1.80537 17.2722 2.53396 17.7068 3.18068C18.1415 3.8274 18.7035 4.37867 19.3585 4.80075C20.2903 5.41688 21.3829 5.74528 22.5 5.74505V9.84202Z"/></svg>
+          TikTok
+        </a>
+      </div>
+    </div>
+
+    <div class="reviews-marquee__right">
+      <div class="reviews-marquee__panel">
+        <div
+          class="reviews-marquee__viewport"
+          id="reviewsViewport"
+          tabindex="0"
+          aria-label="Ulasan tamu, bergulir otomatis"
+        >
+          <div
+            class="reviews-marquee__track"
+            id="reviewsTrack"
+            style="--rv-dur:26s"
+            set:html={reviewsTrackHTML}
+          ></div>
+        </div>
+      </div>
+      <div class="reviews-marquee__bar">
+        <button class="reviews-marquee__toggle" id="reviewsToggle" type="button">Jeda gulir</button>
+      </div>
+    </div>
   </div>
 </section>
 
 <script>
-  // Script marquee (fetch + penggantian DOM) baru dimuat saat section mendekati
-  // viewport. Kartu SSR tetap tampil & beranimasi walau JS belum/tidak jalan.
+  // Script marquee (fetch + render ulang) baru dimuat saat section mendekati
+  // viewport. Baris SSR tetap tampil & beranimasi walau JS belum/tidak jalan.
   (() => {
     const track = document.getElementById('reviewsTrack');
-    if (!track) return;
+    const viewport = document.getElementById('reviewsViewport');
+    const toggle = document.getElementById('reviewsToggle');
+    if (!track || !viewport) return;
 
     let started = false;
     const start = () => {
@@ -50,7 +96,7 @@ const ssrDuration = ((sampleReviews.length * 424 + 12) / 94).toFixed(2);
       started = true;
       if (observer) observer.disconnect();
       import('../scripts/reviewsMarquee.js')
-        .then((mod) => mod.initReviewsMarquee(track))
+        .then((mod) => mod.initReviewsMarquee(track, viewport, toggle))
         .catch(() => {});
     };
 
@@ -71,320 +117,380 @@ const ssrDuration = ((sampleReviews.length * 424 + 12) / 94).toFixed(2);
 
 <style is:global>
   .reviews-marquee {
+    /* Palet diturunkan dari warna dasar situs: hijau tua, krem, dan amber. */
+    --rm-ink: #f4f7f3;
+    --rm-soft: #cfded8;
+    --rm-muted: #9fb0aa;
+    --rm-line: rgba(244, 247, 243, 0.12);
+    --rm-row: rgba(244, 247, 243, 0.06);
+    --rm-row-line: rgba(244, 247, 243, 0.08);
+    --rm-mint: #8fd0bd;
+    --rm-amber: #d9a15f;
     position: relative;
     overflow: hidden;
-    /* Circle gradient aesthetic: midnight navy sebagai warna utama, powder blue di tepi. */
-    background:
-      radial-gradient(circle at 18% 8%, rgba(176, 224, 230, 0.16), transparent 52%),
-      radial-gradient(circle at 82% 92%, rgba(176, 224, 230, 0.12), transparent 58%),
-      radial-gradient(circle at 50% 36%, #24357c 0%, #191970 40%, #191970 68%, #b0e0e6 100%);
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
-    border-bottom: 1px solid rgba(25, 25, 112, 0.15);
-    padding: 108px 0 76px;
     isolation: isolate;
+    color: var(--rm-ink);
+    background:
+      radial-gradient(58% 76% at 12% 4%, rgba(143, 208, 189, 0.14), transparent 58%),
+      radial-gradient(52% 70% at 92% 96%, rgba(184, 110, 47, 0.12), transparent 62%),
+      linear-gradient(158deg, #14352e 0%, #0d2b26 46%, #0a221e 100%);
+    border-top: 1px solid var(--rm-line);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+    padding: clamp(64px, 9vw, 112px) clamp(20px, 5vw, 64px);
+    font-family: var(--font-primary);
   }
 
-  .reviews-marquee__header {
-    text-align: center;
-    max-width: 660px;
-    margin: 0 auto 56px;
-    padding: 0 24px;
+  /* Tekstur grid tipis yang memudar ke tepi. */
+  .reviews-marquee::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(244, 247, 243, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(244, 247, 243, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 45%, #000, transparent 100%);
   }
 
-  .reviews-marquee__badge {
-    display: inline-flex;
+  .reviews-marquee__wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(32px, 6vw, 80px);
     align-items: center;
-    gap: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #cdeef3;
-    background: rgba(176, 224, 230, 0.08);
-    border: 1px solid rgba(176, 224, 230, 0.42);
-    border-radius: 999px;
-    padding: 9px 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 24px rgba(176, 224, 230, 0.14) inset;
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+  }
+
+  /* ===== kolom kiri: judul + CTA ===== */
+  .reviews-marquee__left {
+    min-width: 0;
   }
 
   .reviews-marquee__title {
-    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
-    font-weight: 700;
-    color: #ffffff;
-    line-height: 1.15;
-    margin-bottom: 18px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    margin: 0;
   }
 
-  .reviews-marquee__title-accent {
-    background: linear-gradient(90deg, #eaf9fb, #b0e0e6);
+  .reviews-marquee__title-serif {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 6.2vw, 4.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--rm-ink);
+  }
+
+  .reviews-marquee__title-sans {
+    display: block;
+    font-family: var(--font-primary);
+    font-weight: 800;
+    font-size: clamp(3.4rem, 9.6vw, 7.2rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    background: linear-gradient(100deg, #f4f7f3 8%, #d7ece4 48%, var(--rm-mint) 92%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
 
-  .reviews-marquee__divider {
+  .reviews-marquee__sub {
+    margin: 22px 0 0;
+    max-width: 40ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--rm-muted);
+  }
+
+  .reviews-marquee__cta {
     display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    margin-top: 36px;
+  }
+
+  .reviews-marquee__tile {
+    display: inline-flex;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 112px;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 18px;
-  }
-  .reviews-marquee__line {
-    width: 56px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(176, 224, 230, 0.8));
-  }
-  .reviews-marquee__line:last-child {
-    background: linear-gradient(90deg, rgba(176, 224, 230, 0.8), transparent);
-  }
-  .reviews-marquee__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #b0e0e6;
-    box-shadow: 0 0 12px rgba(176, 224, 230, 0.9);
+    height: 104px;
+    border-radius: 22px;
+    background: #f1f4f0;
+    color: #14231f;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    box-shadow: 0 22px 34px -14px rgba(0, 0, 0, 0.7);
+    transition: transform 0.25s ease, background 0.25s ease;
   }
 
-  .reviews-marquee__subtitle {
-    color: rgba(230, 247, 250, 0.8);
-    font-size: 1.05rem;
-    line-height: 1.7;
+  .reviews-marquee__tile:hover {
+    transform: translateY(-3px);
+    background: #ffffff;
+  }
+
+  .reviews-marquee__tile:focus-visible {
+    outline: 2px solid var(--rm-mint);
+    outline-offset: 4px;
+  }
+
+  .reviews-marquee__tile svg {
+    width: 30px;
+    height: 30px;
+    fill: currentColor;
+  }
+
+  /* Ikon Instagram memakai garis, bukan bidang. */
+  .reviews-marquee__tile .reviews-marquee__tile-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ===== kolom kanan: panel ulasan bergulir vertikal ===== */
+  .reviews-marquee__panel {
+    padding: 14px;
+    border-radius: 34px;
+    background:
+      linear-gradient(180deg, rgba(244, 247, 243, 0.08), rgba(244, 247, 243, 0.02)),
+      linear-gradient(180deg, #173a32, #0f2924);
+    border: 1px solid var(--rm-line);
+    box-shadow:
+      0 40px 80px -30px rgba(0, 0, 0, 0.85),
+      inset 0 1px 0 rgba(244, 247, 243, 0.09);
   }
 
   .reviews-marquee__viewport {
+    height: clamp(380px, 46vw, 470px);
     overflow: hidden;
-    width: 100%;
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
-    mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+    border-radius: 22px;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+  }
+
+  .reviews-marquee__viewport:focus-visible {
+    outline: 2px solid var(--rm-mint);
+    outline-offset: 2px;
   }
 
   .reviews-marquee__track {
-    display: flex;
-    gap: 24px;
-    width: max-content;
-    padding: 10px 0 20px;
+    animation: reviews-marquee-up var(--rv-dur, 26s) linear infinite;
     will-change: transform;
-    animation: reviews-marquee-scroll var(--marquee-duration, 22.55s) linear infinite;
   }
 
-  .reviews-marquee:hover .reviews-marquee__track {
+  .reviews-marquee__half {
+    display: flow-root;
+  }
+
+  @keyframes reviews-marquee-up {
+    to {
+      transform: translateY(-50%);
+    }
+  }
+
+  .reviews-marquee__viewport:hover .reviews-marquee__track,
+  .reviews-marquee__viewport:focus-within .reviews-marquee__track,
+  .reviews-marquee__track.is-paused,
+  .reviews-marquee__track.is-held {
     animation-play-state: paused;
   }
 
-  @keyframes reviews-marquee-scroll {
-    from { transform: translateX(0); }
-    /* -50% saja menyisakan selisih setengah gap (12px) setiap loop;
-       kompensasi ini membuat sambungan set benar-benar mulus. */
-    to { transform: translateX(calc(-50% - 12px)); }
-  }
-
-  /* ===== card ===== */
-  .reviews-marquee__card {
-    position: relative;
-    width: 400px;
-    max-width: 86vw;
-    flex-shrink: 0;
-    /* Kartu putih solid agar tetap terpisah dari bagian gradient yang memutih. */
-    background: #ffffff;
-    border: 1px solid rgba(25, 25, 112, 0.14);
-    border-radius: 28px;
-    padding: 30px 30px 26px;
-    -webkit-backdrop-filter: blur(14px) saturate(120%);
-    backdrop-filter: blur(14px) saturate(120%);
-    box-shadow: 0 20px 46px rgba(9, 12, 40, 0.35);
-    transition: transform 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease;
-  }
-
-  .reviews-marquee__card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 28px;
-    padding: 2px;
-    background: linear-gradient(135deg, rgba(176, 224, 230, 0.85), transparent 40%, transparent 70%, rgba(25, 25, 112, 0.5));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.28s ease;
-    pointer-events: none;
-  }
-
-  .reviews-marquee__card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(127, 184, 196, 0.8);
-    box-shadow: 0 28px 58px rgba(9, 12, 40, 0.45);
-  }
-
-  .reviews-marquee__card:hover::before {
-    opacity: 1;
-  }
-
-  .reviews-marquee__quote {
-    position: absolute;
-    top: 4px;
-    right: 22px;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 5.5rem;
-    line-height: 1;
-    color: rgba(25, 25, 112, 0.16);
-    user-select: none;
-  }
-
-  .reviews-marquee__rect {
-    position: relative;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(25, 25, 112, 0.12);
-    border-radius: 18px;
-    padding: 18px 20px;
-    margin-bottom: 18px;
-    box-shadow: 0 6px 16px rgba(25, 25, 112, 0.06);
-  }
-
-  .reviews-marquee__stars {
-    position: relative;
-    display: inline-flex;
-    gap: 3px;
-    color: #191970;
-    font-size: 1.05rem;
-    letter-spacing: 2px;
-    margin-bottom: 16px;
-  }
-
-  .reviews-marquee__text {
-    position: relative;
-    color: #1f2947;
-    font-size: 0.97rem;
-    line-height: 1.75;
-    margin: 0 0 26px;
-    min-height: 86px;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .reviews-marquee__author {
+  .reviews-marquee__row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 14px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(25, 25, 112, 0.1);
+    margin-bottom: 12px;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(244, 247, 243, 0.075), rgba(244, 247, 243, 0.04));
+    border: 1px solid var(--rm-row-line);
+    box-shadow:
+      0 10px 24px -14px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 rgba(244, 247, 243, 0.05);
   }
 
-  .reviews-marquee__avatar {
+  .reviews-marquee__av {
+    flex: none;
+    display: grid;
+    place-items: center;
     width: 46px;
     height: 46px;
     border-radius: 50%;
-    flex-shrink: 0;
-    padding: 2px;
-    background: linear-gradient(135deg, #b0e0e6, #191970);
-    box-shadow: 0 4px 14px rgba(25, 25, 112, 0.28);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow: hidden;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--rm-ink);
+    background: #2b5a4e;
+    box-shadow: 0 0 0 2px rgba(244, 247, 243, 0.16);
   }
 
-  .reviews-marquee__avatar-initial {
+  .reviews-marquee__av--1 {
+    background: #345648;
+  }
+
+  .reviews-marquee__av--2 {
+    background: #4a4a35;
+  }
+
+  .reviews-marquee__av img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    background: #ffffff;
-    color: #191970;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.05rem;
+    object-fit: cover;
   }
 
-  .reviews-marquee__meta {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  .reviews-marquee__body {
     min-width: 0;
+    flex: 1;
   }
 
-  .reviews-marquee__name-row {
+  .reviews-marquee__top {
     display: flex;
     align-items: center;
-    gap: 8px;
-    min-width: 0;
+    justify-content: space-between;
+    gap: 12px;
   }
 
   .reviews-marquee__name {
-    font-size: 0.98rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
     font-weight: 600;
-    color: #101a3a;
+    font-size: 14px;
+    line-height: 1.3;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .reviews-marquee__check {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: rgba(34, 197, 94, 0.15);
-    border: 1px solid rgba(34, 197, 94, 0.5);
-    color: #16a34a;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    flex: none;
+    width: 14px;
+    height: 14px;
+    color: var(--rm-mint);
   }
 
   .reviews-marquee__villa {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    align-self: flex-start;
-    font-size: 0.76rem;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    color: #191970;
-    background: #eef8fa;
-    border: 1px solid #bfe4ea;
-    border-radius: 999px;
-    padding: 4px 12px;
+    flex: none;
+    max-width: 45%;
+    font-size: 11.5px;
+    color: var(--rm-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+  }
+
+  .reviews-marquee__stars {
+    margin-top: 3px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    line-height: 1;
+    color: var(--rm-amber);
+  }
+
+  .reviews-marquee__stars-off {
+    color: rgba(244, 247, 243, 0.22);
+  }
+
+  .reviews-marquee__text {
+    margin: 10px 0 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--rm-soft);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .reviews-marquee__bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .reviews-marquee__toggle {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 4px 2px;
+    cursor: pointer;
+    font: 500 12.5px/1.2 var(--font-primary);
+    color: var(--rm-muted);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .reviews-marquee__toggle:hover {
+    color: var(--rm-ink);
+  }
+
+  .reviews-marquee__toggle:focus-visible {
+    outline: 2px solid var(--rm-mint);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .reviews-marquee__wrap {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
 
   @media (max-width: 768px) {
     .reviews-marquee {
-      padding: 76px 0 60px;
+      padding: 76px 20px 64px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .reviews-marquee__cta {
+      gap: 10px;
+    }
+    .reviews-marquee__tile {
+      height: 96px;
+      font-size: 11px;
+    }
+    .reviews-marquee__tile svg {
+      width: 27px;
+      height: 27px;
     }
     .reviews-marquee__viewport {
-      -webkit-mask-image: none;
-      mask-image: none;
+      height: clamp(340px, 82vw, 420px);
     }
-    .reviews-marquee__card {
-      width: 330px;
-    }
-    .reviews-marquee__text {
-      min-height: 0;
+    .reviews-marquee__row {
+      padding: 14px 15px;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .reviews-marquee__track {
       animation: none;
-      flex-wrap: wrap;
-      width: auto;
-      padding: 0 24px;
     }
-    .reviews-marquee__card {
-      flex: 1 1 330px;
-      max-width: none;
+    .reviews-marquee__half[aria-hidden="true"] {
+      display: none;
+    }
+    .reviews-marquee__viewport {
+      overflow-y: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .reviews-marquee__bar {
+      display: none;
     }
   }
 </style>

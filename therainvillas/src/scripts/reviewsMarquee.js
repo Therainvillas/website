@@ -1,50 +1,83 @@
-// Marquee ulasan: fetch + render + kontrol kecepatan.
+// Marquee ulasan vertikal: fetch + render + kontrol jeda.
 //
 // Dimuat secara lazy oleh ReviewsMarquee.astro saat section mendekati viewport,
 // supaya fetch dan penggantian DOM tidak ikut membebani load awal. Animasi tetap
-// 100% CSS transform; script hanya menyetel durasi agar kecepatan konstan dan
-// menjeda animasi ketika marquee di luar layar.
+// 100% CSS transform; script hanya menyetel durasi agar kecepatan konstan,
+// menduplikasi baris agar loop mulus, dan menjeda animasi di luar layar.
 
-import { REVIEWS_API_URL, parseReviews, reviewCardHTML } from '../data/reviews.js';
+import { REVIEWS_API_URL, parseReviews, reviewRowHTML, sampleReviews } from '../data/reviews.js';
 
 const CACHE_KEY = 'trv_reviews_cache';
 const TIMEOUT_MS = 5000;
-// Kecepatan geser yang dipertahankan berapa pun jumlah kartu / lebar layar.
-const SPEED_PX_PER_SEC = 94;
+const SPEED_PX_PER_SEC = 26;
+const MAX_COPIES = 12;
+// Tampilkan ulasan terbaru saja: loop tetap ringkas dan bobot layer animasi
+// tidak membengkak ketika jumlah ulasan terus bertambah.
+const MAX_REVIEWS = 20;
+
+const HALF_CLASS = 'reviews-marquee__half';
 
 function setDuration(track) {
-  const width = track.scrollWidth;
-  if (!width) return;
-  // Keyframes bergeser -50% - 12px (kompensasi setengah gap 24px).
-  const shift = width / 2 + 12;
-  const seconds = Math.max(8, shift / SPEED_PX_PER_SEC);
-  track.style.animationDuration = `${seconds.toFixed(2)}s`;
+  const half = track.querySelector(`.${HALF_CLASS}`);
+  const height = half ? half.offsetHeight : track.offsetHeight / 2;
+  if (!height) return;
+  const seconds = Math.max(12, height / SPEED_PX_PER_SEC);
+  track.style.setProperty('--rv-dur', `${seconds.toFixed(1)}s`);
 }
 
-function renderReviews(track, reviews) {
-  if (!reviews || !reviews.length) return;
-  const cards = reviews.map(reviewCardHTML).join('');
-  const viewportW = window.innerWidth || 1600;
-  const approxSetW = reviews.length * 424; // lebar kartu + gap
-  // Butuh minimal 2 set agar translateX(-50%) mulus; tambah 2 set lagi hanya
-  // bila satu set belum cukup menutup lebar viewport (layar sangat lebar).
-  const sets = Math.max(2, Math.ceil(viewportW / approxSetW) * 2);
-  track.innerHTML = cards.repeat(sets);
+function timeOf(review) {
+  const time = new Date(review && review.timestamp ? review.timestamp : 0).getTime();
+  return Number.isNaN(time) ? 0 : time;
+}
+
+function prepareReviews(reviews) {
+  const list = (reviews && reviews.length ? reviews.slice() : sampleReviews.slice());
+  // Ulasan terbaru lebih relevan untuk ditampilkan lebih dulu.
+  list.sort((a, b) => timeOf(b) - timeOf(a));
+  return list.slice(0, MAX_REVIEWS);
+}
+
+function renderRows(track, viewport, reviews) {
+  const list = prepareReviews(reviews);
+  const rows = list.map(reviewRowHTML).join('');
+
+  // Satu set baris harus lebih tinggi dari viewport, kalau tidak loop
+  // translateY(-50%) akan menyisakan ruang kosong.
+  track.innerHTML = `<div class="${HALF_CLASS}">${rows}</div>`;
+  const half = track.firstElementChild;
+  let copies = 1;
+  const minHeight = (viewport.offsetHeight || 380) + 40;
+  while (half.offsetHeight > 0 && half.offsetHeight < minHeight && copies < MAX_COPIES) {
+    half.insertAdjacentHTML('beforeend', rows);
+    copies += 1;
+  }
+
+  const halfHTML = half.innerHTML;
+  track.innerHTML =
+    `<div class="${HALF_CLASS}">${halfHTML}</div>` +
+    `<div class="${HALF_CLASS}" aria-hidden="true">${halfHTML}</div>`;
+
   setDuration(track);
   try {
-    sessionStorage.setItem(CACHE_KEY, JSON.stringify(reviews));
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify(list));
   } catch (e) {
     /* storage penuh / diblokir */
   }
 }
 
-export function initReviewsMarquee(track) {
-  if (!track || track.dataset.marqueeReady === '1') return;
+export function initReviewsMarquee(track, viewport, toggle) {
+  if (!track || !viewport || track.dataset.marqueeReady === '1') return;
   track.dataset.marqueeReady = '1';
 
-  setDuration(track);
+  let current = [];
+  let resizeTimer = 0;
 
-  // Jeda animasi saat marquee di luar viewport → tidak ada compositing sia-sia.
+  const render = (reviews) => {
+    if (reviews && reviews.length) current = reviews;
+    renderRows(track, viewport, current);
+  };
+
+  // Jeda animasi saat section di luar viewport → tidak ada compositing sia-sia.
   if ('IntersectionObserver' in window) {
     const visibility = new IntersectionObserver(
       (entries) => {
@@ -57,18 +90,48 @@ export function initReviewsMarquee(track) {
     visibility.observe(track);
   }
 
-  // Lebar set berubah saat rotasi layar / resize → hitung ulang durasi.
-  let resizeTimer = 0;
+  // Tinggi baris berubah saat font termuat / layar berputar → hitung ulang.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => render(current));
+  }
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(() => setDuration(track), 180);
+    resizeTimer = window.setTimeout(() => render(current), 200);
   });
+
+  // Tombol jeda / lanjut.
+  if (toggle) {
+    toggle.setAttribute('aria-pressed', 'false');
+    toggle.addEventListener('click', () => {
+      const paused = track.classList.toggle('is-paused');
+      toggle.textContent = paused ? 'Lanjutkan gulir' : 'Jeda gulir';
+      toggle.setAttribute('aria-pressed', String(paused));
+    });
+  }
+
+  // Sentuhan di HP: berhenti selama jari menempel, lanjut sebentar setelahnya.
+  let resume = 0;
+  viewport.addEventListener(
+    'touchstart',
+    () => {
+      clearTimeout(resume);
+      track.classList.add('is-held');
+    },
+    { passive: true },
+  );
+  viewport.addEventListener(
+    'touchend',
+    () => {
+      resume = window.setTimeout(() => track.classList.remove('is-held'), 1800);
+    },
+    { passive: true },
+  );
 
   (async () => {
     // Tampilkan ulasan yang sudah di-cache lebih dulu, lalu refresh di background.
     try {
       const cached = JSON.parse(sessionStorage.getItem(CACHE_KEY));
-      if (Array.isArray(cached) && cached.length) renderReviews(track, cached);
+      if (Array.isArray(cached) && cached.length) render(cached);
     } catch (e) {
       /* cache rusak / diblokir */
     }
@@ -93,9 +156,10 @@ export function initReviewsMarquee(track) {
           }
         }
       }
-      renderReviews(track, parseReviews(data));
+      const reviews = parseReviews(data);
+      if (reviews.length) render(reviews);
     } catch (e) {
-      // network error / timeout → biarkan kartu SSR (tidak pernah kosong)
+      // network error / timeout → biarkan baris SSR (tidak pernah kosong)
     } finally {
       clearTimeout(timer);
     }

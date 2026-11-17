@@ -1479,6 +1479,12 @@ const rateLabel = (label) => {
     .wheel__search {
       max-width: none;
     }
+
+    /* iOS Safari memperbesar halaman saat input < 16px difokuskan.
+       Samakan ukuran font agar ketukan pada kolom cari tidak memicu zoom. */
+    .wheel__search-box input {
+      font-size: 16px;
+    }
   }
 
   @media (max-width: 720px) {
@@ -1517,7 +1523,10 @@ const rateLabel = (label) => {
     }
 
     .wheel__card {
-      contain: layout paint;
+      /* Sengaja tanpa paint containment: kartu yang dibuka membesar 1.4x dan
+         bayangan aktif ikut keluar dari kotak kartu. Dengan paint containment
+         sisi belakang terpotong dan tombolnya tidak bisa diklik di ponsel. */
+      contain: layout;
     }
 
     .wheel__card-tilt {

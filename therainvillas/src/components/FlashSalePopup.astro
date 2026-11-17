@@ -555,6 +555,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       badge();
       confetti();
       if (!reduce) startFx();
+      if (!reduce && window.NYText) window.NYText.start(root, card);
       document.addEventListener('keydown', onKeydown);
 
       window.setTimeout(() => {
@@ -565,6 +566,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       window.setTimeout(() => {
         ensureVisible();
         if (!reduce && !running) startFx();
+        if (!reduce && window.NYText) window.NYText.start(root, card);
       }, 1700);
     }
 
@@ -585,6 +587,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
         root.hidden = true;
         closing = false;
         stopFx();
+        if (window.NYText) window.NYText.stop();
         unlockBody();
         const lastFocus = opener;
         opener = null;
@@ -650,8 +653,13 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
         reduce = event.matches && CONFIG.respectReducedMotion && !forceFx;
         root.classList.toggle('ny-anim-on', !reduce);
         if (!visible) return;
-        if (reduce) stopFx();
-        else if (!running) startFx();
+        if (reduce) {
+          stopFx();
+          if (window.NYText) window.NYText.stop();
+        } else {
+          if (!running) startFx();
+          if (window.NYText) window.NYText.start(root, card);
+        }
         confetti();
       });
     }
@@ -661,6 +669,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       () => {
         clearTimeout(hideTimer);
         if (running) stopFx();
+        if (window.NYText) window.NYText.stop();
       },
       { once: true },
     );
@@ -710,6 +719,460 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
 
     // Pintu darurat untuk uji manual dari console: __nyPromo.open()
     window.__nyPromo = { open: show, close };
+  })();
+
+  /* =====================================================================
+     Kembang api berbentuk tulisan "therainvillas" + nama-nama villa.
+     Canvas terpisah di atas popup, jadi kode kembang api utama tidak diubah.
+     Font memakai font situs (Inter/Work Sans) yang sudah di-host sendiri.
+     ===================================================================== */
+  (() => {
+    const OPT = {
+      brand: 'therainvillas', // tulisan utama (besar, di atas kartu)
+      names: [
+        'Agave', 'Arisyfa', 'Awan', 'Aleia', 'Arsy', 'Albi',
+        'Bodas', 'Baduo', 'Calmora', 'Cempaka', 'Cemara', 'Cyrena',
+        'De Summit', 'Halla', 'Echa', 'Valora',
+        'Wanela', 'Rjs Cottage', 'Rjs 2', 'Rjs 3', 'The Helina',
+        'Ranna', 'Rayya', 'Twins', 'Thymi', 'Opung', 'Elora',
+        '4D', 'Rio', 'Kaca 1', 'Kaca 2',
+      ],
+      nameChance: 0.4, // peluang tiap peluncuran menjadi nama villa (0-1)
+      maxNames: 3, // maksimal nama villa yang tampil bersamaan
+      brandEvery: 16, // tulisan utama muncul lagi tiap X detik
+      font: '600 120px "Inter Variable","Inter","Work Sans Variable","Segoe UI",Arial,sans-serif',
+    };
+
+    const PAL = [
+      ['#ffd479', '#ffb347'],
+      ['#ff6f91', '#ffb0c2'],
+      ['#7fe7ff', '#4fb8ff'],
+      ['#fff6e0', '#f3dca4'],
+      ['#9dffb0', '#4fe39a'],
+      ['#c9a6ff', '#8f7bff'],
+    ];
+    const T1 = 1;
+    const HOLD = 1.9;
+    const FALL = 1; // detik: huruf mengembang / bertahan / jatuh
+
+    let root;
+    let card;
+    let cv;
+    let ctx;
+    let W = 0;
+    let H = 0;
+    let S = 1;
+    let parts = [];
+    let rockets = [];
+    let live = [];
+    let cache = {};
+    let bag = [];
+    let raf = 0;
+    let last = 0;
+    let clock = 0;
+    let next = 0;
+    let brandWait = 0;
+    let running = false;
+
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const pick = (a) => a[Math.floor(Math.random() * a.length)];
+
+    function size() {
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      W = cv.clientWidth || window.innerWidth;
+      H = cv.clientHeight || window.innerHeight;
+      cv.width = W * d;
+      cv.height = H * d;
+      ctx.setTransform(d, 0, 0, d, 0, 0);
+      S = Math.max(0.55, Math.min(1.3, Math.min(W, H) / 720));
+    }
+
+    /* posisi kartu terhadap overlay (tidak terpengaruh animasi masuk kartu) */
+    function box() {
+      if (card.offsetParent === root) {
+        return {
+          l: card.offsetLeft,
+          t: card.offsetTop,
+          r: card.offsetLeft + card.offsetWidth,
+          b: card.offsetTop + card.offsetHeight,
+        };
+      }
+      const a = root.getBoundingClientRect();
+      const c = card.getBoundingClientRect();
+      return { l: c.left - a.left, t: c.top - a.top, r: c.right - a.left, b: c.bottom - a.top };
+    }
+
+    /* ---------- Tulisan menjadi titik-titik ---------- */
+    function textGet(str) {
+      if (cache[str]) return cache[str];
+      const c = document.createElement('canvas');
+      const g = c.getContext('2d');
+      const pts = [];
+      g.font = OPT.font;
+      const w = Math.ceil(g.measureText(str).width) + 24;
+      const h = 180;
+      c.width = w;
+      c.height = h;
+      g.font = OPT.font;
+      g.textBaseline = 'middle';
+      g.fillStyle = '#fff';
+      g.fillText(str, 12, h / 2);
+      const d = g.getImageData(0, 0, w, h).data;
+      let x0 = 1e9;
+      let x1 = -1e9;
+      let y0 = 1e9;
+      let y1 = -1e9;
+      for (let y = 0; y < h; y += 6) {
+        for (let x = 0; x < w; x += 6) {
+          if (d[(y * w + x) * 4 + 3] > 128) {
+            pts.push([x, y]);
+            if (x < x0) x0 = x;
+            if (x > x1) x1 = x;
+            if (y < y0) y0 = y;
+            if (y > y1) y1 = y;
+          }
+        }
+      }
+      const cx = (x0 + x1) / 2;
+      const cy = (y0 + y1) / 2;
+      for (let i = 0; i < pts.length; i++) {
+        pts[i][0] -= cx;
+        pts[i][1] -= cy;
+      }
+      return (cache[str] = { pts, w: x1 - x0 + 6, h: y1 - y0 + 6 });
+    }
+
+    /* tulisan utama besar, nama villa kecil */
+    function textScale(T, small) {
+      const cap = small ? Math.max(0.28, Math.min(0.3, W / 1300)) : Math.max(0.45, Math.min(0.7, W / 1000));
+      return Math.min(cap, (W * (small ? 0.45 : 0.86)) / T.w);
+    }
+
+    function nextName() {
+      if (!bag.length) {
+        bag = OPT.names.slice();
+        for (let i = bag.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const t = bag[i];
+          bag[i] = bag[j];
+          bag[j] = t;
+        }
+      }
+      return bag.pop();
+    }
+
+    /* ---------- Tempat acak untuk nama villa ---------- */
+    const hit = (a, b) => a.l < b.r && a.r > b.l && a.t < b.b && a.b > b.t;
+
+    function place(T, sc) {
+      const hw = (T.w * sc) / 2 + 8;
+      const hh = (T.h * sc) / 2 + 8;
+      let c = box();
+      c = { l: c.l - 10, t: c.t - 10, r: c.r + 10, b: c.b + 10 };
+      for (let n = 0; n < 50; n++) {
+        // 30 percobaan pertama: di luar kartu; sisanya (layar HP): boleh di atas kartu
+        const x = rnd(hw, Math.max(hw, W - hw));
+        const y = rnd(hh, Math.max(hh, H * 0.88 - hh));
+        const r = { l: x - hw, t: y - hh, r: x + hw, b: y + hh };
+        let ok = n >= 30 || !hit(r, c);
+        for (let j = 0; ok && j < live.length; j++) {
+          if (live[j].until > clock && hit(r, live[j])) ok = false;
+        }
+        if (ok) return { x, y };
+      }
+      return null;
+    }
+
+    function reserve(x, y, T, sc, wait, isName) {
+      const hw = (T.w * sc) / 2 + 8;
+      const hh = (T.h * sc) / 2 + 8;
+      live = live.filter((o) => o.until > clock);
+      live.push({
+        l: x - hw,
+        t: y - hh,
+        r: x + hw,
+        b: y + hh,
+        name: isName,
+        until: clock + (wait || 0) + 1.2 + T1 + HOLD + FALL,
+      });
+    }
+    const namesLive = () => live.filter((o) => o.name && o.until > clock).length;
+
+    /* ---------- Roket & ledakan ---------- */
+    function launchText(str, isBrand, wait) {
+      const T = textGet(str);
+      const sc = textScale(T, !isBrand);
+      let pal;
+      let x;
+      let y;
+      if (!T.pts.length) return;
+      if (isBrand) {
+        // besar, di tengah, tepat di atas kartu
+        pal = PAL[0];
+        const hh = (T.h * sc) / 2;
+        x = W / 2;
+        y = Math.max(hh + 12, Math.min(H * 0.3, box().t - hh - 14));
+      } else {
+        // kecil, tempat acak
+        const pos = place(T, sc);
+        if (!pos) return;
+        x = pos.x;
+        y = pos.y;
+        pal = pick(PAL);
+      }
+      reserve(x, y, T, sc, wait, !isBrand);
+      const x0 = W / 2 + (x - W / 2) * 0.6;
+      rockets.push({
+        x0,
+        y0: H - 30,
+        x1: x,
+        y1: y,
+        p: 0,
+        dur: rnd(0.8, 1.15),
+        wait: wait || 0,
+        T,
+        sc,
+        pal,
+        small: !isBrand,
+        px: x0,
+        py: H - 30,
+      });
+    }
+
+    function spark(x, y) {
+      parts.push({
+        x,
+        y,
+        px: x,
+        py: y,
+        vx: rnd(-0.6, 0.6),
+        vy: rnd(0.2, 1.2),
+        life: 1,
+        decay: rnd(0.05, 0.09),
+        size: 1.2,
+        c: '#ffd9a0',
+        g: 0.04,
+        f: 0.96,
+      });
+    }
+
+    function explode(r, x, y) {
+      const T = r.T;
+      const sc = r.sc;
+      const col = r.pal[0];
+      const P = 6.4 * S * (r.small ? 0.4 : 1);
+      const sp = 6 * sc;
+      const sz = Math.max(1.4, Math.min(3.4, sp * 0.7));
+      let i;
+      let a;
+      for (i = 0; i < T.pts.length; i++) {
+        // titik-titik huruf terbang dari pusat ledakan
+        const q = T.pts[i];
+        parts.push({
+          x,
+          y,
+          px: x,
+          py: y,
+          sx: x,
+          sy: y,
+          tx: x + q[0] * sc,
+          ty: y + q[1] * sc,
+          t: -Math.random() * 0.1,
+          size: sz,
+          c: Math.random() < 0.72 ? col : '#fff6e0',
+          txt: 1,
+          vy: 0,
+        });
+      }
+      const n = r.small ? 50 : 70; // cincin kilat di pusat
+      for (i = 0; i < n; i++) {
+        a = (i / n) * 6.283;
+        parts.push({
+          x,
+          y,
+          px: x,
+          py: y,
+          vx: Math.cos(a) * P * 0.95,
+          vy: Math.sin(a) * P * 0.95 * 0.6,
+          life: 1,
+          decay: rnd(0.011, 0.019),
+          size: rnd(1.4, 2.2),
+          c: col,
+          g: 0.05,
+          f: 0.965,
+        });
+      }
+    }
+
+    function stepRocket(r, dt) {
+      if (r.wait > 0) {
+        r.wait -= dt;
+        return true;
+      }
+      r.p += dt / r.dur;
+      const e = 1 - Math.pow(1 - Math.min(r.p, 1), 2.2);
+      const x = r.x0 + (r.x1 - r.x0) * e;
+      const y = r.y0 + (r.y1 - r.y0) * e;
+      ctx.strokeStyle = 'rgba(255,243,207,.9)';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(r.px, r.py);
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      spark(x, y);
+      r.px = x;
+      r.py = y;
+      if (r.p >= 1) {
+        explode(r, x, y);
+        return false;
+      }
+      return true;
+    }
+
+    function spawn() {
+      if (brandWait <= 0 && OPT.brand) {
+        launchText(OPT.brand, true, 0);
+        brandWait = OPT.brandEvery;
+        return;
+      }
+      if (OPT.names.length && Math.random() < OPT.nameChance && namesLive() < OPT.maxNames) {
+        launchText(nextName(), false, 0);
+      }
+    }
+
+    function frame(t) {
+      if (!running) return;
+      const dt = Math.min((t - last) / 1000 || 0.016, 0.05);
+      const f = dt * 60;
+      last = t;
+      clock += dt;
+      brandWait -= dt;
+      next -= dt;
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,.24)';
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round';
+
+      if (next <= 0) {
+        spawn();
+        next = rnd(0.5, 0.9);
+      }
+      for (let i = rockets.length - 1; i >= 0; i--) {
+        if (!stepRocket(rockets[i], dt)) rockets.splice(i, 1);
+      }
+
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const p = parts[i];
+        if (p.txt) {
+          // huruf: mengembang > diam berkelip > jatuh
+          p.t += dt;
+          if (p.t < 0) continue;
+          let al = 0.95;
+          p.px = p.x;
+          p.py = p.y;
+          if (p.t < T1) {
+            const k = p.t / T1;
+            const e = 1 - Math.pow(1 - k, 3);
+            p.x = p.sx + (p.tx - p.sx) * e;
+            p.y = p.sy + (p.ty - p.sy) * e;
+          } else if (p.t < T1 + HOLD) {
+            p.x = p.tx + rnd(-0.4, 0.4);
+            p.y = p.ty + rnd(-0.4, 0.4);
+            p.px = p.x;
+            p.py = p.y;
+            al = 0.8 + Math.random() * 0.2;
+          } else {
+            const fq = (p.t - T1 - HOLD) / FALL;
+            if (fq >= 1) {
+              parts.splice(i, 1);
+              continue;
+            }
+            p.vy += 0.05 * f;
+            p.y += p.vy * f;
+            p.x += rnd(-0.3, 0.3);
+            al = 1 - fq;
+          }
+          ctx.globalAlpha = al;
+          ctx.strokeStyle = p.c;
+          ctx.lineWidth = p.size;
+          ctx.beginPath();
+          ctx.moveTo(p.px, p.py);
+          ctx.lineTo(p.x + 0.01, p.y);
+          ctx.stroke();
+          continue;
+        }
+        p.px = p.x;
+        p.py = p.y;
+        p.vx *= Math.pow(p.f, f);
+        p.vy *= Math.pow(p.f, f);
+        p.vy += p.g * f;
+        p.x += p.vx * f;
+        p.y += p.vy * f;
+        p.life -= p.decay * f;
+        if (p.life <= 0) {
+          parts.splice(i, 1);
+          continue;
+        }
+        ctx.globalAlpha = Math.min(1, p.life * 1.4);
+        ctx.strokeStyle = p.c;
+        ctx.lineWidth = p.size * (0.5 + 0.5 * p.life);
+        ctx.beginPath();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      raf = requestAnimationFrame(frame);
+    }
+
+    /* ---------- Dipanggil dari popup ---------- */
+    const onResize = () => {
+      if (running) size();
+    };
+
+    function start(rootEl, cardEl) {
+      if (running || !rootEl || !cardEl) return;
+      root = rootEl;
+      card = cardEl;
+      if (!cv) {
+        cv = document.createElement('canvas');
+        cv.setAttribute('aria-hidden', 'true');
+        cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5';
+        ctx = cv.getContext('2d');
+      }
+      if (cv.parentNode !== root) root.appendChild(cv);
+      size();
+      parts = [];
+      rockets = [];
+      live = [];
+      clock = 0;
+      brandWait = 0;
+      next = 1.6;
+      running = true;
+      last = performance.now();
+      window.addEventListener('resize', onResize);
+      launchText(OPT.brand, true, 1); // tulisan utama pertama, sesaat setelah popup terbuka
+      brandWait = OPT.brandEvery;
+      raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      running = false;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      if (ctx) ctx.clearRect(0, 0, W, H);
+      if (cv && cv.parentNode) cv.parentNode.removeChild(cv);
+    }
+
+    // Hitung ulang titik huruf setelah font situs termuat.
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load(OPT.font).then(() => {
+        cache = {};
+      });
+    }
+
+    window.NYText = { start, stop };
   })();
 </script>
 

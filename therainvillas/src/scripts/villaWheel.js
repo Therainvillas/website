@@ -88,8 +88,19 @@ export function initVillaWheel() {
     root.style.setProperty('--step', `${DEG}deg`);
   }
 
+  let allImagesWarmed = false;
+  function ensureAllImagesWarmed() {
+    if (allImagesWarmed) return;
+    allImagesWarmed = true;
+    root.querySelectorAll('.wheel__card-media img').forEach((img) => {
+      if (img.loading !== 'eager') img.loading = 'eager';
+    });
+  }
+
   function applyRing() {
-    ring.style.setProperty('--rot', `${(-pos * DEG).toFixed(3)}deg`);
+    const rot = (-pos * DEG).toFixed(3);
+    ring.style.transform = `translateZ(-${radius.toFixed(2)}px) rotateY(${rot}deg)`;
+    ring.style.setProperty('--rot', `${rot}deg`);
   }
 
   function render() {
@@ -116,10 +127,12 @@ export function initVillaWheel() {
       const fog = Math.min(1, Math.pow(distance / 6.2, 1.6));
       const lift = Math.pow(Math.max(0, 1 - distance), 1.7) * cardW * 0.5;
 
-      card.style.setProperty('--shade', shade.toFixed(3));
+      if (!mobile) {
+        card.style.setProperty('--shade', shade.toFixed(3));
+        card.style.setProperty('--motion', motion.toFixed(3));
+      }
       card.style.setProperty('--fog', fog.toFixed(3));
       card.style.setProperty('--lift', lift.toFixed(1));
-      card.style.setProperty('--motion', motion.toFixed(3));
     }
 
     const index = mod(Math.round(pos));
@@ -233,6 +246,7 @@ export function initVillaWheel() {
   }
 
   function goToIndex(index, nextRate) {
+    ensureAllImagesWarmed();
     let destination = index;
     if (!enabled.has(destination)) {
       const near = nearestIndexTo(destination);
@@ -245,6 +259,7 @@ export function initVillaWheel() {
   }
 
   function stepBy(direction) {
+    ensureAllImagesWarmed();
     if (enabled.size < 2) return;
     if (flipped >= 0) closeFlip(false);
     let bestDelta = null;
@@ -274,6 +289,7 @@ export function initVillaWheel() {
   }
 
   function pageBy(direction) {
+    ensureAllImagesWarmed();
     if (!enabled.size) return;
     if (flipped >= 0) closeFlip(false);
     const wanted = target + direction * 5;
@@ -785,6 +801,7 @@ export function initVillaWheel() {
   /* ---------- events ---------- */
 
   stage.addEventListener('pointerdown', (event) => {
+    ensureAllImagesWarmed();
     if (pointerId !== null) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
     if (event.target.closest && event.target.closest('a, button')) return;
@@ -1006,19 +1023,18 @@ export function initVillaWheel() {
   /* ---------- boot ---------- */
 
   measure();
-  pos = reduced ? 0 : -10;
+  const isMobile = mobile || window.innerWidth <= 720;
+  pos = reduced || isMobile ? 0 : -10;
   target = 0;
   applyFilter('');
   render();
 
-  if (reduced) {
+  if (reduced || isMobile) {
     intro = false;
     pos = 0;
     target = 0;
     render();
   } else {
-    // Mobile memakai intro yang lebih singkat agar roda cepat diam dan
-    // tidak memicu render 3D terus-menerus.
-    startLoop(mobile ? 6 : 3.2);
+    startLoop(3.2);
   }
 }

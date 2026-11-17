@@ -230,31 +230,84 @@ const rateLabel = (label) => {
     let started = false;
     let observer = null;
 
-    // Muat semua gambar kartu begitu roda hampir terlihat. Lazy-load biasa
-    // tidak menjangkau kartu yang posisinya di belakang ring 3D, sehingga
-    // beberapa kartu samping tampil kosong saat roda pertama diputar.
-    const warmCardImages = () => {
-      section.querySelectorAll('.wheel__card-media img').forEach((img) => {
-        img.loading = 'eager';
+    // Muat gambar kartu secara terencana. Di mobile, hanya 5 kartu depan yang
+    // dimuat eager langsung agar thread tidak macet oleh decode 31 gambar sekaligus.
+    // Sisa kartu dimuat bertahap di idle time atau saat user mulai memutar roda.
+    const warmCardImages = (isMobile) => {
+      const imgs = Array.from(section.querySelectorAll('.wheel__card-media img'));
+      if (!imgs.length) return;
+
+      if (!isMobile) {
+        imgs.forEach((img) => {
+          img.loading = 'eager';
+        });
+        return;
+      }
+
+      // Prioritas 5 kartu terdepan (aktif & samping terdekat)
+      const total = imgs.length;
+      const initialIndices = [0, 1, 2, total - 1, total - 2];
+      initialIndices.forEach((idx) => {
+        if (imgs[idx]) imgs[idx].loading = 'eager';
       });
+
+      // Muat sisa kartu di idle time tanpa mengganggu kelancaran scroll
+      const warmRest = () => {
+        let cursor = 3;
+        const batchSize = 4;
+        const nextBatch = () => {
+          for (let i = 0; i < batchSize && cursor < total - 2; i++, cursor++) {
+            if (imgs[cursor]) imgs[cursor].loading = 'eager';
+          }
+          if (cursor < total - 2) {
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(nextBatch, { timeout: 1000 });
+            } else {
+              setTimeout(nextBatch, 120);
+            }
+          }
+        };
+
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(nextBatch, { timeout: 1200 });
+        } else {
+          setTimeout(nextBatch, 250);
+        }
+      };
+
+      warmRest();
     };
 
     const start = () => {
       if (started) return;
       started = true;
       if (observer) observer.disconnect();
-      warmCardImages();
-      import('../../scripts/villaWheel.js')
-        .then((mod) => mod.initVillaWheel())
-        .catch(() => {});
+      const isMobile = window.matchMedia('(max-width: 720px)').matches;
+      warmCardImages(isMobile);
+
+      const loadEngine = () => {
+        import('../../scripts/villaWheel.js')
+          .then((mod) => mod.initVillaWheel())
+          .catch(() => {});
+      };
+
+      // Beri kesempatan scroll momentum browser selesai sebelum mengeksekusi engine di mobile
+      if (isMobile && 'requestAnimationFrame' in window) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(loadEngine);
+        });
+      } else {
+        loadEngine();
+      }
     };
 
     if ('IntersectionObserver' in window) {
+      const isMobile = window.matchMedia('(max-width: 720px)').matches;
       observer = new IntersectionObserver(
         (entries) => {
           if (entries.some((entry) => entry.isIntersecting)) start();
         },
-        { rootMargin: '600px 0px' },
+        { rootMargin: isMobile ? '200px 0px' : '500px 0px' },
       );
       observer.observe(section);
     } else {
@@ -1437,6 +1490,12 @@ const rateLabel = (label) => {
       --perspective: 1183.19px;
       --flip-scale: 1.4;
       padding: 64px 0 78px;
+      contain-intrinsic-size: auto 680px;
+    }
+
+    .wheel__viewport {
+      animation: none;
+      opacity: 1;
     }
 
     .wheel__head {
@@ -1449,6 +1508,20 @@ const rateLabel = (label) => {
 
     .wheel__stage {
       height: 400px;
+      -webkit-mask-image: none !important;
+      mask-image: none !important;
+    }
+
+    .wheel__ring {
+      will-change: transform;
+    }
+
+    .wheel__card {
+      contain: layout paint;
+    }
+
+    .wheel__card-tilt {
+      transition: none;
     }
 
     .wheel__zones {
@@ -1463,16 +1536,13 @@ const rateLabel = (label) => {
       padding: 7px 9px 9px;
     }
 
-    /* Mobile: buang lapisan dekoratif yang mahal di GPU. Tampilan kartu
-       dan isi sisi belakang tetap sama setelah animasi selesai. */
+    /* Mobile: buang seluruh lapisan 3D & efek yang membebani GPU */
     .wheel__card-shadow,
     .wheel__card-glare,
-    .wheel__card-hover {
-      display: none;
-    }
-
-    .wheel__card-layer:nth-child(n + 5) {
-      display: none;
+    .wheel__card-hover,
+    .wheel__card-layer,
+    .wheel__floor {
+      display: none !important;
     }
 
     .wheel__card--muted .wheel__card-face {

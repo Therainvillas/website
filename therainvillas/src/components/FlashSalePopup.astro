@@ -103,6 +103,15 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
 
     const DISMISS_KEY = 'trv_promo_ny2027_dismissed';
 
+    // Tandai sesi tab ini sebagai sudah pernah menjadwalkan popup.
+    function markSeen() {
+      try {
+        sessionStorage.setItem(DISMISS_KEY, '1');
+      } catch (error) {
+        /* ignore */
+      }
+    }
+
     const rnd = (a, b) => a + Math.random() * (b - a);
     const pick = (a) => a[Math.floor(Math.random() * a.length)];
 
@@ -569,11 +578,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       visible = false;
       clearTimeout(hideTimer);
       document.removeEventListener('keydown', onKeydown);
-      try {
-        sessionStorage.setItem(DISMISS_KEY, '1');
-      } catch (error) {
-        /* ignore */
-      }
+      markSeen();
 
       root.classList.remove('is-open');
       hideTimer = window.setTimeout(() => {
@@ -618,13 +623,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
 
     xBtn.addEventListener('click', close);
     later.addEventListener('click', close);
-    cta.addEventListener('click', () => {
-      try {
-        sessionStorage.setItem(DISMISS_KEY, '1');
-      } catch (error) {
-        /* ignore */
-      }
-    });
+    cta.addEventListener('click', markSeen);
 
     // Klik latar = kembang api di titik itu (fokus tetap di dalam dialog).
     root.addEventListener('click', (event) => {
@@ -701,6 +700,10 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
 
     function schedule() {
       if (!canShow()) return;
+      // Sekali popup dijadwalkan, tab ini dianggap "sudah masuk". Pindah ke halaman
+      // lain dalam tab yang sama tidak menjadwalkan lagi. Hard refresh tetap
+      // muncul karena canShow() memeriksa isReload() lebih dulu.
+      markSeen();
       preloadImage();
       window.setTimeout(show, CONFIG.delayMs);
     }

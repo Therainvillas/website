@@ -1,8 +1,8 @@
 ---
 // Popup promo Paket 2 Malam Tahun Baru 2027.
 //
-// Versi baru (tema malam tahun baru): latar navy + bintang, bukit + rumah
-// menyala, konfeti, angka 2027 Playfair, dan kembang api canvas.
+// Versi baru (tema malam tahun baru): latar kota malam 2D berbasis canvas,
+// konfeti, angka 2027 Playfair, dan kembang api canvas.
 // Tanpa hitung mundur. Markup, gaya, dan script vanilla (tanpa library).
 import { getGeneralImageSeo } from '../utils/imageSeo';
 
@@ -19,16 +19,6 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
   hidden
 >
   <div class="ny-confetti" id="nyConfetti" aria-hidden="true"></div>
-
-  <svg class="ny-hills" viewBox="0 0 1440 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-    <path
-      d="M0 120C120 70 240 90 360 110C500 135 600 60 760 70C920 80 1040 130 1180 100C1300 75 1380 90 1440 105V200H0Z"
-      fill="#0d1230"></path>
-    <path d="M0 150C200 118 360 150 520 150H1120C1240 150 1340 125 1440 140V200H0Z" fill="#060817"></path>
-    <path d="M990 150V132H1050V150ZM984 132L1020 110L1056 132Z" fill="#060817"></path>
-    <rect class="ny-light" x="1008" y="138" width="9" height="8" fill="#ffd479"></rect>
-    <rect class="ny-light" x="1026" y="138" width="9" height="8" fill="#ffd479" style="animation-delay:-1.3s"></rect>
-  </svg>
 
   <div class="ny-card" id="nyCard" tabindex="-1">
     <button class="ny-x" id="nyClose" type="button" aria-label="Tutup promo">
@@ -552,6 +542,8 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       lockBody();
       void root.offsetWidth;
       root.classList.add('is-open');
+      // Latar kota 2D disisipkan sebagai elemen pertama, di belakang kartu.
+      if (window.NYCity) window.NYCity.start(root);
       badge();
       confetti();
       if (!reduce) startFx();
@@ -565,6 +557,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
       window.setTimeout(ensureVisible, 750);
       window.setTimeout(() => {
         ensureVisible();
+        if (window.NYCity) window.NYCity.start(root);
         if (!reduce && !running) startFx();
         if (!reduce && window.NYText) window.NYText.start(root, card);
       }, 1700);
@@ -588,6 +581,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
         closing = false;
         stopFx();
         if (window.NYText) window.NYText.stop();
+        if (window.NYCity) window.NYCity.stop();
         unlockBody();
         const lastFocus = opener;
         opener = null;
@@ -660,6 +654,12 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
           if (!running) startFx();
           if (window.NYText) window.NYText.start(root, card);
         }
+        // NYCity membaca prefers-reduced-motion sekali saat dibuat; bangun
+        // ulang agar mode diam/animasi mengikuti preferensi baru.
+        if (window.NYCity) {
+          window.NYCity.stop();
+          window.NYCity.start(root);
+        }
         confetti();
       });
     }
@@ -670,6 +670,7 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
         clearTimeout(hideTimer);
         if (running) stopFx();
         if (window.NYText) window.NYText.stop();
+        if (window.NYCity) window.NYCity.stop();
       },
       { once: true },
     );
@@ -1174,6 +1175,326 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
 
     window.NYText = { start, stop };
   })();
+
+  /* =====================================================================
+     LATAR KOTA 2D (canvas) untuk popup Tahun Baru
+     ---------------------------------------------------------------------
+     Gambar latar lama TIDAK dipakai lagi. Kota malam 2D ini berdiri sendiri
+     (canvas sendiri, tanpa gambar) dan bergerak:
+     gedung bertingkat dengan jendela menyala-padam, papan neon "2027",
+     bianglala berputar, kereta layang lewat, blimp bertuliskan 2027,
+     lampu sorot berayun, mobil & bus di jalan, orang berjalan membawa
+     kembang api tangan (sparkler), lampu jalan, dan bintang berkelip.
+
+     Dipanggil oleh popup utama lewat window.NYCity.start(root) / stop().
+     Font memakai font situs (Inter/Work Sans) yang sudah di-host sendiri.
+     ===================================================================== */
+  (function () {
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var WC = ['#ffd479', '#fff2c9', '#7fe7ff', '#ff8fb0'];       // warna cahaya jendela
+    var FONT = '"Inter Variable","Inter","Work Sans Variable","Segoe UI",Arial,sans-serif';
+
+    var cv, ctx, W = 0, H = 0, U = 1, dpr = 1, running = false, shown = false, raf = 0, last = 0, t = 0, R;
+    var baseY, walkY, trackY, sky, ground, far, mid, near, wheel, cars, peds, sparks = [], train, blimp, stars, beams, fog, sign;
+
+    function rng(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var x = Math.imul(a ^ a >>> 15, 1 | a); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; }; }
+    function rr(a, b) { return a + R() * (b - a); }
+    function rn(a, b) { return a + Math.random() * (b - a); }
+
+    function sprite(rgb) {
+      var c = document.createElement('canvas'); c.width = c.height = 64;
+      var g = c.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      gr.addColorStop(0, 'rgba(' + rgb + ',1)'); gr.addColorStop(.3, 'rgba(' + rgb + ',.45)'); gr.addColorStop(1, 'rgba(' + rgb + ',0)');
+      g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return c;
+    }
+    var glowW = sprite('255,225,150'), glowR = sprite('255,70,70');
+
+    function mk() {
+      var c = document.createElement('canvas'); c.width = Math.ceil(W * dpr); c.height = Math.ceil(H * dpr);
+      var g = c.getContext('2d'); g.scale(dpr, dpr); return g;
+    }
+    function rp(x, y, w, h, r) {                 // jalur kotak membulat
+      ctx.beginPath(); ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+    }
+
+    /* ---------- Langit, bintang, bulan ---------- */
+    function buildSky() {
+      var g = mk(), gr = g.createLinearGradient(0, 0, 0, baseY), i, x, y;
+      gr.addColorStop(0, '#03040f'); gr.addColorStop(.55, '#0b1233'); gr.addColorStop(1, '#1d2350');
+      g.fillStyle = gr; g.fillRect(0, 0, W, H);
+      var gl = g.createRadialGradient(W / 2, baseY, 0, W / 2, baseY, Math.max(W, H) * .7);   // cahaya kota di cakrawala
+      gl.addColorStop(0, 'rgba(255,150,90,.30)'); gl.addColorStop(1, 'rgba(255,150,90,0)');
+      g.fillStyle = gl; g.fillRect(0, 0, W, H);
+      for (i = 0; i < 70; i++) {
+        x = R() * W; y = R() * baseY * .75; g.fillStyle = 'rgba(255,255,255,' + (.25 + R() * .5) + ')';
+        g.beginPath(); g.arc(x, y, .4 + R() * .9, 0, 6.283); g.fill();
+      }
+      var mx = W * .84, my = H * .13, mr = 15 * U;                                            // bulan sabit
+      g.save(); g.shadowColor = 'rgba(255,240,200,.7)'; g.shadowBlur = 18 * U; g.fillStyle = '#f6edcf';
+      g.beginPath(); g.arc(mx, my, mr, 0, 6.283); g.arc(mx + mr * .5, my - mr * .12, mr * .86, 0, 6.283, true); g.fill('evenodd'); g.restore();
+      stars = []; for (i = 0; i < 28; i++) stars.push({ x: R() * W, y: R() * baseY * .7, r: .6 + R() * .9, ph: R() * 6.28 });
+      return g.canvas;
+    }
+
+    /* ---------- Lapisan gedung ---------- */
+    function layer(o) {
+      var g = mk(), b = [], wc = [[], [], [], []], blink = [], x = -30 * U, w, h, bd, tw, th, ax, ah, ww, wh, gx, gy, cols, rows, ci, ri, c;
+      while (x < W + 30 * U) {
+        w = rr(o.w0, o.w1) * U; h = rr(o.h0, o.h1) * H;
+        if (x + w > wheel.x - wheel.R - 8 * U && x < wheel.x + wheel.R + 8 * U) h *= .3;   // sisakan ruang untuk bianglala
+        bd = { x: x, w: w, h: h, y: baseY - h }; b.push(bd);
+        g.fillStyle = o.col; g.fillRect(x, bd.y, w, h + 2);
+        g.fillStyle = o.edge; g.fillRect(x, bd.y, 1.2, h); g.fillRect(x, bd.y, w, 1.2);
+        if (R() < .5) {                                                      // atap bertingkat
+          tw = w * rr(.4, .7); th = rr(8, 22) * U;
+          g.fillStyle = o.col; g.fillRect(x + (w - tw) / 2, bd.y - th, tw, th);
+          g.fillStyle = o.edge; g.fillRect(x + (w - tw) / 2, bd.y - th, tw, 1.2); bd.top = bd.y - th;
+        }
+        if (R() < .35) {                                                     // antena + lampu merah
+          ax = x + w * rr(.3, .7); ah = rr(14, 30) * U;
+          g.fillStyle = o.col; g.fillRect(ax, (bd.top || bd.y) - ah, 1.6 * U, ah);
+          blink.push({ x: ax + .8 * U, y: (bd.top || bd.y) - ah, ph: R() * 6.28 });
+        }
+        ww = o.ws * U; wh = ww * 1.35; gx = ww * .9; gy = wh * .8;
+        cols = Math.floor((w - 6 * U) / (ww + gx)); rows = Math.floor((h - 8 * U) / (wh + gy));
+        for (ri = 0; ri < rows; ri++) for (ci = 0; ci < cols; ci++) {
+          c = R(); c = c < .72 ? 0 : c < .82 ? 1 : c < .92 ? 2 : 3;
+          wc[c].push({ x: x + 4 * U + ci * (ww + gx), y: bd.y + 6 * U + ri * (wh + gy), w: ww, h: wh, on: R() < o.on });
+        }
+        x += w + R() * o.gap * U;
+      }
+      return { c: g.canvas, b: b, wc: wc, blink: blink, a: o.alpha };
+    }
+
+    function wins(L) {                               // jendela menyala; sesekali ada yang berganti
+      ctx.globalAlpha = L.a;
+      for (var c = 0; c < 4; c++) {
+        var a = L.wc[c], i; ctx.fillStyle = WC[c]; ctx.beginPath();
+        for (i = 0; i < a.length; i++) if (a[i].on) ctx.rect(a[i].x, a[i].y, a[i].w, a[i].h);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      if (Math.random() < .35) {
+        var a2 = L.wc[Math.floor(Math.random() * 4)];
+        if (a2.length) { var w = a2[Math.floor(Math.random() * a2.length)]; w.on = !w.on; }
+      }
+    }
+
+    /* ---------- Jalan & lampu jalan ---------- */
+    function buildGround() {
+      var g = mk(), x, gr;
+      g.fillStyle = '#0c1030'; g.fillRect(0, baseY, W, H - baseY);                 // trotoar
+      g.fillStyle = '#04060f'; g.fillRect(0, H - 40 * U, W, 40 * U);               // jalan
+      g.fillStyle = 'rgba(160,170,255,.25)'; g.fillRect(0, H - 40 * U, W, 1.5);
+      g.fillStyle = 'rgba(255,212,121,.55)';
+      for (x = 0; x < W; x += 40 * U) g.fillRect(x, H - 22 * U, 20 * U, 1.6 * U);
+      for (x = 60 * U; x < W; x += 150 * U) {                                       // lampu jalan
+        g.fillStyle = '#050816'; g.fillRect(x, baseY - 34 * U, 2 * U, 34 * U); g.fillRect(x, baseY - 34 * U, 9 * U, 2 * U);
+        gr = g.createRadialGradient(x + 8 * U, baseY - 32 * U, 0, x + 8 * U, baseY - 32 * U, 50 * U);
+        gr.addColorStop(0, 'rgba(255,200,110,.45)'); gr.addColorStop(1, 'rgba(255,200,110,0)');
+        g.fillStyle = gr; g.fillRect(x - 45 * U, baseY - 85 * U, 110 * U, 110 * U);
+        g.fillStyle = '#ffe3a3'; g.beginPath(); g.arc(x + 8 * U, baseY - 32 * U, 2.4 * U, 0, 6.283); g.fill();
+      }
+      return g.canvas;
+    }
+
+    /* ---------- Bangun seluruh pemandangan ---------- */
+    function build() {
+      var i, cc = ['#2a3270', '#5b2a4a', '#1f4d5a', '#4a3a1f', '#3a2a6a', '#14213d'], jc = ['#ff6f91', '#7fe7ff', '#ffd479', '#9dffb0', '#c9a6ff', '#fff6e0'];
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      W = cv.clientWidth; H = cv.clientHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      U = Math.max(.7, Math.min(1.3, H / 800));
+      baseY = H - 72 * U; walkY = H - 50 * U; trackY = baseY - .24 * H;
+      R = rng(2027);
+
+      sky = buildSky();
+      wheel = { x: W * .2, R: Math.min(72 * U, W * .17) }; wheel.y = baseY - wheel.R - 12 * U;
+      far = layer({ w0: 34, w1: 74, h0: .18, h1: .40, col: '#101640', edge: 'rgba(130,150,255,.10)', ws: 2.6, on: .5, gap: 3, alpha: .55 });
+      mid = layer({ w0: 40, w1: 90, h0: .14, h1: .34, col: '#0a0f2d', edge: 'rgba(140,160,255,.16)', ws: 3.6, on: .5, gap: 4, alpha: .9 });
+      near = layer({ w0: 50, w1: 110, h0: .05, h1: .15, col: '#060919', edge: 'rgba(160,170,255,.14)', ws: 4.4, on: .55, gap: 6, alpha: 1 });
+      ground = buildGround();
+
+      var tall = mid.b.slice().sort(function (a, b) { return b.h - a.h; });               // papan neon & lampu sorot di gedung tertinggi
+      sign = null;
+      for (i = 0; i < tall.length; i++) { var cx = tall[i].x + tall[i].w / 2; if ((cx < W * .3 || cx > W * .7) && tall[i].w > 34 * U) { sign = tall[i]; break; } }
+      if (!sign) sign = tall[0];
+      beams = tall.slice(0, 2).map(function (b, k) { return { x: b.x + b.w / 2, y: b.top || b.y, ph: k * 2.1 }; });
+      fog = ctx.createLinearGradient(0, baseY - .34 * H, 0, baseY);
+      fog.addColorStop(0, 'rgba(255,150,90,0)'); fog.addColorStop(1, 'rgba(255,150,90,.14)');
+
+      cars = []; for (i = 0; i < 9; i++) cars.push({ lane: i % 2, x: R() * W, v: (34 + R() * 70) * U, len: (i === 4 ? 46 : 24 + R() * 6) * U, col: cc[i % 6], bus: i === 4 });
+      peds = []; for (i = 0; i < 18; i++) peds.push({ x: R() * W, dir: R() < .5 ? -1 : 1, v: (12 + R() * 20) * U, h: (17 + R() * 7) * U, ph: R() * 6.28, col: jc[i % 6], sp: R() < .4 });
+      train = { on: false, wait: 1.5, v: 95 * U, dir: 1, x: 0, n: 6, cl: 40 * U, gap: 3 * U };
+      blimp = { x: W * .7, y: H * .16 };
+    }
+
+    /* ---------- Elemen bergerak ---------- */
+    function drawWheel() {
+      var w = wheel, i, a, x, y, R0 = w.R, ang = t * .15;
+      ctx.lineCap = 'round'; ctx.strokeStyle = '#2a3470'; ctx.lineWidth = 3 * U;
+      ctx.beginPath(); ctx.moveTo(w.x, w.y); ctx.lineTo(w.x - R0 * .55, baseY); ctx.moveTo(w.x, w.y); ctx.lineTo(w.x + R0 * .55, baseY); ctx.stroke();
+      ctx.strokeStyle = '#4a57a6'; ctx.lineWidth = 2 * U; ctx.beginPath(); ctx.arc(w.x, w.y, R0, 0, 6.283); ctx.stroke();
+      ctx.strokeStyle = '#38438a'; ctx.lineWidth = 1 * U; ctx.beginPath();
+      for (i = 0; i < 12; i++) { a = ang + i * .5236; ctx.moveTo(w.x, w.y); ctx.lineTo(w.x + Math.cos(a) * R0, w.y + Math.sin(a) * R0); }
+      ctx.stroke();
+      for (i = 0; i < 36; i++) {                                         // lampu pelek berganti warna
+        a = i / 36 * 6.283; ctx.fillStyle = 'hsl(' + ((i * 10 + t * 60) % 360) + ',100%,68%)';
+        ctx.beginPath(); ctx.arc(w.x + Math.cos(a) * R0, w.y + Math.sin(a) * R0, 1.9 * U, 0, 6.283); ctx.fill();
+      }
+      for (i = 0; i < 12; i++) {                                         // gondola
+        a = ang + i * .5236; x = w.x + Math.cos(a) * R0; y = w.y + Math.sin(a) * R0;
+        ctx.fillStyle = '#ffd479'; rp(x - 3.5 * U, y + 1 * U, 7 * U, 5.5 * U, 1.5 * U); ctx.fill();
+      }
+    }
+
+    function drawBlimp(dt) {
+      var b = blimp, x, y, L = 46 * U, Hh = 15 * U;
+      b.x -= 18 * U * dt; if (b.x < -L * 1.5) b.x = W + L * 1.5;
+      x = b.x; y = b.y + Math.sin(t * .6) * 4 * U;
+      ctx.fillStyle = '#1a2250'; ctx.beginPath(); ctx.ellipse(x, y, L, Hh, 0, 0, 6.283); ctx.fill();
+      ctx.fillStyle = 'rgba(120,140,255,.25)'; ctx.beginPath(); ctx.ellipse(x, y - Hh * .35, L * .9, Hh * .35, 0, 0, 6.283); ctx.fill();
+      ctx.fillStyle = '#141a42'; ctx.beginPath(); ctx.moveTo(x + L * .78, y); ctx.lineTo(x + L * 1.12, y - Hh * .9); ctx.lineTo(x + L * 1.12, y + Hh * .9); ctx.closePath(); ctx.fill();
+      ctx.fillRect(x - 8 * U, y + Hh * .85, 16 * U, 5 * U);
+      ctx.font = '700 ' + (11 * U) + 'px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ffd479'; ctx.shadowColor = '#ffb347'; ctx.shadowBlur = 8 * U; ctx.fillText('2027', x, y + 1); ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = .5 + .5 * Math.sin(t * 4);
+      ctx.drawImage(glowR, x - L - 5 * U, y - 5 * U, 10 * U, 10 * U); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function drawBeams() {                           // lampu sorot berayun dari atap gedung
+      ctx.globalCompositeOperation = 'lighter';
+      beams.forEach(function (s) {
+        var a = -Math.PI / 2 + Math.sin(t * .6 + s.ph) * .55, len = 460 * U, ex = s.x + Math.cos(a) * len, ey = s.y + Math.sin(a) * len;
+        var gr = ctx.createLinearGradient(s.x, s.y, ex, ey); gr.addColorStop(0, 'rgba(255,255,255,.22)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x + Math.cos(a - .07) * len, s.y + Math.sin(a - .07) * len); ctx.lineTo(s.x + Math.cos(a + .07) * len, s.y + Math.sin(a + .07) * len); ctx.fill();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function drawSign() {                            // papan neon "2027"
+      var b = sign, w = Math.min(b.w * .85, 84 * U), h = 24 * U, x = b.x + (b.w - w) / 2, y = (b.top || b.y) + 10 * U, col = 'hsl(' + ((t * 40) % 360) + ',100%,66%)';
+      ctx.fillStyle = '#080b20'; rp(x, y, w, h, 3 * U); ctx.fill();
+      ctx.save(); ctx.shadowColor = col; ctx.shadowBlur = 12 * U; ctx.strokeStyle = col; ctx.lineWidth = 1.6 * U; rp(x, y, w, h, 3 * U); ctx.stroke();
+      ctx.font = '700 ' + (15 * U) + 'px ' + FONT; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = col;
+      ctx.globalAlpha = .85 + .15 * Math.sin(t * 9); ctx.fillText('2027', x + w / 2, y + h / 2 + 1); ctx.restore();
+    }
+
+    function drawBlink(L) {
+      ctx.globalCompositeOperation = 'lighter';
+      L.blink.forEach(function (k) { ctx.globalAlpha = .15 + .85 * Math.max(0, Math.sin(t * 3 + k.ph)); ctx.drawImage(glowR, k.x - 5 * U, k.y - 5 * U, 10 * U, 10 * U); });
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function drawTrain(dt) {                         // rel layang + kereta lewat sesekali
+      var T = train, k, x0, cx;
+      ctx.fillStyle = '#0d1238'; ctx.fillRect(0, trackY, W, 3 * U);
+      ctx.fillStyle = '#0a0f2c'; for (k = 40 * U; k < W; k += 120 * U) ctx.fillRect(k, trackY + 3 * U, 4 * U, baseY - trackY);
+      if (!T.on) { T.wait -= dt; if (T.wait <= 0) { T.on = true; T.dir = Math.random() < .5 ? 1 : -1; T.x = T.dir > 0 ? 0 : W; } return; }
+      var len = T.n * (T.cl + T.gap);
+      T.x += T.dir * T.v * dt;
+      if ((T.dir > 0 && T.x - len > W) || (T.dir < 0 && T.x + len < 0)) { T.on = false; T.wait = rn(8, 14); return; }
+      for (k = 0; k < T.n; k++) {
+        x0 = T.dir > 0 ? T.x - (k + 1) * (T.cl + T.gap) + T.gap : T.x + k * (T.cl + T.gap);
+        ctx.fillStyle = '#1b2250'; rp(x0, trackY - 16 * U, T.cl, 14 * U, 3 * U); ctx.fill();
+        ctx.fillStyle = 'rgba(140,160,255,.35)'; ctx.fillRect(x0 + 3 * U, trackY - 16 * U, T.cl - 6 * U, 1.5 * U);
+        ctx.fillStyle = '#ffe9a8'; for (cx = 0; cx < 6; cx++) ctx.fillRect(x0 + 4 * U + cx * 6 * U, trackY - 13 * U, 4 * U, 5 * U);
+      }
+      ctx.globalCompositeOperation = 'lighter'; ctx.drawImage(glowW, T.x - 8 * U, trackY - 16 * U, 16 * U, 16 * U); ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function drawCar(c, dt) {
+      var dir = c.lane ? -1 : 1, y = H - (c.lane ? 14 : 31) * U, L = c.len, h = (c.bus ? 12 : 8) * U, x, yb = y + 5 * U, fx, bx, k, gr, hy;
+      c.x += dir * c.v * dt; if (c.x > W + 60 * U) c.x = -60 * U; if (c.x < -60 * U) c.x = W + 60 * U;
+      x = c.x - L / 2; ctx.fillStyle = c.col; rp(x, yb - h, L, h, 2 * U); ctx.fill();
+      if (!c.bus) { ctx.fillStyle = '#0a0e26'; rp(x + L * .25, yb - h - 5 * U, L * .5, 5.5 * U, 2 * U); ctx.fill(); }
+      else { ctx.fillStyle = '#ffe9a8'; for (k = 0; k < 5; k++) ctx.fillRect(x + 3 * U + k * 8 * U, yb - h + 2 * U, 5 * U, 4 * U); }
+      fx = dir > 0 ? x + L : x; bx = dir > 0 ? x : x + L; hy = yb - h * .55;
+      ctx.globalCompositeOperation = 'lighter';
+      gr = ctx.createLinearGradient(fx, 0, fx + dir * 40 * U, 0); gr.addColorStop(0, 'rgba(255,230,160,.30)'); gr.addColorStop(1, 'rgba(255,230,160,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(fx, hy); ctx.lineTo(fx + dir * 40 * U, hy - 7 * U); ctx.lineTo(fx + dir * 40 * U, hy + 7 * U); ctx.fill();
+      ctx.drawImage(glowW, fx - 7 * U + dir * 3 * U, hy - 7 * U, 14 * U, 14 * U);
+      ctx.drawImage(glowR, bx - 5 * U, hy - 5 * U, 10 * U, 10 * U);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function drawPed(p, dt) {                        // orang berjalan; sebagian membawa sparkler
+      var y = walkY, h = p.h, hip = y - h * .42, sh = y - h * .8, sw, hx, hy;
+      p.x += p.dir * p.v * dt; if (p.x > W + 20) p.x = -20; if (p.x < -20) p.x = W + 20; p.ph += p.v * dt * .5;
+      sw = Math.sin(p.ph) * h * .2; ctx.lineCap = 'round';
+      ctx.strokeStyle = '#070a1d'; ctx.lineWidth = 2 * U; ctx.beginPath();
+      ctx.moveTo(p.x, hip); ctx.lineTo(p.x + sw, y); ctx.moveTo(p.x, hip); ctx.lineTo(p.x - sw, y); ctx.stroke();
+      ctx.strokeStyle = p.col; ctx.lineWidth = 2.8 * U; ctx.beginPath(); ctx.moveTo(p.x, hip); ctx.lineTo(p.x, sh); ctx.stroke();
+      ctx.lineWidth = 1.6 * U; ctx.beginPath(); ctx.moveTo(p.x, sh + U);
+      if (p.sp) { hx = p.x + p.dir * h * .28; hy = y - h * 1.08; ctx.lineTo(hx, hy); } else ctx.lineTo(p.x - Math.sin(p.ph) * h * .15, hip);
+      ctx.stroke();
+      ctx.fillStyle = '#d9c3a8'; ctx.beginPath(); ctx.arc(p.x, y - h * .93, h * .11, 0, 6.283); ctx.fill();
+      if (p.sp && sparks.length < 220) for (var k = 0; k < 2; k++) sparks.push({ x: hx, y: hy, vx: rn(-35, 35), vy: rn(-55, -5), l: 1 });
+    }
+
+    function drawSparks(dt) {
+      var i, s; ctx.globalCompositeOperation = 'lighter';
+      for (i = sparks.length - 1; i >= 0; i--) {
+        s = sparks[i]; s.vy += 130 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.l -= dt * 2.2;
+        if (s.l <= 0) { sparks.splice(i, 1); continue; }
+        ctx.globalAlpha = s.l; ctx.fillStyle = '#ffd98a'; ctx.fillRect(s.x, s.y, 1.6 * U, 1.6 * U);
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* ---------- Gambar satu frame ---------- */
+    function draw(dt) {
+      var i;
+      ctx.drawImage(sky, 0, 0, W, H);
+      for (i = 0; i < stars.length; i++) {
+        ctx.globalAlpha = .2 + .8 * Math.abs(Math.sin(t * 1.4 + stars[i].ph));
+        ctx.fillStyle = '#fff'; ctx.fillRect(stars[i].x, stars[i].y, stars[i].r, stars[i].r);
+      }
+      ctx.globalAlpha = 1;
+      drawBlimp(dt);
+      ctx.drawImage(far.c, 0, 0, W, H); wins(far);
+      drawBeams(); drawWheel();
+      ctx.drawImage(mid.c, 0, 0, W, H); wins(mid); drawBlink(mid); drawSign();
+      drawTrain(dt);
+      ctx.fillStyle = fog; ctx.fillRect(0, baseY - .34 * H, W, .34 * H);
+      ctx.drawImage(near.c, 0, 0, W, H); wins(near); drawBlink(near);
+      ctx.drawImage(ground, 0, 0, W, H);
+      for (i = 0; i < cars.length; i++) drawCar(cars[i], dt);
+      for (i = 0; i < peds.length; i++) drawPed(peds[i], dt);
+      drawSparks(dt);
+    }
+
+    function frame(ts) {
+      if (!running) return;
+      var dt = Math.min((ts - last) / 1000 || .016, .05); last = ts; t += dt;
+      draw(dt); raf = requestAnimationFrame(frame);
+    }
+
+    function onResize() { if (!shown) return; build(); if (!running) draw(0); }
+
+    function start(root) {
+      if (shown) return;
+      if (!cv) {
+        cv = document.createElement('canvas'); cv.setAttribute('aria-hidden', 'true');
+        cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none';
+        ctx = cv.getContext('2d');
+      }
+      if (cv.parentNode !== root) root.insertBefore(cv, root.firstChild);
+      shown = true; t = 0; sparks = []; build(); window.addEventListener('resize', onResize);
+      if (reduce) { draw(0); return; }                // gerakan dikurangi: tampilkan satu gambar diam
+      running = true; last = performance.now(); raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      running = false; shown = false; cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      if (cv && cv.parentNode) cv.parentNode.removeChild(cv);
+    }
+
+    window.NYCity = { start: start, stop: stop };
+  })();
 </script>
 
 <style scoped>
@@ -1206,56 +1527,9 @@ const flashSaleImageSeo = getGeneralImageSeo('flash-sale');
     box-sizing: border-box;
   }
 
-  /* bintang berkelip */
-  .ny-pop::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    animation: ny-twinkle 3.2s ease-in-out infinite alternate;
-    background-image:
-      radial-gradient(1.5px 1.5px at 8% 14%, #fff, transparent),
-      radial-gradient(1px 1px at 22% 38%, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 35% 9%, #ffe9b0, transparent),
-      radial-gradient(1px 1px at 52% 22%, #fff, transparent),
-      radial-gradient(1.5px 1.5px at 66% 11%, #fff, transparent),
-      radial-gradient(1px 1px at 78% 33%, #ffe9b0, transparent),
-      radial-gradient(1.5px 1.5px at 91% 17%, #fff, transparent),
-      radial-gradient(1px 1px at 14% 62%, #fff, transparent),
-      radial-gradient(1px 1px at 88% 58%, #fff, transparent);
-  }
-  @keyframes ny-twinkle {
-    from {
-      opacity: 0.45;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  /* lapisan: bukit < confetti < kartu < kembang api */
-  .ny-hills {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: clamp(90px, 22vh, 200px);
-    pointer-events: none;
-    z-index: 1;
-  }
-  .ny-light {
-    animation: ny-lamp 2.6s ease-in-out infinite alternate;
-  }
-  @keyframes ny-lamp {
-    from {
-      opacity: 0.55;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
+  /* lapisan: kota 2D (canvas) < confetti < kartu < kembang api < tulisan */
+  /* Canvas kota disisipkan lewat JS dengan z-index: 0 dan pointer-events: none.
+     Latar radial di .ny-pop tetap dipertahankan sebagai fallback. */
   .ny-confetti {
     position: absolute;
     inset: 0;
